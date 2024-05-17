@@ -1,5 +1,3 @@
-package ru.ads.linkedlist;
-
 import java.util.*;
 
 public class LinkedList
