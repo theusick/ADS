@@ -145,6 +145,21 @@ public class LinkedList
         }
     }
 
+    public static LinkedList sumEqualLengthLists(LinkedList left, LinkedList right)
+    {
+        LinkedList result = new LinkedList();
+        if (left.count() == right.count()) {
+            Node currLeft = left.head;
+            Node currRight = right.head;
+            while (currLeft != null) {
+                result.addInTail(new Node(currLeft.value + currRight.value));
+                currLeft = currLeft.next;
+                currRight = currRight.next;
+            }
+        }
+        return result;
+    }
+
 }
 
 class Node

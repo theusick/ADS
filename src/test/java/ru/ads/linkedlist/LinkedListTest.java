@@ -12,7 +12,7 @@ public class LinkedListTest {
     private static final int[] MANY_ELEMS_ARRAY = new int[]{ -10, 0, 4, 5, 0, 0, 4, 3, 5, -10 };
 
     @Test
-    void addInTail() {
+    void testAddInTail() {
         LinkedList list = generateLinkedList(EMPTY_ARRAY);
         Node node = new Node(2);
         list.addInTail(node);
@@ -28,7 +28,7 @@ public class LinkedListTest {
     }
 
     @Test
-    void find() {
+    void testFind() {
         LinkedList list = generateLinkedList(EMPTY_ARRAY);
         assertNull(list.find(2));
 
@@ -72,7 +72,7 @@ public class LinkedListTest {
     }
 
     @Test
-    void remove() {
+    void testRemove() {
         LinkedList list = generateLinkedList(EMPTY_ARRAY);
         assertFalse(list.remove(1));
 
@@ -103,7 +103,7 @@ public class LinkedListTest {
     }
 
     @Test
-    void removeAll() {
+    void testRemoveAll() {
         LinkedList list = generateLinkedList(EMPTY_ARRAY);
         list.removeAll(1);
         assertEquals(0, list.count());
@@ -133,7 +133,7 @@ public class LinkedListTest {
     }
 
     @Test
-    void clear() {
+    void testClear() {
         LinkedList list = generateLinkedList(EMPTY_ARRAY);
         list.clear();
         assertEquals(0, list.count());
@@ -154,7 +154,7 @@ public class LinkedListTest {
     }
 
     @Test
-    void count() {
+    void testCount() {
         LinkedList list = generateLinkedList(EMPTY_ARRAY);
         assertEquals(0, list.count());
 
@@ -170,7 +170,7 @@ public class LinkedListTest {
     }
 
     @Test
-    void insertAfter() {
+    void testInsertAfter() {
         LinkedList list = generateLinkedList(EMPTY_ARRAY);
         list.insertAfter(null, new Node(4));
         assertEquals(4, list.head.value);
@@ -198,6 +198,31 @@ public class LinkedListTest {
         assertEquals(0, list.tail.value);
         assertEquals(list.tail, node.next);
         assertNull(list.tail.next);
+    }
+
+    @Test
+    void testSumEqualLengthLists() {
+        LinkedList left = generateLinkedList(EMPTY_ARRAY);
+        LinkedList right = generateLinkedList(EMPTY_ARRAY);
+        LinkedList result = LinkedList.sumEqualLengthLists(left, right);
+        assertEquals(0, result.count());
+
+        left = generateLinkedList(ONE_ELEM_ARRAY);
+        right = generateLinkedList(ONE_ELEM_ARRAY);
+        result = LinkedList.sumEqualLengthLists(left, right);
+        assertEquals(1, result.count());
+        assertEquals(4, result.head.value);
+
+        right = generateLinkedList(MANY_ELEMS_ARRAY);
+        result = LinkedList.sumEqualLengthLists(left, right);
+        assertEquals(0, result.count());
+
+        left = generateLinkedList(MANY_ELEMS_ARRAY);
+        right = generateLinkedList(MANY_ELEMS_ARRAY);
+        result = LinkedList.sumEqualLengthLists(left, right);
+        assertEquals(10, result.count());
+        assertEquals(-20, result.head.value);
+        assertEquals(-20, result.tail.value);
     }
 
     private LinkedList generateLinkedList(int[] data) {
