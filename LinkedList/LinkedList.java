@@ -49,6 +49,9 @@ public class LinkedList
             if (curr.value == _value) {
                 if (curr == this.head) {
                     this.head = this.head.next;
+                    if (this.head == null) {
+                        this.tail = null;
+                    }
                 } else if (curr == this.tail) {
                     prev.next = null;
                     this.tail = prev;
@@ -72,6 +75,10 @@ public class LinkedList
                 if (curr == this.head) {
                     this.head = this.head.next;
                     curr = this.head;
+
+                    if (this.head == null) {
+                        this.tail = null;
+                    }
                 } else if (curr == this.tail) {
                     prev.next = null;
                     this.tail = prev;
