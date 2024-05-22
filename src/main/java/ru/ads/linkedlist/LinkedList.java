@@ -140,6 +140,7 @@ public class LinkedList
                 if (node == this.tail) {
                     this.tail = _nodeToInsert;
                 }
+                return;
             }
             node = node.next;
         }
