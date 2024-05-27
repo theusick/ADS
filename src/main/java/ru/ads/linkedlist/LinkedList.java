@@ -2,13 +2,11 @@ package ru.ads.linkedlist;
 
 import java.util.*;
 
-public class LinkedList
-{
+public class LinkedList {
     public Node head;
     public Node tail;
 
-    public LinkedList()
-    {
+    public LinkedList() {
         head = null;
         tail = null;
     }
@@ -43,8 +41,7 @@ public class LinkedList
         return nodes;
     }
 
-    public boolean remove(int _value)
-    {
+    public boolean remove(int _value) {
         Node prev = null;
         Node curr = this.head;
         while (curr != null) {
@@ -68,8 +65,7 @@ public class LinkedList
         return false;
     }
 
-    public void removeAll(int _value)
-    {
+    public void removeAll(int _value) {
         Node prev = null;
         Node curr = this.head;
         while (curr != null) {
@@ -96,8 +92,7 @@ public class LinkedList
         }
     }
 
-    public void clear()
-    {
+    public void clear() {
         Node next = null;
         Node curr = this.head;
         while (curr != null) {
@@ -109,8 +104,7 @@ public class LinkedList
         this.tail = null;
     }
 
-    public int count()
-    {
+    public int count() {
         int count = 0;
         Node node = this.head;
         while (node != null) {
@@ -120,8 +114,7 @@ public class LinkedList
         return count;
     }
 
-    public void insertAfter(Node _nodeAfter, Node _nodeToInsert)
-    {
+    public void insertAfter(Node _nodeAfter, Node _nodeToInsert) {
         if (_nodeAfter == null) {
             _nodeToInsert.next = this.head;
             this.head = _nodeToInsert;
@@ -146,8 +139,7 @@ public class LinkedList
         }
     }
 
-    public static LinkedList sumEqualLengthLists(LinkedList left, LinkedList right)
-    {
+    public static LinkedList sumEqualLengthLists(LinkedList left, LinkedList right) {
         LinkedList result = new LinkedList();
         if (left.count() == right.count()) {
             Node currLeft = left.head;
@@ -163,12 +155,11 @@ public class LinkedList
 
 }
 
-class Node
-{
+class Node {
     public int value;
     public Node next;
-    public Node(int _value)
-    {
+
+    public Node(int _value) {
         value = _value;
         next = null;
     }
