@@ -9,8 +9,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class LinkedList2Test {
 
     private static final int[] EMPTY_ARRAY = new int[]{};
-    private static final int[] ONE_ELEM_ARRAY = new int[]{ 2 };
-    private static final int[] MANY_ELEMS_ARRAY = new int[]{ -10, 0, 4, 5, 0, 0, 4, 3, 5, -10 };
+    private static final int[] ONE_ELEM_ARRAY = new int[]{2};
+    private static final int[] MANY_ELEMS_ARRAY = new int[]{-10, 0, 4, 5, 0, 0, 4, 3, 5, -10};
 
     @Test
     void testAddInTail() {
