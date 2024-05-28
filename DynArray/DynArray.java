@@ -40,7 +40,7 @@ public class DynArray<T> {
      * checkIndexRangeInclusive = O(1)
      * expandArray = O(n)
      * System.arraycopy = O(n)
-     * insert = O(n)
+     * insert = O(n) upper bound. O(1) average
      */
     public void insert(T itm, int index) {
         checkIndexRangeInclusive(index);
@@ -54,7 +54,7 @@ public class DynArray<T> {
      * checkIndexRangeExclusive = O(1)
      * System.arraycopy = O(n)
      * decreaseArray = O(n)
-     * remove = O(n)
+     * remove = O(n) upper bound. O(1) average
      */
     public void remove(int index) {
         checkIndexRangeExclusive(index);
