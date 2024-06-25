@@ -2,16 +2,15 @@ package ru.ads.bloomfilter;
 
 public class BloomFilter {
     public int filter_len;
-    public int[] bitFilter;
+    public long bitFilter = 0;
 
     public final int RANDOM_NUM_HASH1 = 17;
     public final int RANDOM_NUM_HASH2 = 223;
 
-    private static final int BITS_PER_INT = 32;
+    private static final int BITS_PER_LONG = 64;
 
     public BloomFilter(int f_len) {
         filter_len = f_len;
-        bitFilter = new int[(filter_len + BITS_PER_INT - 1) / BITS_PER_INT];
     }
 
     public int hash1(String str1) {
@@ -30,8 +29,8 @@ public class BloomFilter {
         int hash1Result = hash1(str1);
         int hash2Result = hash2(str1);
 
-        bitFilter[hash1Result / BITS_PER_INT] |= (1 << (hash1Result % BITS_PER_INT));
-        bitFilter[hash2Result / BITS_PER_INT] |= (1 << (hash2Result % BITS_PER_INT));
+        bitFilter |= (1L << (hash1Result % BITS_PER_LONG));
+        bitFilter |= (1L << (hash2Result % BITS_PER_LONG));
     }
 
     public boolean isValue(String str1) {
@@ -42,10 +41,8 @@ public class BloomFilter {
         int hash1Result = hash1(str1);
         int hash2Result = hash2(str1);
 
-        boolean hasHash1Bit = (bitFilter[hash1Result / BITS_PER_INT]
-                & (1 << (hash1Result % BITS_PER_INT))) != 0;
-        boolean hasHash2Bit = (bitFilter[hash2Result / BITS_PER_INT]
-                & (1 << (hash2Result % BITS_PER_INT))) != 0;
+        boolean hasHash1Bit = (bitFilter & (1L << (hash1Result % BITS_PER_LONG))) != 0;
+        boolean hasHash2Bit = (bitFilter & (1L << (hash2Result % BITS_PER_LONG))) != 0;
 
         return hasHash1Bit && hasHash2Bit;
     }
