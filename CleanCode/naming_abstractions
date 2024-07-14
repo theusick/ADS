@@ -1,0 +1,51 @@
+data - userData
+// содержит данные пользователя, а не любые данные
+
+calc - calculateInterest
+// вычисление процента
+
+list - orderList
+// список заказов
+
+item - cartItem
+// отношение к элементу корзины
+
+result - searchResult
+// результаты поиска
+
+
+
+storage - cache
+// хранилище представляет собой кэш
+
+controller - eventHandler
+// отвечает за обработку событий
+
+buffer - inputBuffer
+// буфер используется для ввода данных
+
+algo - sortingAlgorithm
+// алгоритм содержит алгоритм сортировки
+
+
+
+processPayment - paymentDetails
+// содержит детали платежа в контексте обработки платежа
+
+User - userName
+// относится к имени пользователя в классе пользователя
+
+sendEmail - emailBody
+// содержит тело письма в контексте отправки электронной почты
+
+
+
+temporaryStorageBuffer - tempBuffer
+
+currentUserSessionData - userSession
+
+initialConfigurationSettings - initConfig
+
+databaseConnectionHandler - dbHandler
+
+authenticationTokenGenerator - authTokenGen
