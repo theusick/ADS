@@ -1,3 +1,4 @@
+6.1.
 data - userData
 // содержит данные пользователя, а не любые данные
 
@@ -15,6 +16,7 @@ result - searchResult
 
 
 
+6.2.
 storage - cache
 // хранилище представляет собой кэш
 
@@ -29,6 +31,7 @@ algo - sortingAlgorithm
 
 
 
+6.3.
 processPayment - paymentDetails
 // содержит детали платежа в контексте обработки платежа
 
@@ -40,6 +43,7 @@ sendEmail - emailBody
 
 
 
+6.4.
 temporaryStorageBuffer - tempBuffer
 
 currentUserSessionData - userSession
