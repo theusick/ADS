@@ -1,0 +1,130 @@
+7.1.
+stale - isAuthStale
+// флаг, указывающий необходима ли проверка подлинности аутентификации
+
+needAuth - requiresAuthentication
+// флаг, определяющий нужна ли аутентификация
+
+errorFlag - hasError
+// флаг, указывающий на наличие ошибки
+
+notFound - found
+// использование утвердительного имени вместо отрицательного
+
+complete - isCompleted
+// ясно указывает, что переменная отражает состояние завершения
+
+
+
+7.2.
+// использование `success` для определения статуса завершения операции
+boolean success = false;
+if (Objects.nonNull(array) && (array.length >= count)) {
+    ...
+    success = true;
+}
+return success;
+
+// использование `error` как признак ошибки
+boolean error = false;
+BufferedReader reader = null;
+try {
+    reader = new BufferedReader(new FileReader(fileName));
+    ...
+} catch (IOException e) {
+    error = true;
+    e.printStackTrace();
+}
+if (error) {
+    ...
+}
+
+// использование `found` для определения обнаружения значения
+boolean found = false;
+for (String element : elements) {
+    if (element.equals(target)) {
+        found = true;
+        break;
+    }
+}
+if (found) {
+    ...
+}
+
+
+
+7.3.
+// пример с использованием индексов для строк и столбцов в матрице
+for (int rowIndex = 0; rowIndex < matrix.length; rowIndex++) {
+    for (int columnIndex = 0; columnIndex < matrix[rowIndex].length; columnIndex++) {
+        System.out.print(matrix[rowIndex][columnIndex] + " ");
+    }
+    System.out.println();
+}
+
+// индекс символа в строке
+for (String item : items) {
+    int count = 0;
+    for (int charIndex = 0; charIndex < item.length(); charIndex++) {
+        if (Character.isLetter(item.charAt(charIndex))) {
+            count++;
+        }
+    }
+    itemCountMap.put(item, count);
+}
+
+
+
+7.4.
+int begin = 0;
+int end = array.length - 1;
+while (begin < end) {
+    ...
+    begin++;
+    end--;
+}
+
+T firstItem = items.get(0);
+T lastItem = items.get(items.size() - 1);
+if (!firstItem.equals(lastItem)) {
+    ...
+}
+
+
+7.5.
+// до изменений
+int tempRes = calculateResult();
+for (int i = 0; i < list.size(); i++) {
+    int x = list.get(i);
+    if (x == temp) {
+        ...
+    }
+}
+// после
+int result = calculateResult();
+for (int i = 0; i < list.size(); i++) {
+    int currentValue = list.get(i);
+    if (currentValue == result) {
+        ...
+    }
+}
+
+// до изменений
+...
+int[] tempArray = Arrays.copyOf(array, array.length);
+int tempCount = count;
+...
+int tempLeftIndex = leftIndex;
+for (int i = leftIndex; i < rightIndex; i++) {
+    if (tempArray[i] >= pivotValue) {
+        swap(tempArray, tempLeftIndex, i);
+        tempLeftIndex++;
+    }
+}
+
+// после
+int[] copiedArray = Arrays.copyOf(array, array.length);
+int remainingCount = count;
+...
+int tempLeftIndex = leftIndex; // оставлено без изменений
+...
