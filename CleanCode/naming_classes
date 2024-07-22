@@ -1,0 +1,100 @@
+UserDataManager - CustomerRepository
+// избавление от слова `Manager` и переименование в соответствии
+// с паттерном Репозиторий
+
+ProcessingInfo - TransactionHandler
+// избавление от слова `Info` и убран глагол,
+// переименование для уточнения, что класс
+// занимается конкретно обработкой транзакций
+
+FileManager - DocumentStorage
+// избавление от слова `Manger` и переименование для
+// указания, что класс предназначен для хранения документов,
+// а не управления любыми файлами
+
+UserProcessor - UserAuthenticator
+// конкретизация класса по аутентификации пользователей
+
+HandleKeys - KeyHandler
+// убран глагол, переименовано в существительное
+
+
+
+// до изменений
+public class UserService {
+
+    ...
+    public User fetchData(int userId) {
+        ...
+    }
+}
+
+public class CourseService {
+
+    ...
+    public Course getData() {
+        ...
+    }
+}
+
+// после изменений
+// унифицированы методы получения данных и в других классах сервисного слоя
+public class UserService {
+
+    ...
+    public User fetchData(int userId) {
+        ...
+    }
+}
+
+public class CourseService {
+
+    ...
+    public Course fetchData() {
+        ...
+    }
+}
+
+// до изменений
+DataProcessor inputDataHandler = new DataProcessor();
+...
+DataHandler dataHandler = new DataHandler();
+
+// после изменений
+// убран класс DataHandler, его логика пересекалась с DataProcessor,
+// поэтому туда были добавлены отсутсвующие методы DataHandler
+DataProcessor inputDataHandler = new DataProcessor();
+...
+DataProcessor outputDataHandler = new DataProcessor();
+
+
+// переименованы методы в классах паттерна Репозиторий по сохранению
+// данных, в разных классах использовалось либо storeData, либо saveData.
+// вместо:
+saveData()
+
+// используется везде, так как нагляднее демонстрирует сохранение в хранилище:
+storeData()
+
+// в классах описания сущностей CourseEntry, CourseModuleEntry, ...
+// унифицированы методы CRUD: createCourse, getCourse, updateCourse, removeCourse.
+
+// до изменений
+UnauthorizedUserService unauthorizedUserService = new UnauthorizedUserService();
+...
+AdminManager adminUserManager = new AdminManager();
+
+// после изменений
+UnauthorizedUserService unauthorizedUserService = new UnauthorizedUserService();
+...
+AdminService adminUserService = new AdminService();
+
+// до изменений
+userAccount = new UserAccount();
+...
+adminProfile = new AdminProfile();
+
+// после изменений
+userAccount = new UserAccount();
+...
+adminAccount = new AdminAccount();
