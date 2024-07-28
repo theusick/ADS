@@ -1,0 +1,165 @@
+// до исправления
+public class Point {
+    private int x;
+    private int y;
+
+    public Point(int x) {
+        this.x = x;
+        this.y = 0;
+    }
+
+    public Point(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+    ...
+}
+
+// после
+// добавлены методы-фабрики для класса точки в двумерном пространстве
+public class Point {
+    private double x;
+    private double y;
+
+    private Point(double x, double y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public static Point fromX(double x) {
+        return new Point(x, 0.0);
+    }
+
+    public static Point fromY(double y) {
+        return new Point(0.0, y);
+    }
+
+    public static Point fromXY(double x, double y) {
+        return new Point(x, y);
+    }
+    ...
+}
+
+// до изменений
+public class User {
+    private String name;
+    private int age;
+    ...
+
+    public User(String name) {
+        this.name = name;
+        this.age = 0;
+    }
+
+    public User(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+    ...
+}
+
+// после
+public class User {
+    private String name;
+    private int age;
+    ...
+
+    private User(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    public static User withName(String name) {
+        return new User(name, 0);
+    }
+
+    public static User withNameAndAge(String name, int age) {
+        return new User(name, age);
+    }
+}
+
+// до изменений
+public class Employee {
+    private String name;
+    private double salary;
+    ...
+
+    public Employee(String name) {
+        this.name = name;
+        this.salary = DEFAULT_SALARY;
+    }
+
+    public Employee(String name, double salary) {
+        this.name = name;
+        this.salary = salary;
+    }
+    ...
+}
+
+// после
+public class Employee {
+    private String name;
+    private double salary;
+    ...
+
+    private Employee(String name, double salary) {
+        this.name = name;
+        this.salary = salary;
+    }
+
+    public static Employee withName(String name) {
+        return new Employee(name, DEFAULT_SALARY);
+    }
+
+    public static Employee withNameAndSalary(String name, double salary) {
+        return new Employee(name, salary);
+    }
+    ...
+}
+
+
+
+// абстрактный класс Shape без использования префиксов и прочих
+// указателей в названии на абстрактный класс
+class Shape
+{
+public:
+    Shape(const point_t & pos);
+    virtual ~Shape() = default;
+    virtual double getArea() const noexcept = 0;
+    virtual rectangle_t getFrameRect() const = 0;
+    virtual void move(const point_t & posOffset) noexcept;
+    virtual void move(const double dx, const double dy) noexcept;
+    virtual void scale(const double ratio) = 0;
+    virtual void rotate(const double angle) = 0;
+    virtual void print() const;
+
+protected:
+    point_t pos_;
+};
+
+// базовый интерфейс фильтра сообщений в учебном примере создавался
+// мной также без лишней информации в имени на интерфейс 
+public interface TextAnalyzer extends Comparable<TextAnalyzer> {
+
+    static TextAnalyzer createTooLongAnalyzer(long maxLength) {
+        return new TooLongFilter(maxLength);
+    }
+
+    static TextAnalyzer createSpamAnalyzer(String[] spam) {
+        return new SpamFilter(spam);
+    }
+
+    static TextAnalyzer createNegativeTextAnalyzer() {
+        return new NegativeTextFilter();
+    }
+
+
+public interface RobotConnection extends AutoCloseable {
+    
+    void moveRobotTo(int x, int y) throws RobotConnectionException;
+
+    @Override
+    void close();
+
+}
