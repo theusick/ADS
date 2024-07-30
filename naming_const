@@ -1,0 +1,197 @@
+1.
+// до изменений
+// неправильное именование константы, не понятно из чего
+// сформировано "магическое число", неправильное
+// именование "временной" переменной
+... 
+final int dashCommaLength = 4;
+if ((temp.type_ == Token::tokenType::DASH) && (tempSize < dashCommaLength))
+...
+
+// после
+// "магическое число" в переменной dashCommaLength было разбито на элементы
+// для улучшения понимания читающим, что в себя оно включает,
+// наименования констант изменено согласно рекомендациям,
+// использование temp заменено в имени переменных
+... 
+final int DASH_LENGTH = 3, COMMA_LENGTH = 1, SPACE_LENGTH = 1;
+if ((formattedLine.type_ == Token::tokenType::DASH) && (formattedLineSize <
+    DASH_LENGTH + COMMA_LENGTH + SPACE_LENGTH))
+...
+
+2.
+// до изменений
+// переменные в Python могут быть изменены, согласно
+// рекомендациям с использованием инструмента статического
+// анализа проверки типов (прим. mypy), можно для
+// Python 3.8+ использовать спецификатор типа typing.Final
+// для объявления констант, чтобы при изменении значения
+// подобной переменной статический анализатор сообщал об этом
+// как об ошибке
+...
+ROOT_DIR: Path = Path(__file__).parent.parent.parent
+BOT_DIR: Path = Path(__file__).parent.parent
+LOCALES_DIR: PurePath = PurePath(BOT_DIR, "locales")
+
+IMAGE_LOGO_PATH: PurePath = PurePath(BOT_DIR, "assets", "logo.jpg")
+
+// после изменений
+// добавлен спецификатор typing.Final константам
+...
+from typing import Final
+
+ROOT_DIR: Final[Path] = Path(__file__).parent.parent.parent
+BOT_DIR: Final[Path] = Path(__file__).parent.parent
+LOCALES_DIR: Final[PurePath] = PurePath(BOT_DIR, "locales")
+
+IMAGE_LOGO_PATH: Final[PurePath] = PurePath(BOT_DIR, "assets", "logo.jpg")
+
+3.
+// до изменений
+static const unsigned char base64_table[65] = ...;
+
+// после
+// изменено название с использование только заглавных букв
+// и цифр (цифры оставлены для наглядности к определению
+// схемы кодирования)
+static const unsigned char BASE64_CHARS_TABLE[65] = ...;
+
+4.
+// изменено название константы с использованием только
+// заглавных букв 
+final int PRIORITY;
+
+5.
+// до изменений
+char received_nc[9] = {0};
+nonce_pos += 7;
+sscanf(nonce_pos, "%64[^\"]", received_nonce);
+opaque_pos += 8;
+sscanf(opaque_pos, "%64[^\"]", received_opaque);
+nc_pos += 3;
+sscanf(nc_pos, "%8[0-9a-fA-F]", received_nc);
+
+// после
+// "магические значения" заменены на константы, даже
+// которые используются всего один раз
+...
+const int FIELD_MAX_LENGTH = SHA256_DIGEST_LENGTH * 2 + 1;
+char received_nonce[FIELD_MAX_LENGTH];
+char received_opaque[FIELD_MAX_LENGTH];
+
+const int NC_LENGTH = 9;
+char received_nc[NC_LENGTH] = {0};
+
+const int NONCE_PREFIX_LENGTH = 7;
+nonce_pos += NONCE_PREFIX_LENGTH;
+sscanf(nonce_pos,  "%64[^\"]", received_nonce);
+
+const int OPAQUE_PREFIX_LENGTH = 8;
+opaque_pos += OPAQUE_PREFIX_LENGTH;
+sscanf(opaque_pos, "%64[^\"]", received_opaque);
+
+const int NC_PREFIX_LENGTH = 3;
+nc_pos += NC_PREFIX_LENGTH;
+sscanf(nc_pos, "%8[0-9a-fA-F]", received_nc);
+...
+
+6.
+// до изменений
+...
+char auth_body[MAX_DIGEST + 18];
+get_auth_response(auth_type, auth_body, MAX_DIGEST + 18, client_id, 1);
+char auth_body[MAX_DIGEST + 40];
+get_auth_response(auth_type, auth_body, MAX_DIGEST + 18, client_id, 1);
+
+// после
+// "магические значения" заменены на константы
+...
+const int AUTH_BODY_EXTRA_LENGTH = 18;
+char auth_body[MAX_DIGEST + AUTH_BODY_EXTRA_LENGTH];
+get_auth_response(auth_type, auth_body, MAX_DIGEST + AUTH_BODY_EXTRA_LENGTH, client_id, 1);
+
+const int NONCE_EXPIRED_BODY_EXTRA_LENGTH = 40;
+char auth_body[MAX_DIGEST + NONCE_EXPIRED_BODY_EXTRA_LENGTH];
+get_auth_response(auth_type, auth_body, MAX_DIGEST + NONCE_EXPIRED_BODY_EXTRA_LENGTH, client_id, 1);
+
+7.
+// до изменений
+// "магическое значение" 1024, нет комментария о том,
+// что оно обозначает
+...
+char buffer[1024];
+...
+for (int i = 0; i < 1024; i++)
+{
+    buffer[i] = ...;
+}
+
+
+// после
+// значение 1024 заменено на понятную константу
+const int BUFFER_SIZE = 1024;
+char buffer[BUFFER_SIZE];
+...
+for (int i = 0; i < BUFFER_SIZE; i++)
+{
+    buffer[i] = ...;
+}
+
+8.
+// до изменений
+// "магическое значение" 60, нет объяснения
+for (int i = 0; i < 60; i++)
+{
+...
+}
+
+// после
+// значение 60 заменено на константу
+const int SECONDS_IN_MINUTE = 60;
+for (int i = 0; i < SECONDS_IN_MINUTE; i++) 
+{ 
+...
+}
+
+9.
+// до изменений
+// "магическое значение" 100, неясно его значение
+final int count = 100;
+
+// после
+// значение 100 заменено на константу
+final int MAX_USER_COUNT = 100;
+final int count = MAX_USER_COUNT;
+
+10.
+// до изменений
+// неправильное именование константы, неясно, что значит 3
+int retries = 3;
+
+// после
+// значение 3 заменено на понятную константу
+const int MAX_RETRIES = 3;
+int retries = MAX_RETRIES;
+
+11.
+// до изменений
+// "магическое значение" 5000 без описания величины
+int timeout = 5000;
+
+// после
+// значение 5000 заменено на константу с указанием, что
+// это миллисекунды
+const int TIMEOUT_MS = 5000;
+int timeout = TIMEOUT_MS;
+
+12.
+// до изменений
+// магическое значение 7, неясно его значение
+if (day == 7)
+...
+
+// после
+// значение 7 заменено на константу
+const int DAYS_IN_WEEK = 7;
+if (day == DAYS_IN_WEEK)
+...
