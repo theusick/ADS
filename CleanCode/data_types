@@ -1,0 +1,254 @@
+1.
+// до изменений
+// возможность 0 в знаменателе (параметр `a` равен нулю
+// на входе) - это приведет к недопустимому математическому 
+// выражению
+public static String equation(int a, int b, int c) {
+    double sqrtDiscriminant = Math.sqrt(b * b - 4 * a * c);
+    double x1 = (-b + sqrtDiscriminant) / (2 * a);
+    double x2 = (-b - sqrtDiscriminant) / (2 * a);
+    return Math.max(x1, x2) + ", " + Math.min(x1, x2);
+}
+
+// после
+// добавлена проверка коэф. `a` на равенство нулю с
+// вызовом ошибки, если это так
+public static String equation(int a, int b, int c) {
+    if (a == 0) {
+        throw new IllegalArgumentException("Coefficient 'a' must not be zero");
+    }
+    double sqrtDiscriminant = Math.sqrt(b * b - 4 * a * c);
+    double x1 = (-b + sqrtDiscriminant) / (2 * a);
+    double x2 = (-b - sqrtDiscriminant) / (2 * a);
+    return Math.max(x1, x2) + ", " + Math.min(x1, x2);
+}
+
+2.
+// до изменений
+// у numberOrder может быть переполнение после возведения
+// в степень получения порядка максимального разряда,
+// необходимо вместо int использовать long
+public static byte maxNumber(long a) {
+    byte result = 1;
+    byte maxDigit = 0;
+    byte currentDigit = 0;
+    int numberLength = (int) Math.log10(a) + 1;
+    int numberOrder = (int) Math.pow(10, numberLength - 1);
+    ...
+
+// после
+public static byte maxNumber(long a) {
+    byte result = 1;
+    byte maxDigit = 0;
+    byte currentDigit = 0;
+    int numberLength = (int) Math.log10(a) + 1;
+    long numberOrder = (long) Math.pow(10, numberLength - 1);
+
+3.
+// до изменений
+// сумма значений показателя totalZuns - вещественное
+// число, сравнивать которое на равенство с другим недопустимому
+            ...
+            for (Test test : tests) {
+                List<Zun> zuns = zunRepository.findByTest(test);
+                for (Zun zun : zuns) {
+                    totalZuns += zun.getValue();
+                }
+            }
+        }
+    }
+
+    if (totalZuns == 1.0) {
+        ...
+    }
+
+    return totalZuns;
+}
+
+// после
+// условный оператор изменен на неравенство с учетом
+// ошибки округления
+final double EPSILON = 1e-9;
+            ...
+            for (Test test : tests) {
+                List<Zun> zuns = zunRepository.findByTest(test);
+                for (Zun zun : zuns) {
+                    totalZuns += zun.getValue();
+                }
+            }
+        }
+    }
+
+    if (Math.abs(totalZuns - 1.0) < EPSILON) {
+        ...
+    }
+
+    return totalZuns;
+}
+
+4.
+// до изменений
+// логическое условие сложно читается из-за использования
+// нескольких операций в одном выражении, использование
+// логических переменных помимо повышения читабельности
+// также упростит модификацию
+if (((symbol == '-') || (symbol == '+')) && isdigit(nextSymbol)) {
+    return true;
+}
+
+// после
+bool isSign = (symbol == '-') || (symbol == '+');
+
+if (isSign && isDigit(nextSymbol)) {
+    return true;
+}
+
+5.
+// до изменений
+// сложное условие в цикле, затрудняющее понимание кода
+while(!std::cin.eof() && (isdigit(symbol) || (symbol == '+')
+        || (symbol == '-') || (symbol == '.'))) {
+    const char nextSymbol = std::cin.peek();
+    if ((symbol == '.') && !isdigit(nextSymbol)) {
+        break;
+    }
+    ...
+
+// после
+bool isSign = (symbol == '+') || (symbol == '-') || (symbol == '.');
+bool isDigitOrSign = isDigit(symbol) || isSign;
+bool notEndOfStream = !std::cin.eof();
+
+while(notEndOfStream && isDigitOrSign) {
+    const char nextSymbol = std::cin.peek();
+    bool isDotWithoutFollowingDigit = (symbol == '.') && !isdigit(nextSymbol);
+
+    if (isDotWithoutFollowingDigit) {
+        break;
+    }
+    ...
+
+6.
+// до изменений
+// использование чисел с одинарной точностью для вычислений
+float distance = 0.0f;
+float speed = 5.5f;
+float time = 2.3f;
+
+distance = speed * time;
+
+// после
+// замена чисел с одинарной точностью на числа с двойной
+// точностью
+double distance = 0.0;
+double speed = 5.5;
+double time = 2.3;
+
+distance = speed * time;
+
+7.
+// до изменений
+// использование float для хранения и обработки значений
+// обладает меньшей точностью по сравнению с double
+float averageTemperature = 23.7f;
+float minTemperature = 15.2f;
+float maxTemperature = 30.5f;
+
+// после 
+// изменение типа переменных на double для повышения точности
+double averageTemperature = 23.7;
+double minTemperature = 15.2;
+double maxTemperature = 30.5;
+
+8.
+// до изменений
+// явного использования Unicode в коде форматирования текста
+// не было
+void TextConverter::readText()
+{
+    char symbol;
+
+    std::cin >> std::noskipws;
+    while (std::cin >> symbol)
+    {
+...
+
+// после
+// добавлена поддержка Unicode с использованием типов
+// "широких символов"
+
+#include <codecvt>
+#include <locale>
+#include <cwctype>
+
+void TextConverter::readText()
+{
+    wchar_t symbol;
+    std::wcin.imbue(std::locale(std::locale(), new std::codecvt_utf8<wchar_t>));
+
+    std::wcin >> std::noskipws;
+    while (std::cin >> symbol)
+    {
+
+9.
+// до изменений
+...
+double result = a / b;
+
+// после
+// добавлено явное преобразование типов с проверкой деления
+// на ноль
+...
+if (b == 0) {
+    std::cerr << "Error: Division by zero!" << std::endl;
+    return;
+}
+double result = static_cast<double>(a) / b;
+
+10.
+// до изменений
+// сравнение различных типов
+...
+bool hasAuth = ...;
+int validUserAuth = ...;
+
+if (hasAuth == validUserAuth)
+{
+    ...
+}
+
+// после
+// добавлено явное приведение типов в проверке на равенство
+if (static_cast<int>(hasAuth) == validUserAuth)
+{
+    ...
+}
+
+11.
+// добавлена локализация текстовых сообщений в
+// web-app с использованием инструмента pybabel:
+// изменены переводимые на русский и английский текстовые
+// сообщения с вызовом конкретных уже переведенных текстов
+callback_query.text(text=_("simulation_statistics_info"))
+
+12.
+// до изменений
+// в условии используются "магические" числа, затрудняющие
+// понимание кода
+...
+if (score > 80 && level == 3 && items.size() > 10) {
+    ...
+}
+
+// после
+// заменены "магические" числа на константы
+...
+const int PASSING_SCORE = 80;
+const int TARGET_LEVEL = 3;
+const int MIN_ITEMS = 10;
+...
+
+if ((score > PASSING_SCORE) && (level == TARGET_LEVEL)
+    && (items.size() > MIN_ITEMS)) {
+    ...
+}
