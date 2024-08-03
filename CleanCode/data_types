@@ -47,7 +47,7 @@ public static byte maxNumber(long a) {
 3.
 // до изменений
 // сумма значений показателя totalZuns - вещественное
-// число, сравнивать которое на равенство с другим недопустимому
+// число, сравнивать которое на равенство с другим недопустимо
             ...
             for (Test test : tests) {
                 List<Zun> zuns = zunRepository.findByTest(test);
@@ -187,7 +187,7 @@ void TextConverter::readText()
     std::wcin.imbue(std::locale(std::locale(), new std::codecvt_utf8<wchar_t>));
 
     std::wcin >> std::noskipws;
-    while (std::cin >> symbol)
+    while (std::wcin >> symbol)
     {
 
 9.
