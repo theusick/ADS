@@ -1,0 +1,461 @@
+1.
+// до изменений
+// отсутствие начальной инициализации у переменной result
+public static int[] getMaxArray(int[] array, int count) {
+    int[] result;
+    if (array != null && array.length >= count) {
+        result = new int[count];
+        // ... код ...
+    }
+    return result;
+}
+
+// после
+// задано начальное значение null переменной result
+public static int[] getMaxArray(int[] array, int count) {
+    int[] result = null;
+    if (array != null && array.length >= count) {
+        result = new int[count];
+        // ... код ...
+    }
+    return result;
+}
+
+2.
+// до изменений
+// переменная sum без начальной инициализации
+public int getArraySum(int[] array) {
+    int sum;
+    for (int i = 0; i < array.length; i++) {
+        sum += array[i];
+    }
+    return sum;
+}
+
+// после
+// инициализация переменной нулем до её использования
+public int getArraySum(int[] array) {
+    int sum;
+    for (int i = 0; i < array.length; i++) {
+        sum += array[i];
+    }
+    return sum;
+}
+
+3.
+// до изменений
+// потенциально неинициализированная переменная distance
+public static double calculateSpeed(int time) {
+    double distance;
+    if (time > 0) {
+        distance = 100;
+    }
+    return distance / time;
+}
+
+// после
+// инициализация переменной
+public static double calculateSpeed(int time) {
+    double distance = 0;
+    if (time > 0) {
+        distance = 100;
+    }
+    return distance / time;
+}
+
+4.
+// до изменений
+// использование хранилища часто используемого значения (nTriangleVertices)
+// без указания, что это константа
+...
+size_t nTriangleVertices = 3;
+
+size_t nTriangles = 0;
+nTriangles = std::count_if(shapes.begin(), shapes.end(),
+    [&nTriangleVertices](const detail::Shape & shapeVector)
+    {
+    if (shapeVector.size() == nTriangleVertices)
+    {
+        return true;
+    }
+    return false;
+    });
+...
+
+// после
+// объявление nTriangleVertices константой
+...
+const size_t nTriangleVertices = 3;
+
+size_t nTriangles = 0;
+nTriangles = std::count_if(shapes.begin(), shapes.end(),
+    [&nTriangleVertices](const detail::Shape & shapeVector)
+    {
+    if (shapeVector.size() == nTriangleVertices)
+    {
+        return true;
+    }
+    return false;
+    });
+...
+
+5.
+// до изменений
+// инициализация переменных задолго до их использования 
+...
+const int nMin = 0;
+const int nMax = 20;
+
+const int minElem = 1;
+const int maxElem = 20;
+... // много кода
+int nList = nMin;
+while (std::getline(buffer, tempString, ' '))
+{
+nList++;
+
+if (nList > nMax)
+{
+    throw std::invalid_argument("Invalid number of array elements in second task");
+}
+
+int elem = std::atoi(tempString.c_str());
+if (elem < minElem || elem > maxElem)
+{
+...
+
+// после
+// перенос константных значений ближе к циклу, месту их
+// использования
+...
+const int nMin = 0;
+const int nMax = 20;
+
+const int minElem = 1;
+const int maxElem = 20;
+
+int nList = nMin;
+while (std::getline(buffer, tempString, ' '))
+{
+nList++;
+
+if (nList > nMax)
+{
+    throw std::invalid_argument("Invalid number of array elements in second task");
+}
+
+int elem = std::atoi(tempString.c_str());
+if (elem < minElem || elem > maxElem)
+{
+...
+
+6.
+// до изменений
+// глобальная переменная-счетчик IFORMT остается с актуальными
+// значениями после завершения блока, что может привести к ошибкам
+// при повторном использовании
+void FORM()
+{
+    int i, j;
+
+    for (IFORMT = 0; IFORMT < MAXFORMT; IFORMT++)
+        memcpy(FORMT[IFORMT], "\x0\x0\x0\x0\x0\x0\x0\x0\x0", 9);
+
+    IFORMT = 0;
+    j = DST[I2].DST2;
+    ... // модификация IFORMT
+
+// после
+// обнуление переменной в конце процедуры
+void FORM()
+{
+    for (IFORMT = 0; IFORMT < MAXFORMT; IFORMT++)
+        memcpy(FORMT[IFORMT], "\x0\x0\x0\x0\x0\x0\x0\x0\x0", 9);
+
+    IFORMT = 0;
+    j = DST[I2].DST2;
+
+    // int i, j; - инициализация перенесена непосредственно в
+    //             заголовок циклов их использующих 
+    ... // модификация IFORMT
+    IFORMT = 0;
+}
+
+7.
+// до изменений
+// объявление переменных задолго до их использования
+// без инициализации
+char openBracket, closeBracket, delim;
+
+std::vector<detail::Shape> shapes;
+
+std::string input;
+while(getline(std::cin, input))
+{
+std::stringstream buffer(input);
+
+size_t nPoints = 0;
+buffer >> nPoints;
+
+detail::Shape tempShape;
+for (size_t i = 0; i < nPoints; i++)
+{
+    Point point;
+
+    buffer >> openBracket >> point.x >> delim >> point.y >> closeBracket;
+
+// после
+// перенос объявлений с начальной инициализацией
+std::vector<detail::Shape> shapes;
+
+  std::string input;
+  while(getline(std::cin, input))
+  {
+    std::stringstream buffer(input);
+    
+    size_t nPoints = 0;
+    buffer >> nPoints;
+
+    detail::Shape tempShape;
+    for (size_t i = 0; i < nPoints; i++)
+    {
+      Point point;
+      char openBracket = '\0', closeBracket = '\0', delim = '\0';
+
+      buffer >> openBracket >> point.x >> delim >> point.y >> closeBracket;
+
+8.
+// до изменений
+// объявление и инициализация счетчиков задолго до цикла
+int ODC1()
+{
+    int i = -1;
+    FORM();
+
+    for (i = 0; i < ISYM; i++)
+    {
+        if (!strcmp(SYM[i].NAME, FORMT[1]) &&
+            strlen(SYM[i].NAME) == strlen(FORMT[1]))
+        {
+            return 6;
+        }
+    }
+...
+
+// после
+// перенесено объявление счетчика цикла в его заголовок
+int ODC1()
+{
+    FORM();
+
+    for (int i = 0; i < ISYM; i++)
+    {
+        if (!strcmp(SYM[i].NAME, FORMT[1]) &&
+            strlen(SYM[i].NAME) == strlen(FORMT[1]))
+        {
+            return 6;
+        }
+    }
+...
+
+9.
+
+// до изменений
+// не все поля инициализируются в конструкторе
+class BankAccount {
+public:
+    std::string accountNumber;
+
+    BankAccount(const std::string& accNumber) {
+        accountNumber = accNumber;
+        // balance не инициализируется
+    }
+private:
+    std::vector<std::string> transactions;
+    double balance;
+};
+
+// после
+class BankAccount {
+public:
+    std::string accountNumber;
+
+    BankAccount(const std::string& accNumber)
+        : accountNumber(accNumber), transactions(), balance(0.0)
+    {
+        ...
+    }
+private:
+    std::vector<std::string> transactions;
+    double balance;
+};
+
+10.
+// до изменений
+// отсутствие указания на константы переменных, используемых как
+// хранилища часто используемых значений - nQuadrangleVertices и
+// nEraseVertices
+...
+size_t nQuadrangleVertices = 4;
+
+size_t nRectangles = 0;
+nRectangles = std::count_if(shapes.begin(), shapes.end(),
+    [&nQuadrangleVertices](const detail::Shape & shapeVector)
+    {
+    if (shapeVector.size() == nQuadrangleVertices)
+    {
+        return true;
+    }
+    return false;
+    });
+
+size_t nEraseVertices = 5;
+shapes.erase(std::remove_if(shapes.begin(), shapes.end(),
+    [&nEraseVertices](const detail::Shape & shapeVector)
+    {
+    if (shapeVector.size() == nEraseVertices)
+    {
+        return true;
+    }
+    return false;
+    }), shapes.end());
+...
+
+// после
+// указание, что nQuadrangleVertices и nEraseVertices константы
+const size_t nQuadrangleVertices = 4;
+
+size_t nRectangles = 0;
+nRectangles = std::count_if(shapes.begin(), shapes.end(),
+    [&nQuadrangleVertices](const detail::Shape & shapeVector)
+    {
+    if (shapeVector.size() == nQuadrangleVertices)
+    {
+        return true;
+    }
+    return false;
+    });
+
+const size_t nEraseVertices = 5;
+shapes.erase(std::remove_if(shapes.begin(), shapes.end(),
+    [&nEraseVertices](const detail::Shape & shapeVector)
+    {
+    if (shapeVector.size() == nEraseVertices)
+    {
+        return true;
+    }
+    return false;
+    }), shapes.end());
+...
+
+11.
+// использование в C++ умного указателя для автоматического
+// освобождения ресурсов 
+...
+std::unique_ptr<int[]> data = std::make_unique<int[]>(100);
+...
+
+12.
+// до изменений
+...
+void withdraw(double amount) {
+    balance -= amount;
+}
+
+// после
+// добавлены инварианты проверки состояния полей
+...
+void withdraw(double amount) {
+    assert(amount > 0 && "Withdrawal amount must be positive");
+    assert(balance >= amount && "Insufficient funds");
+    balance -= amount;
+}
+
+13.
+// до изменений
+// не все поля инициализируются в конструкторе
+public class Employee {
+    private String name;
+    private double salary;
+    ...
+
+    public Employee(String name) {
+        this.name = name;
+    }
+    ...
+}
+
+// после
+// инициализация переменной salary в конструкторе
+public class Employee {
+    private String name;
+    private double salary;
+    ...
+
+    public Employee(String name) {
+        this.name = name;
+        his.salary = DEFAULT_SALARY;
+    }
+    ...
+}
+
+14.
+// до изменений
+// не все поля инициализируются в конструкторе
+TextFormatter::TextFormatter(const size_t width) :
+  input_(),
+  newContent_(),
+  width_(width)
+{}
+
+// после
+TextFormatter::TextFormatter(const size_t width) :
+  input_(),
+  newContent_(),
+  width_(width),
+  formattedStrings()
+{}
+
+15.
+// до изменений
+// использование "магических значений"
+void TextFormatter::readWord(std::string::iterator& iter) {
+  std::string content;
+  auto lastHyphen = input_.begin();
+
+  while (iter != input_.end()) {
+    if (isalpha(*iter)) {
+      content += *iter;
+    } else if (isSpaceSymb(*iter) || isPuncSign(*iter) || isDash(iter)) {
+      if (content.size() > 100) { // магическое число
+        throw std::invalid_argument("Too long word");
+      }
+      newContent_.push_back({ content, WORD });
+      return;
+    }
+    ...
+  }
+}
+
+// после
+// добавлена константа для обозначения максимальной
+// длины слова
+const size_t MAX_WORD_LENGTH = 100;
+
+void TextFormatter::readWord(std::string::iterator& iter) {
+  std::string content;
+  auto lastHyphen = input_.begin();
+
+  while (iter != input_.end()) {
+    if (isalpha(*iter)) {
+      content += *iter;
+    } else if (isSpaceSymb(*iter) || isPuncSign(*iter) || isDash(iter)) {
+      if (content.size() > MAX_WORD_LENGTH) {
+        throw std::invalid_argument("Too long word");
+      }
+      newContent_.push_back({ content, WORD });
+      return;
+    }
+    ...
+  }
+}
