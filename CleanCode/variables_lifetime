@@ -1,0 +1,629 @@
+1.
+// до изменений
+// переменная session объявлена как поле класса,
+// но используется только в одном методе
+public class UserController {
+    ...
+    private HttpSession session;
+
+    public void login(String username) {
+        session = request.getSession();  
+        ...
+    }
+
+}
+
+// после
+// переменная session объявлена локально в методе,
+// область видимости ограничена методом
+public class UserController {
+    ...
+
+    public void login(String username) {
+        HttpSession session = request.getSession();  
+        ...
+    }
+
+}
+
+2.
+// до изменений
+// обработка данных и вывод логов разбросаны ->
+// переменная totalSales подвержена риску изменения
+public double calculateTotalSales(List<Order> orders) {
+    double totalSales = 0;
+
+    for (Order order : orders) {
+        if (order.isValid()) {
+            totalSales += order.getAmount();
+        }
+    }
+    ...
+
+    logger.debug("Total sales so before discount: " + totalSales);
+
+    for (Order order : orders) {
+        if (order.isDiscounted()) {
+            totalSales -= order.getDiscount();
+        }
+    }
+
+    logger.info("Final total sales: " + totalSales);
+    return totalSales;
+}
+
+// после
+// вся работа с totalSales сгруппирована,
+// промежуточное debug логирование убрано
+public double calculateTotalSales(List<Order> orders) {
+    double totalSales = calculateOrdersSales(orders);
+    totalSales = applyDiscounts(orders, totalSales);
+    logger.info("Final total sales: " + totalSales);
+    return totalSales;
+}
+
+private double calculateOrdersSales(List<Order> orders) {
+    double totalSales = 0;
+    for (Order order : orders) {
+        if (order.isValid()) {
+            totalSales += order.getAmount();
+        }
+    }
+    return totalSales;
+}
+
+private double applyDiscounts(List<Order> orders, double totalSales) {
+    for (Order order : orders) {
+        if (order.isDiscounted()) {
+            totalSales -= order.getDiscount();
+        }
+    }
+    return totalSales;
+}
+
+3.
+// до изменений
+// вычисления с переменной area разбросаны по процедуре,
+// что увеличивает окно уязвимости переменной
+double calculateShapeArea(const Shape & shape)
+{
+    double area = 0;
+    for (const Polygon & polygon : shape.getPolygons())
+    {
+        area += polygon.getArea();
+    }
+
+    if (shape.hasPool())
+    {
+        area += shape.getPoolArea();
+    }
+
+    std::cout << "Total area: " << area << std::endl;
+    return area;
+}
+
+// после
+// операции с area сгруппированы в отдельный метод,
+// окно уязвимости переменной area уменьшено
+void calculateShapeArea(const Shape & shape)
+{
+    double area = calculateArea(shape);
+    logArea(area);
+}
+
+double calculateArea(const Shape & shape)
+{
+    double area = 0;
+    for (const Polygon & polygon : shape.getPolygons())
+    {
+        area += polygon.getArea();
+    }
+
+    if (shape.hasPool())
+    {
+        area += shape.getPoolArea();
+    }
+
+    return area;
+}
+
+void logArea(double area)
+{
+    std::cout << "Total area: " << area << std::endl;
+}
+
+4.
+// до изменений
+// globalConfig используется только в одной процедуре
+...
+Configuration globalConfig;
+
+void init()
+{
+    globalConfig = loadConfig(ENV_CONFIG_PATH);
+    applyConfig(globalConfig);
+    ...
+}
+
+// после
+// область видимости globalConfig ограничена функцией init
+...
+void init()
+{
+    Configuration config = loadConfig(ENV_CONFIG_PATH);
+    applyConfig(config);
+    ...
+}
+
+5.
+// до изменений
+// переменная logger объявлена как статическая и
+// используется только в одном методе
+public class ReportGenerator {
+    ...
+    private static Logger logger = Logger.getLogger(ReportGenerator.class);
+
+    public void generateReport(Data data) {
+        logger.info("Starting report generation...");
+        ...
+    }
+
+}
+
+// после
+// область видимости ограничена методом, так как
+// logger объявлен как локальной переменной
+public class ReportGenerator {
+    ...
+
+    public void generateReport(Data data) {
+        Logger logger = Logger.getLogger(ReportGenerator.class);
+        logger.info("Starting report generation...");
+        ...
+    }
+
+}
+
+6.
+// до изменений
+// переменная totalWeight используется в разных частях процедуры,
+// блок кода с переменной можно сгруппировать
+void processWeights(Item items[], int itemCount)
+{
+    double totalWeight = 0;
+
+    for (int i = 0; i < itemCount; ++i)
+    {
+        totalWeight += items[i].weight;
+    }
+
+    printf("Total weight before shipping: %f\n", totalWeight);
+
+    double shippingCost = calculateShipping(totalWeight);
+    printf("Shipping cost: %f\n", shippingCost);
+}
+
+// после
+// обработка переменной totalWeight сгруппирована,
+// код разделен на функции для уменьшения окна уязвимости
+void processWeights(Item items[], int itemCount)
+{
+    double totalWeight = calculateTotalWeight(items, itemCount);
+    logTotalWeight(totalWeight);
+
+    double shippingCost = calculateShipping(totalWeight);
+    printf("Shipping cost: %f\n", shippingCost);
+}
+
+double calculateTotalWeight(Item items[], int itemCount)
+{
+    double totalWeight = 0;
+    for (int i = 0; i < itemCount; ++i)
+    {
+        totalWeight += items[i].weight;
+    }
+    return totalWeight;
+}
+
+void logTotalWeight(double totalWeight)
+{
+    printf("Total weight before shipping: %f\n", totalWeight);
+}
+
+7.
+// до изменений
+// переменная result используется только внутри try блока
+std::string processRequest()
+{
+    std::string result;
+    try
+    {
+        result = fetchData();
+    }
+    catch (const std::exception & e)
+    {
+        std::cerr << err.what() << '\n';
+        return 2;
+    }
+    return result;
+}
+
+// после
+// result объявлена внутри try блока и
+// область видимости ограничена блоком try
+std::string processRequest()
+{
+    try
+    {
+        std::string requestData = fetchData();
+        return requestData;
+    }
+    catch (const std::exception & e)
+    {
+        std::cerr << err.what() << '\n';
+        return 2;
+    }
+}
+
+8.
+// до изменений
+// переменная result разбросана по методу,
+// большие интервалы между её использованием
+public static String getGeneratedSummary(List<String> outputData) {
+    StringBuilder result = new StringBuilder();
+    ...
+
+    for (String item : outputData) {
+        if (item.getFieldStatus().equals("important")) {
+            result.append(item).append("\n");
+        }
+    }
+
+    if (outputData.size() > 10) {
+        result.append(...);
+        ...
+    }
+}
+
+// после
+// работа с result сгруппирована в одной функции
+public static String getGeneratedSummary(List<String> outputData) {
+    return buildSummary(outputData);
+}
+
+private static String buildSummary(List<String> data) {
+    StringBuilder result = new StringBuilder();
+    ...
+
+    for (String item : data) {
+        if (item.getFieldStatus().equals("important")) {
+            result.append(item).append("\n");
+        }
+    }
+
+    if (data.size() > 10) {
+        result.append(...);
+    }
+
+    return result.toString();
+}
+
+9.
+// до изменений
+// переменная userCount изменяется и используется в нескольких местах,
+// возможны побочные эффекты, трудно следить за изменениями
+void manageUsers(std::vector<User> & users)
+{
+    ...
+    int userCount = 0;
+
+    for (const auto & user : users)
+    {
+        if (user.isActive()) {
+            ++userCount;
+        }
+    }
+
+    std::cout << "Active users before deactivation: " << userCount << std::endl;
+
+    for (auto & user : users)
+    {
+        if (!user.isActive() && userCount > 0) {
+            user.deactivate();
+            --userCount;
+        }
+    }
+
+    std::cout << "Final active users: " << userCount << std::endl;
+}
+
+// после
+// операции с userCount сгруппированы в отдельные функции
+// уменьшено окно уязвимости переменной
+void manageUsers(std::vector<User> & users)
+{
+    ...
+    int userCount = countActiveUsers(users);
+    std::cout << "Active users before deactivation: " << userCount << std::endl;
+
+    userCount = updateAndCountUsers(users, userCount);
+    std::cout << "Final active users: " << userCount << std::endl;
+}
+
+int countActiveUsers(const std::vector<User> & users)
+{
+    int userCount = 0;
+    for (const auto & user : users)
+    {
+        if (user.isActive())
+        {
+            ++userCount;
+        }
+    }
+    return userCount;
+}
+
+int updateAndCountUsers(std::vector<User> & users, int userCount)
+{
+    for (auto& user : users)
+    {
+        if (!user.isActive() && (userCount > 0))
+        {
+            user.deactivate();
+            --userCount;
+        }
+    }
+    return userCount;
+}
+
+10.
+// до изменений
+// переменная outputFile объявлена на уровне процедуры, но
+// используется только в блоке if
+void saveData(const char* filename)
+{
+    FILE* outputFile;
+    if (conditionMet())
+    {
+        outputFile = fopen(filename, "w");
+        ...
+        fclose(outputFile);
+    }
+}
+
+// после
+// переменная outputFile объявлена внутри блока if ->
+// область видимости ограничена блоком if
+void saveData(const char* filename)
+{
+    if (conditionMet())
+    {
+        FILE* outputFile = fopen(filename, "w");
+        ...
+        fclose(outputFile);
+    }
+}
+
+11.
+// до изменений
+// переменная messageBuffer объявлена на уровне класса,
+// так как была использована только в одном методе
+class DataProcessor
+{
+public:
+    ...
+    void processData()
+    {
+        memset(messageBuffer, 0, sizeof(messageBuffer));
+        ...
+    }
+
+private:
+    ...
+    char messageBuffer[MAX_MESSAGE_SIZE];
+};
+
+// после
+// messageBuffer объявлена локальной переменной,
+// область видимости ограничена методом processData
+class DataProcessor
+{
+public:
+    ...
+    void processData()
+    {
+        char messageBuffer[MAX_MESSAGE_SIZE];
+        memset(messageBuffer, 0, sizeof(messageBuffer));
+        ...
+    }
+};
+
+12.
+// до изменений
+// responseCode используется до и после других операций,
+// переменная имеет большое окно уязвимости
+void handleRequest(Request* req)
+{
+    int responseCode = HTTP_200;
+
+    if (!req->isValid())
+    {
+        responseCode = HTTP_400;
+    }
+
+    logRequest(req);
+
+    if (responseCode == HTTP_200)
+    {
+        processRequest(req);
+    }
+
+    sendResponse(responseCode);
+}
+
+// после
+// операции с responseCode сгруппированы в одном месте,
+// логирование и обработка запроса вынесены в функции
+void handleRequest(Request* req)
+{
+    int responseCode = validateRequest(req);
+    logRequest(req);
+
+    if (responseCode == HTTP_200)
+    {
+        processRequest(req);
+    }
+
+    sendResponse(responseCode);
+}
+
+int validateRequest(Request* req)
+{
+    return req->isValid() ? HTTP_200 : HTTP_400;
+}
+
+13.
+// до изменений
+// вычисления с price разбросаны,
+// логика может быть трудной для отслеживания
+void adjustPrice(Product& product)
+{
+    ...
+    double price = product.getBasePrice();
+
+    if (product.isOnSale())
+    {
+        price *= SALE_COEF;
+    }
+
+    if (product.hasLoyaltyDiscount())
+    {
+        price *= LOYALTY_COEF;
+    }
+
+    logPrice(price);
+    product.setPrice(price);
+    ...
+}
+
+// после
+// работа с price сгруппирована в одном методе,
+// логика стала компактнее и легче для понимания
+void adjustPrice(Product& product)
+{
+    ...
+    double price = calculateDiscountedPrice(product);
+    logPrice(price);
+    product.setPrice(price);
+    ...
+}
+
+double calculateDiscountedPrice(Product& product)
+{
+    double price = product.getBasePrice();
+
+    if (product.isOnSale())
+    {
+        price *= SALE_COEF;
+    }
+
+    if (product.hasLoyaltyDiscount())
+    {
+        price *= LOYALTY_COEF;
+    }
+
+    return price;
+}
+
+14.
+// до изменений
+// переменная sum изменяется и используется в разных частях метода
+void calculateSum(int* arr, int size)
+{
+    int sum = 0;
+
+    for (int i = 0; i < size; ++i)
+    {
+        sum += arr[i];
+    }
+
+    for (int i = 0; i < size; ++i)
+    {
+        sum += arr[i] % 2;
+    }
+    ...
+}
+
+// после
+// вычисления с sum сгруппированы в одном месте
+void calculateSum(int* arr, int size)
+{
+    int sum = calculateInitialSum(arr, size);
+    sum = applyAdditionalOperations(arr, size, sum);
+    ...
+}
+
+int calculateInitialSum(int* arr, int size)
+{
+    int sum = 0;
+    for (int i = 0; i < size; ++i)
+    {
+        sum += arr[i];
+    }
+    return sum;
+}
+
+int applyAdditionalOperations(int* arr, int size, int sum)
+{
+    for (int i = 0; i < size; ++i)
+    {
+        sum += arr[i] % 2;
+    }
+    return sum;
+}
+
+15.
+// до изменений
+// работа с переменной processedCount разделена
+// из-за чего трудно следить за её состоянием
+public void processItems(List<Item> items) {
+    int processedCount = 0;
+    ...
+
+    for (Item item : items) {
+        if (item.isValid()) {
+            process(item);
+            processedCount++;
+        }
+    }
+
+    log("Processed items: " + processedCount);
+    ...
+}
+
+// после
+// обработка и работа с processedCount сгруппированы
+public void processItems(List<Item> items)
+{
+    int processedCount = processAndCountValidItems(items);
+    ...
+    log("Processed items: " + processedCount);
+    notifyIfNecessary(processedCount);
+}
+
+private int processAndCountValidItems(List<Item> items) {
+    int processedCount = 0;
+    for (Item item : items) {
+        if (item.isValid()) {
+            process(item);
+            processedCount++;
+        }
+    }
+    return processedCount;
+}
+
+private void notifyIfNecessary(int processedCount) {
+    if (processedCount > 10) {
+        notifyAdmin();
+    }
+}
