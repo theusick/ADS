@@ -1,0 +1,59 @@
+1.
+// переменные allocateSpaceRows и allocateSpaceColumns
+// связываются со значением в момент написания кода.
+// Значения этих переменных жестко закодированы в коде, так
+// как представляют собой коэффициенты аддитивного увеличения
+// размера структуры матрицы
+void Matrix::insert(const std::shared_ptr<Shape> & obj)
+{
+  const size_t allocateSpaceRows = 5;
+  const size_t allocateSpaceColumns = 15;
+
+  if (obj == nullptr)
+  {
+    throw std::invalid_argument("Invalid matrix parameter");
+  }
+
+  if (rows_ == 0)
+  {
+    matrix_ = std::make_unique<std::shared_ptr<Shape>[]>(
+        (rowsAllocated_ + allocateSpaceRows) * (columnsAllocated_ + allocateSpaceColumns));
+    rows_++;
+    columns_++;
+    rowsAllocated_ += allocateSpaceRows;
+    columnsAllocated_ += allocateSpaceColumns;
+    matrix_[0] = obj;
+    ...
+  }
+  ...
+}
+
+2.
+// MAX_CONNECTIONS связана со значением во время компиляции,
+// она объявлена как final и инициализируется значением 100
+// на этапе написания кода. Проверка activeConnections будет
+// зависит от подставленного компилятором значения
+public class ServerConfig {
+    public final int MAX_CONNECTIONS = 100;
+
+    public void startServer() {
+        ...
+        if (activeConnections > MAX_CONNECTIONS) {
+            throw new APITimeoutException();
+        }
+        ...
+    }
+}
+
+3.
+// path связывается со значением во время выполнения программы,
+// так как её значение передается в метод в качестве аргумента
+// и зависит от параметров запуска
+public static int removeWithFile(String path) {
+    File source = new File(path);
+
+    if (!source.exists()) {
+        return 0;
+    }
+    ...
+}
