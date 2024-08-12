@@ -1,0 +1,193 @@
+1.
+// до изменений
+// массив увеличивается вручную, вручную выполняется копирование
+...
+size_t fileSize = 0;
+size_t sizeAllocated = 15;
+
+std::unique_ptr<char[]> arrayC = std::make_unique<char[]>(sizeAllocated);
+
+while(!fileInput.eof())
+{
+  fileInput.read(&arrayC[fileSize], sizeAllocated - fileSize);
+  fileSize += fileInput.gcount();
+
+  if (fileSize == sizeAllocated)
+  {
+    const size_t allocateSpace = sizeAllocated * 2;
+
+    std::unique_ptr<char[]> newArray = std::make_unique<char[]>(allocateSpace);
+
+    sizeAllocated = allocateSpace;
+
+    for (size_t i = 0; i < fileSize; i++)
+    {
+      newArray[i] = arrayC[i];
+    }
+    arrayC.swap(newArray);
+  }
+}
+...
+
+// после
+// std::vector заменяет массив, автокорректирует размер
+// и убирает необходимость в данном примере обращаться по
+// индексам к элементам массива для копирования данных
+...
+size_t fileSize = 0;
+const size_t allocationSize = 15;
+
+std::vector<char> fileInputBuffer(allocationSize);
+
+while(!fileInput.eof())
+{
+  fileInput.read(fileInputBuffer.data() + fileSize, allocationSize);
+  fileSize += fileInput.gcount();
+}
+...
+
+2.
+// до изменений
+// указатель на массив array_ требует прямой индексации
+... // composite-shape.hpp
+std::unique_ptr<std::shared_ptr<Shape>[]> array_;
+...
+
+void CompositeShape::scale(const double ratio)
+{
+  if (ratio <= 0)
+  {
+    throw std::invalid_argument("Invalid scale ratio");
+  }
+
+  if (ratio != 1)
+  {
+    for (size_t i = 0; i < size_; i++)
+    {
+      const point_t currShapeCenter = array_[i]->getFrameRect().pos;
+      array_[i]->move(point_t{pos_.x + ratio * (currShapeCenter.x - pos_.x),
+        pos_.y + ratio * (currShapeCenter.y - pos_.y)});
+      array_[i]->scale(ratio);
+    }
+  }
+}
+
+// после
+// std::vector заменяет массив, цикл итерируется по итератору
+... // composite-shape.hpp
+std:vector<Shape> array_;
+...
+
+void CompositeShape::scale(const double ratio)
+{
+  if (ratio <= 0)
+  {
+    throw std::invalid_argument("Invalid scale ratio");
+  }
+
+  if (ratio != 1)
+  {
+    for (Shape & shape : array_)
+    {
+      const point_t currShapeCenter = shape->getFrameRect().pos;
+      shape->move(point_t{pos_.x + ratio * (currShapeCenter.x - pos_.x),
+        pos_.y + ratio * (currShapeCenter.y - pos_.y)});
+      shape->scale(ratio);
+    }
+  }
+}
+
+3.
+// до изменений
+// ручная итерация по массиву TextAnalyzer[] через индексы
+public class TextFilterManager {
+
+    private final TextAnalyzer[] filters;
+    ...
+
+    public FilterType analyze(String text) {
+        for (int i = 0; i < filters.length; i++) {
+            TextAnalyzer currentFilter = filters[i];
+            if (currentFilter.applies(text)) {
+                return currentFilter.getFilterType();
+            }
+        }
+        return goodResult;
+    }
+    ...
+}
+
+// после
+// итерация по массиву TextAnalyzer[] с использованием
+// for-each цикла
+public class TextFilterManager {
+
+    private final TextAnalyzer[] filters;
+    ...
+
+    public FilterType analyze(String text) {
+        for (TextAnalyzer currentFilter : filters) {
+            if (currentFilter.applies(text)) {
+                return currentFilter.getFilterType();
+            }
+        }
+        return goodResult;
+    }
+    ...
+}
+
+4.
+// до изменений
+// ручное выделение памяти и управление динамическим массивом
+...
+Mark* bookmarks = new Mark[BOOKMARKS_SIZE];
+...
+for (int i = 0; i < BOOKMARKS_SIZE; i++)
+{
+  ...
+  if (bookmarks[i].consists(mark, output, noEmpty))
+  {
+    if (!noEmpty)
+    {
+      std::cout << "<EMPTY>" << '\n';
+    }
+    ...
+}
+delete[] bookmarks;
+
+// после
+// std::vector автоматически управляет памятью, упрощая код
+// и позволяет обращаться к элементам без произвольной
+// индексации
+std::vector<Mark> bookmarks(BOOKMARKS_SIZE);
+...
+for (Mark & mark : bookmarks)
+{
+  ...
+  if (mark.consists(markName, output, noEmpty))
+  {
+    if (!noEmpty)
+    {
+      std::cout << "<EMPTY>" << '\n';
+    }
+    ...
+}
+
+5.
+// до изменений
+// функция поиска элемента в стандартном массиве
+bool findElement(int arr[], int size, int value) {
+    for (int i = 0; i < size; i++) {
+        if (arr[i] == value) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// после
+// std::find для поиска, улучшен нейминг параметров,
+// убрана прямая индексация
+bool containsElement(const int* array, int size, int targetValue) {
+    return std::find(array, array + size, targetValue) != array + size;
+}
