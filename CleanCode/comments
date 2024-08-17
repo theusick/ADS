@@ -1,0 +1,281 @@
+1.
+// до изменений
+// функция подсчета дней, которые понадобятся гусинице,
+// чтобы залезть по стене.
+// Неявная формула подсчета результата
+public static int snake(int height, int top, int bottom) {
+    int result = Integer.MAX_VALUE;
+    if (top >= height) {
+        result = 1;
+    } else if (top > bottom) {
+        result = ((height - bottom) - 1) / (top - bottom) + 1;
+    }
+    return result;
+}
+
+// после
+public static int snake(int height, int top, int bottom) {
+    int result = Integer.MAX_VALUE;
+    if (top >= height) {
+        result = 1;
+    } else if (top > bottom) {
+        // Formula from equation:
+        // (height - top * n + bottom * (n - 1) = 0) =>
+        // (n = (height - bottom) / (top - bottom));
+        result = ((height - bottom) - 1) / (top - bottom) + 1;
+    }
+    return result;
+}
+
+2.
+// до изменений
+// процедура проверки корректности формата текста
+void TextConverter::format(const size_t size)
+{
+  ...
+  Token prevToken{Token::tokenType::INVALID, ""};
+
+  auto iter = text_.begin();
+  while(iter != text_.end())
+  {
+    Token token = *iter;
+    Token nextToken{Token::tokenType::INVALID, ""};
+    
+    if (std::next(iter) != text_.end())
+    {
+      nextToken.type_ = std::next(iter)->type_;
+      nextToken.value_ = std::next(iter)->value_;
+    }
+    ...
+  }
+}
+
+// после
+// добавлены пояснения проверки формата
+void TextConverter::format(const size_t size)
+{
+  ...
+  Token prevToken{Token::tokenType::INVALID, ""};
+
+  auto iter = text_.begin();
+  while(iter != text_.end())
+  {
+    Token token = *iter;
+    Token nextToken{Token::tokenType::INVALID, ""};
+    
+    if (std::next(iter) != text_.end())
+    {
+      nextToken.type_ = std::next(iter)->type_;
+      nextToken.value_ = std::next(iter)->value_;
+    }
+
+    // Check continuous punctuation marks
+    if ((token.type_ == Token::tokenType::PUNCTUATION)
+        && (prevToken.type_ == Token::tokenType::PUNCTUATION)
+    {
+      throw std::invalid_argument("Invalid format (\"--\")");
+    }
+    ...
+  }
+}
+
+3.
+// до изменений
+// даже после переименования логических условий,
+// неясно почему происходит выход из цикла по
+// чтению числа, когда встречается точка последним
+// символом
+void TextConverter::readNumber()
+{
+  Token token{Token::tokenType::NUMBER, ""};
+  char symbol;
+
+  std::cin >> symbol;
+
+  bool isSign = (symbol == '+') || (symbol == '-') || (symbol == '.');
+  bool isDigitOrSign = isDigit(symbol) || isSign;
+  bool notEndOfStream = !std::cin.eof();
+  
+  while(notEndOfStream && isDigitOrSign)
+  {
+      const char nextSymbol = std::cin.peek();
+      bool isDotWithoutFollowingDigit = (symbol == '.') && !isdigit(nextSymbol);
+
+      if (isDotWithoutFollowingDigit)
+      {
+        break;
+      }
+      token.value_.push_back(symbol);
+      std::cin >> symbol;
+  }
+  ...
+
+// после
+// добавлен комментарий
+void TextConverter::readNumber()
+{
+  Token token{Token::tokenType::NUMBER, ""};
+  char symbol;
+
+  std::cin >> symbol;
+
+  bool isSign = (symbol == '+') || (symbol == '-') || (symbol == '.');
+  bool isDigitOrSign = isDigit(symbol) || isSign;
+  bool notEndOfStream = !std::cin.eof();
+  
+  while(notEndOfStream && isDigitOrSign)
+  {
+      const char nextSymbol = std::cin.peek();
+      bool isDotWithoutFollowingDigit = (symbol == '.') && !isdigit(nextSymbol);
+  
+      // Check that '.' is part of a number, not an error
+      if (isDotWithoutFollowingDigit)
+      {
+        break;
+      }
+      token.value_.push_back(symbol);
+      std::cin >> symbol;
+  }
+  ...
+
+4.
+// до изменений
+// как и в предыдущем
+void TextConverter::readWord()
+{
+  Token token{Token::tokenType::WORD, ""};
+  char symbol;
+
+  std::cin >> symbol;
+
+  bool isLetterOrDash = isalpha(symbol) || (symbol == '-');
+  bool notEndOfStream = !std::cin.eof();
+
+  while(notEndOfStream && isLetterOrDash)
+  {
+    char nextSymbol = std::cin.peek();
+    bool isDashWithoutFollowingLetter = (symbol == '-') && !isalpha(nextSymbol);
+    
+    if (isDashWithoutFollowingLetter)
+    {
+      ...
+    }
+    
+    ...
+    std::cin >> symbol;
+  }
+
+  text_.push_back(token);
+  std::cin.unget();
+}
+
+// после
+void TextConverter::readWord()
+{
+  Token token{Token::tokenType::WORD, ""};
+  char symbol;
+
+  std::cin >> symbol;
+
+  bool isLetterOrDash = isalpha(symbol) || (symbol == '-');
+  bool notEndOfStream = !std::cin.eof();
+
+  while(notEndOfStream && isLetterOrDash)
+  {
+    char nextSymbol = std::cin.peek();
+    bool isDashWithoutFollowingLetter = (symbol == '-') && !isalpha(nextSymbol);
+
+    // Check that '-' not part of the word and doesnot lead to errors
+    if (isDashWithoutFollowingLetter)
+    {
+      ...
+    }
+    
+    ...
+    std::cin >> symbol;
+  }
+
+  text_.push_back(token);
+  std::cin.unget();
+}
+
+5.
+// до изменений
+// неясное использование метода substr
+std::string TextConverter::formatNumber(const std::string& number)
+{
+  std::string formattedNumber = number;
+  size_t pos = formattedNumber.find('.');
+
+  if (pos != std::string::npos)
+  {
+    formattedNumber = formattedNumber.substr(0, pos + 3);
+  }
+
+  return formattedNumber;
+}
+
+// после
+// добавлен комментарий
+std::string TextConverter::formatNumber(const std::string& number)
+{
+  std::string formattedNumber = number;
+  size_t pos = formattedNumber.find('.');
+
+  if (pos != std::string::npos)
+  {
+    // Limit the number to two decimal places
+    formattedNumber = formattedNumber.substr(0, pos + 3);
+  }
+
+  return formattedNumber;
+}
+
+6.
+// до изменений
+public static String reflectiveToString(Object object) {
+    ...
+}
+
+// после
+// добавлен javadoc функции
+/**
+ * Generates a string representation of an object's fields and their values.
+ * This method uses reflection to inspect the fields of the provided object
+ * and constructs a string that lists each field and its value.
+ * 
+ * @param object The object whose fields are to be represented as a string. 
+ *               If the object is {@code null}, the method returns "null".
+ * @return A string representation of the object's fields in the format 
+ *         "{fieldName: fieldValue, ...}".
+ */
+public static String reflectiveToString(Object object) {
+    ...
+}
+
+7.
+// до изменений
+private static void appendFieldToStringBuilder(StringBuilder stringBuilder,
+                                               Field field,
+                                               Object object) throws IllegalAccessException {
+    ...
+}
+
+// после
+// добавлен javadoc функции
+/**
+ * Appends the value of a specific field of an object to a {@link StringBuilder}.
+ * If the field is not accessible, it temporarily makes it accessible, retrieves its value,
+ * and appends it to the {@link StringBuilder}. If the field is an array, the method handles
+ * it accordingly by appending all elements of the array.
+ * 
+ * @param stringBuilder The {@link StringBuilder} to which the field value will be appended.
+ * @param field The {@link Field} whose value is to be appended.
+ * @param object The object from which the field's value is extracted.
+ * @throws IllegalAccessException If the field cannot be accessed.
+ */
+private static void appendFieldToStringBuilder(StringBuilder stringBuilder,
+                                               Field field,
+                                               Object object) throws IllegalAccessException {
+    ...
+}
