@@ -1,0 +1,184 @@
+1.
+// до изменений
+
+// Quality of Protection - qop
+if (DIGEST_QOP_AUTH == (DIGEST_QOP_AUTH & dig->qop))
+{
+    qop_value = "auth";
+}
+
+// после
+// прояснение
+// детальное описание, что такое qop и для чего он используется
+
+// QOP (Quality of Protection) - must be used in every
+// DIGEST Auth implementations
+// See RFC 7616 `qop` for details
+if (DIGEST_QOP_AUTH == (DIGEST_QOP_AUTH & dig->qop))
+{
+    qop_value = "auth";
+}
+
+2.
+// до изменений
+if (bytesReceived < 0)
+{
+...
+
+// после
+// предупреждение о последствиях
+// добавлен комментарий
+
+// Error in receiving data - may lead to loss of connection
+// with the client.
+// Socket should always be closed to avoid file descriptor leak
+if (bytesReceived < 0)
+{
+...
+
+3.
+// до изменений
+
+// Optimize this method for better performance
+public static List<String> wordFrequency(Stream<String> lines) {
+...
+
+// после
+// комментарии TODO
+// уточнение задачи при помощи TODO
+
+// TODO: Optimize this method to improve performance on big data.
+public static List<String> wordFrequency(Stream<String> lines) {
+...
+
+4.
+// до изменений
+std::sort(myList.begin(), myList.end());
+
+// после
+// информативный комментарий
+// уточнение, что сортировка по возрастанию
+
+// Sort the list in ascending order using the default comparison (operator<)
+std::sort(myList.begin(), myList.end());
+
+5.
+// до изменений
+
+// Convert the input to uppercase
+String upperCaseInput = input.toUpperCase();
+
+// после
+// информативный комментарий
+// добавлено уточнение в комментарий, что используемый метод
+// не зависит от формата
+
+// Convert the input to uppercase using the default locale-independent method
+String upperCaseInput = input.toUpperCase();
+
+6.
+// до изменений
+
+// Check if the client is authenticated
+if (client.isAuthenticated()) {
+    ...
+}
+
+// после
+// представление намерений
+
+// Ensure that only authenticated clients can access the resource
+if (client.isAuthenticated()) {
+    ...
+}
+
+7.
+// до изменений
+
+// Initialize the array with zeros
+memset(messageBuffer, 0, sizeof(messageBuffer));
+
+// после
+// усиление
+
+// Zero-initialize buffer to prevent garbage data from being processed
+memset(messageBuffer, 0, sizeof(messageBuffer));
+
+8.
+// до изменений
+
+// TODO: Add error handling for null pointers
+void processRequest(Request* inputRequest)
+{
+    ...
+}
+
+// после
+// комментарии TODO
+
+// TODO: Implement null pointer checks and handle errors gracefully
+void processRequest(Request* inputRequest)
+{
+    ...
+}
+
+9.
+// до изменений
+// Get the user's full name
+string userFullName = getFullName(user);
+...
+
+// после
+// прояснение
+
+// Retrieve the user's full name (first and last names)
+string fullName = getFullName(user);
+
+10.
+// до изменений
+
+// If qop is supplied, add nonce, cnonce, nc and qop
+if (DIGEST_QOP_NOT_SET != dig->qop)
+{
+
+// после
+// прояснение
+// так как DIGEST_QOP_NOT_SET - библиотечный макрос
+// и обязательно необходим для создания/прочтения заголовка
+// Digest-auth, была переделана логика для вызова ошибки
+// при отсутствии qop с комментарием-пояснением по этому
+
+// QOP (Quality of Protection) - must be used in every
+// DIGEST Auth implementations
+// If QOP is not found, throws error.
+// See RFC 7616 `qop` for details
+if (DIGEST_QOP_NOT_SET == dig->qop)
+{
+
+11.
+// информативный комментарий
+// добавлен комментарий с кратким описанием необходимых
+// для инициализации в первый раз сервером полей
+// объекта заголовка Digest-auth
+
+// Fields to be used in the `digest_t` structure:
+// - username: Username of the client being authenticated.
+// - realm: String that defines the protection space.
+// - nonce: Server-generated unique string used to prevent replay attacks.
+// - uri: URI of the requested resource.
+// - algorithm: Algorithm used for hashing. MD5 is used (may be SHA-256).
+// - qop: Quality of Protection.
+// - nc == 0: Nonce Count, 0 at start.
+// See RFC 7616 for details
+
+12.
+// до изменений
+char *auth_str = auth_data + 21; // Skip "Authorization: Basic "
+
+// после
+// информативный комментарий
+
+// Skip "Authorization: Basic " header value as it
+// consists of 21 chars and only header parameter fields
+// are required for processing
+char *auth_data_fields_str = auth_data + 21;
