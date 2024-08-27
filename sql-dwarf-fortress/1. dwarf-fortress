@@ -1,0 +1,97 @@
+1.
+Получить информацию о всех гномах, которые входят в
+какой-либо отряд, вместе с информацией об их отрядах.
+
+SELECT Dwarves.dwarf_id,
+    Dwarves.name as dwarf_name,
+    Dwarves.age as dwarf_age,
+    Dwarves.profession as dwarf_profession,
+    Dwarves.squad_id,
+    Squads.name as squad_name,
+    Squads.mission as squad_mission
+FROM Dwarves
+INNER JOIN Squads ON Dwarves.squad_id = Squads.squad_id;
+
+2.
+Найти всех гномов с профессией "miner", которые не состоят
+ни в одном отряде.
+
+SELECT *
+FROM Dwarves
+WHERE Dwarves.profession = 'miner'
+    AND Dwarves.squad_id IS NULL;
+
+3.
+Получить все задачи с наивысшим приоритетом, которые
+находятся в статусе "pending".
+
+SELECT *
+FROM Tasks
+WHERE Tasks.status = 'pending'
+    AND Tasks.priority = (SELECT MAX(Tasks.priority)
+                          FROM Tasks);
+
+4.
+Для каждого гнома, который владеет хотя бы одним предметом,
+получить количество предметов, которыми он владеет.
+
+SELECT Dwarves.dwarf_id,
+    Dwarves.name as dwarf_name,
+    COUNT(Items.item_id) as items_count
+FROM Items
+INNER JOIN Dwarves ON Items.owner_id = Dwarves.dwarf_id
+GROUP BY Dwarves.dwarf_id, Dwarves.name;
+
+5.
+Получить список всех отрядов и количество гномов в каждом
+отряде. Также включите в выдачу отряды без гномов.
+
+SELECT Squads.squad_id,
+    Squads.name,
+    Squads.mission,
+    COUNT(Dwarves.dwarf_id) as dwarves_count
+FROM Squads
+LEFT JOIN Dwarves ON Squads.squad_id = Dwarves.squad_id
+GROUP BY Squads.squad_id, Squads.name, Squads.mission;
+
+6.
+Получить список профессий с наибольшим количеством
+незавершённых задач ("pending" и "in_progress") у гномов
+этих профессий.
+
+WITH ProfessionsWithUnfinishedTasks AS (
+    SELECT Dwarves.profession,
+        COUNT(Tasks.task_id) as unfinished_tasks_count
+    FROM Tasks
+    INNER JOIN Dwarves ON Tasks.assigned_to = Dwarves.dwarf_id
+    WHERE Tasks.status IN ('pending', 'in_progress')
+    GROUP BY Dwarves.profession;
+)
+SELECT PWUT.profession,
+    PWUT.unfinished_tasks_count
+FROM ProfessionsWithUnfinishedTasks AS PWUT
+WHERE PWUT.unfinished_tasks_count = (SELECT MAX(unfinished_tasks_count) FROM ProfessionsWithUnfinishedTasks);
+
+7.
+Для каждого типа предметов узнать средний возраст гномов,
+владеющих этими предметами.
+
+SELECT Items.type,
+    AVG(Dwarves.age)
+FROM Items
+INNER JOIN Dwarves ON Items.owner_id = Dwarves.dwarf_id
+GROUP BY Items.type;
+
+8.
+Найти всех гномов старше среднего возраста (по всем гномам
+в базе), которые не владеют никакими предметами.
+
+SELECT Dwarves.dwarf_id,
+    Dwarves.name,
+    Dwarves.age,
+    Dwarves.profession,
+    Dwarves.squad_id
+FROM Dwarves
+LEFT JOIN Items ON Dwarves.dwarf_id = Items.owner_id
+WHERE Dwarves.age > (SELECT AVG(Dwarves.age) FROM Dwarves)
+    AND Items.owner_id IS NULL;
