@@ -17,4 +17,12 @@ public class RecursionFunctions {
         return number * powRecursive(number, power - 1);
     }
 
+    public static int sumDigitsRecursive(int number) {
+        if (number == 0) {
+            return 0;
+        }
+
+        return (number % 10) + sumDigitsRecursive(number / 10);
+    }
+
 }

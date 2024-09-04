@@ -46,4 +46,13 @@ class RecursionFunctionsTest {
         assertEquals(4.0, RecursionFunctions.powRecursive(0.5, -2), DELTA);
     }
 
+    @Test
+    void testSumDigitsRecursive() {
+        assertEquals(0, RecursionFunctions.sumDigitsRecursive(0));
+        assertEquals(1, RecursionFunctions.sumDigitsRecursive(1));
+        assertEquals(10, RecursionFunctions.sumDigitsRecursive(19));
+        assertEquals(46, RecursionFunctions.sumDigitsRecursive(2147483647));
+        assertEquals(-3, RecursionFunctions.sumDigitsRecursive(-12));
+    }
+
 }
