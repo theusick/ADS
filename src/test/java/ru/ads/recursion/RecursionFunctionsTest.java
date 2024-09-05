@@ -1,6 +1,7 @@
 package ru.ads.recursion;
 
 import org.junit.jupiter.api.Test;
+import ru.ads.stack.Stack;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -53,6 +54,29 @@ class RecursionFunctionsTest {
         assertEquals(10, RecursionFunctions.sumDigitsRecursive(19));
         assertEquals(46, RecursionFunctions.sumDigitsRecursive(2147483647));
         assertEquals(-3, RecursionFunctions.sumDigitsRecursive(-12));
+    }
+
+    @Test
+    void testGetListLengthRecursive() {
+        Stack<Integer> stack = new Stack<Integer>();
+        assertEquals(0, RecursionFunctions.getListLengthRecursive(stack));
+
+        stack.push(1);
+        assertEquals(1, RecursionFunctions.getListLengthRecursive(stack));
+
+        int stackSize = 15;
+        for (int i = 0; i < stackSize; i++) {
+            stack.push(1);
+        }
+        assertEquals(stackSize, RecursionFunctions.getListLengthRecursive(stack));
+
+        assertEquals(0, RecursionFunctions.getListLengthRecursive(stack));
+
+        stackSize = 150;
+        for (int i = 0; i < stackSize; i++) {
+            stack.push(1);
+        }
+        assertEquals(stackSize, RecursionFunctions.getListLengthRecursive(stack));
     }
 
 }

@@ -1,5 +1,7 @@
 package ru.ads.recursion;
 
+import ru.ads.stack.Stack;
+
 public class RecursionFunctions {
 
     public static double powRecursive(double number, int power) {
@@ -23,6 +25,13 @@ public class RecursionFunctions {
         }
 
         return (number % 10) + sumDigitsRecursive(number / 10);
+    }
+
+    public static <T> int getListLengthRecursive(Stack<T> stack) {
+        if (stack.pop() == null) {
+            return 0;
+        }
+        return 1 + getListLengthRecursive(stack);
     }
 
 }
