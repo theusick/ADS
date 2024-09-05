@@ -34,4 +34,24 @@ public class RecursionFunctions {
         return 1 + getListLengthRecursive(stack);
     }
 
+    public static boolean isPalindromeRecursive(String sentence) {
+        if (sentence == null) {
+            return false;
+        }
+        String wordToCheck = sentence.trim().replace(" ", "").toLowerCase();
+        return isPalindromeRecursive(wordToCheck, 0, wordToCheck.length() - 1);
+    }
+
+    private static boolean isPalindromeRecursive(String word,
+                                                 int leftIndex,
+                                                 int rightIndex) {
+        if (leftIndex >= rightIndex) {
+            return true;
+        }
+        if (word.charAt(leftIndex) != word.charAt(rightIndex)) {
+            return false;
+        }
+        return isPalindromeRecursive(word, leftIndex + 1, rightIndex - 1);
+    }
+
 }

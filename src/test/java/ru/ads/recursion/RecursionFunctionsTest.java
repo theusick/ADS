@@ -79,4 +79,34 @@ class RecursionFunctionsTest {
         assertEquals(stackSize, RecursionFunctions.getListLengthRecursive(stack));
     }
 
+    @Test
+    void testIsPalindromeRecursiveValid() {
+        String palindrome = "aaa";
+        assertTrue(RecursionFunctions.isPalindromeRecursive(palindrome));
+
+        palindrome = "saippuakivikauppias";
+        assertTrue(RecursionFunctions.isPalindromeRecursive(palindrome));
+
+        palindrome = "Norma is as selfless as I am Ron";
+        assertTrue(RecursionFunctions.isPalindromeRecursive(palindrome));
+    }
+
+    @Test
+    void testIsPalindromeRecursiveInvalid() {
+        String notPalindrome = null;
+        assertFalse(RecursionFunctions.isPalindromeRecursive(notPalindrome));
+
+        notPalindrome = "gigolos";
+        assertFalse(RecursionFunctions.isPalindromeRecursive(notPalindrome));
+
+        notPalindrome = "Not palindrome";
+        assertFalse(RecursionFunctions.isPalindromeRecursive(notPalindrome));
+
+        notPalindrome = "Mama";
+        assertFalse(RecursionFunctions.isPalindromeRecursive(notPalindrome));
+
+        notPalindrome = "abcdefdcba";
+        assertFalse(RecursionFunctions.isPalindromeRecursive(notPalindrome));
+    }
+
 }
