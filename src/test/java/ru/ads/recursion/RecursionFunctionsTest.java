@@ -3,6 +3,10 @@ package ru.ads.recursion;
 import org.junit.jupiter.api.Test;
 import ru.ads.stack.Stack;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class RecursionFunctionsTest {
@@ -107,6 +111,18 @@ class RecursionFunctionsTest {
 
         notPalindrome = "abcdefdcba";
         assertFalse(RecursionFunctions.isPalindromeRecursive(notPalindrome));
+    }
+
+    @Test
+    void testGetEvenValuesRecursive() {
+        List<Integer> integerArrayList = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8);
+        assertEquals("2 4 6 8", RecursionFunctions.getEvenValuesRecursive(integerArrayList));
+
+        List<Double> doubleArrayList = Arrays.asList(1.1, 2.2, 3.0, 4.1, 5.1, 6.1, 7.1, 8.1);
+        assertEquals("2 4 6 8", RecursionFunctions.getEvenValuesRecursive(doubleArrayList));
+
+        integerArrayList = new ArrayList<>();
+        assertEquals("", RecursionFunctions.getEvenValuesRecursive(integerArrayList));
     }
 
 }
