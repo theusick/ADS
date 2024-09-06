@@ -31,9 +31,14 @@ public class RecursionFunctions {
     }
 
     public static <T> int getListLengthRecursive(Stack<T> stack) {
-        if (stack.pop() == null) {
+        if (stack == null) {
             return 0;
         }
+
+        if (stack.size() == 0) {
+            return 0;
+        }
+        stack.pop();
         return 1 + getListLengthRecursive(stack);
     }
 
@@ -88,16 +93,14 @@ public class RecursionFunctions {
     }
 
     private static <T> String getEvenIndexValuesRecursive(List<T> list, int currentIndex, int endIndex) {
-        if (currentIndex == endIndex) {
+        if (currentIndex >= endIndex) {
             return "";
         }
 
         StringBuilder evenIndexValueStr = new StringBuilder();
+        evenIndexValueStr.append(list.get(currentIndex)).append(" ");
 
-        if (currentIndex % 2 == 0) {
-            evenIndexValueStr.append(list.get(currentIndex)).append(" ");
-        }
-        return evenIndexValueStr + getEvenIndexValuesRecursive(list, currentIndex + 1, endIndex);
+        return evenIndexValueStr + getEvenIndexValuesRecursive(list, currentIndex + 2, endIndex);
     }
 
     public static int getSecondMaxRecursive(int[] array) {
