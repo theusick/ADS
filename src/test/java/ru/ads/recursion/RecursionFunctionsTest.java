@@ -139,4 +139,30 @@ class RecursionFunctionsTest {
         assertEquals("", RecursionFunctions.getEvenIndexValuesRecursive(new ArrayList<>()));
     }
 
+    @Test
+    void testGetSecondMaxRecursive() {
+        assertEquals(Integer.MIN_VALUE, RecursionFunctions.getSecondMaxRecursive(new int[]{}));
+
+        int[] integerArray = {2, 5, 3, 1, 4, 5};
+        assertEquals(5, RecursionFunctions.getSecondMaxRecursive(integerArray));
+
+        integerArray = new int[]{5};
+        assertEquals(Integer.MIN_VALUE, RecursionFunctions.getSecondMaxRecursive(integerArray));
+
+        integerArray = new int[]{-10000, 100000};
+        assertEquals(-10000, RecursionFunctions.getSecondMaxRecursive(integerArray));
+
+        integerArray = new int[]{100000, -10000};
+        assertEquals(-10000, RecursionFunctions.getSecondMaxRecursive(integerArray));
+
+        integerArray = new int[]{-100000, -10000};
+        assertEquals(-100000, RecursionFunctions.getSecondMaxRecursive(integerArray));
+
+        integerArray = new int[]{5, 5, 5, 5, 5, 5};
+        assertEquals(5, RecursionFunctions.getSecondMaxRecursive(integerArray));
+
+        integerArray = new int[]{1, 2, 3, 4, 5};
+        assertEquals(4, RecursionFunctions.getSecondMaxRecursive(integerArray));
+    }
+
 }

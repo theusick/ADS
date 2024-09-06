@@ -100,4 +100,26 @@ public class RecursionFunctions {
         return evenIndexValueStr + getEvenIndexValuesRecursive(list, currentIndex + 1, endIndex);
     }
 
+    public static int getSecondMaxRecursive(int[] array) {
+        if (array.length == 0) {
+            return Integer.MIN_VALUE;
+        }
+        return getSecondMaxRecursive(array, 1, array[0], Integer.MIN_VALUE);
+    }
+
+    private static int getSecondMaxRecursive(int[] array, int currentIndex, int max, int secondMax)  {
+        if (currentIndex == array.length) {
+            return secondMax;
+        }
+
+        if (array[currentIndex] >= max) {
+            secondMax = max;
+            max = array[currentIndex];
+        }
+        if ((max > array[currentIndex]) && (array[currentIndex] >= secondMax)) {
+            secondMax = array[currentIndex];
+        }
+        return getSecondMaxRecursive(array, currentIndex + 1, max, secondMax);
+    }
+
 }
