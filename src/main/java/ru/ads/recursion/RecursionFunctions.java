@@ -31,9 +31,14 @@ public class RecursionFunctions {
     }
 
     public static <T> int getListLengthRecursive(Stack<T> stack) {
-        if (stack.pop() == null) {
+        if (stack == null) {
             return 0;
         }
+
+        if (stack.size() == 0) {
+            return 0;
+        }
+        stack.pop();
         return 1 + getListLengthRecursive(stack);
     }
 
@@ -107,7 +112,7 @@ public class RecursionFunctions {
         return getSecondMaxRecursive(array, 1, array[0], Integer.MIN_VALUE);
     }
 
-    private static int getSecondMaxRecursive(int[] array, int currentIndex, int max, int secondMax)  {
+    private static int getSecondMaxRecursive(int[] array, int currentIndex, int max, int secondMax) {
         if (currentIndex == array.length) {
             return secondMax;
         }

@@ -62,7 +62,9 @@ class RecursionFunctionsTest {
 
     @Test
     void testGetListLengthRecursive() {
-        Stack<Integer> stack = new Stack<Integer>();
+        assertEquals(0, RecursionFunctions.getListLengthRecursive(null));
+
+        Stack<Integer> stack = new Stack<>();
         assertEquals(0, RecursionFunctions.getListLengthRecursive(stack));
 
         stack.push(1);
