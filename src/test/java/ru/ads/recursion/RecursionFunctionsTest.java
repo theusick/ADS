@@ -115,14 +115,28 @@ class RecursionFunctionsTest {
 
     @Test
     void testGetEvenValuesRecursive() {
+        assertEquals("", RecursionFunctions.getEvenValuesRecursive(null));
+
         List<Integer> integerArrayList = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8);
         assertEquals("2 4 6 8", RecursionFunctions.getEvenValuesRecursive(integerArrayList));
 
         List<Double> doubleArrayList = Arrays.asList(1.1, 2.2, 3.0, 4.1, 5.1, 6.1, 7.1, 8.1);
         assertEquals("2 4 6 8", RecursionFunctions.getEvenValuesRecursive(doubleArrayList));
 
-        integerArrayList = new ArrayList<>();
-        assertEquals("", RecursionFunctions.getEvenValuesRecursive(integerArrayList));
+        assertEquals("", RecursionFunctions.getEvenValuesRecursive(new ArrayList<>()));
+    }
+
+    @Test
+    void testGetEvenIndexValuesRecursive() {
+        assertEquals("", RecursionFunctions.getEvenIndexValuesRecursive(null));
+
+        List<Integer> integerArrayList = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9);
+        assertEquals("1 3 5 7 9", RecursionFunctions.getEvenIndexValuesRecursive(integerArrayList));
+
+        List<String> stringArrayList = Arrays.asList("hello", "apple", "banana", "orange");
+        assertEquals("hello banana", RecursionFunctions.getEvenIndexValuesRecursive(stringArrayList));
+
+        assertEquals("", RecursionFunctions.getEvenIndexValuesRecursive(new ArrayList<>()));
     }
 
 }

@@ -56,6 +56,9 @@ public class RecursionFunctions {
     }
 
     public static <T extends Number> String getEvenValuesRecursive(List<T> list) {
+        if (list == null) {
+            return "";
+        }
         return getEvenValuesRecursive(list.iterator()).trim();
     }
 
@@ -75,6 +78,26 @@ public class RecursionFunctions {
 
     private static boolean isNumberEven(Number value) {
         return value.intValue() % 2 == 0;
+    }
+
+    public static <T> String getEvenIndexValuesRecursive(List<T> list) {
+        if (list == null) {
+            return "";
+        }
+        return getEvenIndexValuesRecursive(list, 0, list.size()).trim();
+    }
+
+    private static <T> String getEvenIndexValuesRecursive(List<T> list, int currentIndex, int endIndex) {
+        if (currentIndex == endIndex) {
+            return "";
+        }
+
+        StringBuilder evenIndexValueStr = new StringBuilder();
+
+        if (currentIndex % 2 == 0) {
+            evenIndexValueStr.append(list.get(currentIndex)).append(" ");
+        }
+        return evenIndexValueStr + getEvenIndexValuesRecursive(list, currentIndex + 1, endIndex);
     }
 
 }
