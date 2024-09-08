@@ -1,9 +1,11 @@
 package ru.ads.recursion;
 
-import ru.ads.stack.Stack;
-
+import java.io.File;
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Stack;
 
 public class RecursionFunctions {
 
@@ -97,10 +99,9 @@ public class RecursionFunctions {
             return "";
         }
 
-        StringBuilder evenIndexValueStr = new StringBuilder();
-        evenIndexValueStr.append(list.get(currentIndex)).append(" ");
-
-        return evenIndexValueStr + getEvenIndexValuesRecursive(list, currentIndex + 2, endIndex);
+        return list.get(currentIndex)
+                + " "
+                + getEvenIndexValuesRecursive(list, currentIndex + 2, endIndex);
     }
 
     public static int getSecondMaxRecursive(int[] array) {
@@ -123,6 +124,33 @@ public class RecursionFunctions {
             secondMax = array[currentIndex];
         }
         return getSecondMaxRecursive(array, currentIndex + 1, max, secondMax);
+    }
+
+    public static List<String> findDirFilesRecursive(String path) {
+        if (path == null) {
+            return new ArrayList<>();
+        }
+
+        File source = new File(path);
+        if (!source.exists()) {
+            return new ArrayList<>();
+        }
+
+        List<String> dirNames = new ArrayList<>();
+        File[] files = source.listFiles();
+        if (files == null) {
+            return dirNames;
+        }
+
+        for (File file : files) {
+            if (file.isFile()) {
+                dirNames.add(file.getName());
+            }
+            if (file.isDirectory()) {
+                dirNames.addAll(findDirFilesRecursive(file.getPath()));
+            }
+        }
+        return dirNames;
     }
 
 }

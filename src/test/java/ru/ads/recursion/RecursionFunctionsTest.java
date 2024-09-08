@@ -1,11 +1,11 @@
 package ru.ads.recursion;
 
 import org.junit.jupiter.api.Test;
-import ru.ads.stack.Stack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Stack;
 
 import static org.junit.jupiter.api.Assertions.*;
 
