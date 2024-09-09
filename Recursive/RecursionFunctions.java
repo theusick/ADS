@@ -28,16 +28,11 @@ public class RecursionFunctions {
         if (number == 0) {
             return 0;
         }
-
         return (number % 10) + sumDigitsRecursive(number / 10);
     }
 
     public static <T> int getListLengthRecursive(Stack<T> stack) {
-        if (stack == null) {
-            return 0;
-        }
-
-        if (stack.size() == 0) {
+        if ((stack == null) || (stack.size() == 0)) {
             return 0;
         }
         stack.pop();
@@ -104,24 +99,29 @@ public class RecursionFunctions {
                 + getEvenIndexValuesRecursive(list, currentIndex + 2, endIndex);
     }
 
-    public static int getSecondMaxRecursive(int[] array) {
-        if (array.length == 0) {
-            return Integer.MIN_VALUE;
+    public static <T extends Comparable<T>> T getSecondMaxRecursive(List<T> array) throws IllegalArgumentException {
+        if ((array == null) || (array.size() < 2)) {
+            throw new IllegalArgumentException("Array must contain at least 2 non null elements.");
         }
-        return getSecondMaxRecursive(array, 1, array[0], Integer.MIN_VALUE);
+        return getSecondMaxRecursive(array, 1, array.get(0), array.get(1));
     }
 
-    private static int getSecondMaxRecursive(int[] array, int currentIndex, int max, int secondMax) {
-        if (currentIndex == array.length) {
+    private static <T extends Comparable<T>> T getSecondMaxRecursive(List<T> array,
+                                                                     int currentIndex,
+                                                                     T max,
+                                                                     T secondMax) {
+        if (currentIndex == array.size()) {
             return secondMax;
         }
 
-        if (array[currentIndex] >= max) {
+        T currentValue = array.get(currentIndex);
+
+        if (currentValue.compareTo(max) >= 0) {
             secondMax = max;
-            max = array[currentIndex];
+            max = currentValue;
         }
-        if ((max > array[currentIndex]) && (array[currentIndex] >= secondMax)) {
-            secondMax = array[currentIndex];
+        if ((currentValue.compareTo(max) < 0) && (currentValue.compareTo(secondMax) >= 0)) {
+            secondMax = currentValue;
         }
         return getSecondMaxRecursive(array, currentIndex + 1, max, secondMax);
     }
@@ -151,6 +151,33 @@ public class RecursionFunctions {
             }
         }
         return dirNames;
+    }
+
+    public static List<String> generateBalancedBracketsSequences(int numberOfBrackets) {
+        if (numberOfBrackets <= 0) {
+            return new ArrayList<>();
+        }
+
+        List<String> balancedBracketsVariants = new ArrayList<>();
+        generateBalancedBracketsSequence(numberOfBrackets, 0, 0, "", balancedBracketsVariants);
+        return balancedBracketsVariants;
+    }
+
+    private static void generateBalancedBracketsSequence(int numberOfBrackets,
+                                                         int current_open,
+                                                         int current_closed,
+                                                         String sequence,
+                                                         List<String> result) {
+        if (current_open + current_closed == 2 * numberOfBrackets) {
+            result.add(sequence);
+            return;
+        }
+        if (current_open < numberOfBrackets) {
+            generateBalancedBracketsSequence(numberOfBrackets, current_open + 1, current_closed, sequence + "(", result);
+        }
+        if (current_open > current_closed) {
+            generateBalancedBracketsSequence(numberOfBrackets, current_open, current_closed + 1, sequence + ")", result);
+        }
     }
 
 }
