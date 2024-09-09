@@ -142,29 +142,123 @@ class RecursionFunctionsTest {
     }
 
     @Test
-    void testGetSecondMaxRecursive() {
-        assertEquals(Integer.MIN_VALUE, RecursionFunctions.getSecondMaxRecursive(new int[]{}));
+    void testGetSecondMaxRecursiveInvalidInput() {
+        assertThrows(IllegalArgumentException.class,
+                () -> RecursionFunctions.getSecondMaxRecursive(null));
+        assertThrows(IllegalArgumentException.class,
+                () -> RecursionFunctions.getSecondMaxRecursive(new ArrayList<Integer>()));
+        assertThrows(IllegalArgumentException.class,
+                () -> RecursionFunctions.getSecondMaxRecursive(Arrays.asList(1)));
+    }
 
-        int[] integerArray = {2, 5, 3, 1, 4, 5};
+    @Test
+    void testGetSecondMaxRecursiveIntegerValidInput() {
+        List<Integer> integerArray = Arrays.asList(2, 5, 3, 1, 4, 5);
         assertEquals(5, RecursionFunctions.getSecondMaxRecursive(integerArray));
 
-        integerArray = new int[]{5};
-        assertEquals(Integer.MIN_VALUE, RecursionFunctions.getSecondMaxRecursive(integerArray));
+        integerArray = Arrays.asList(5, 6);
+        assertEquals(5, RecursionFunctions.getSecondMaxRecursive(integerArray));
 
-        integerArray = new int[]{-10000, 100000};
+        integerArray = Arrays.asList(-10000, 100000);
         assertEquals(-10000, RecursionFunctions.getSecondMaxRecursive(integerArray));
 
-        integerArray = new int[]{100000, -10000};
+        integerArray = Arrays.asList(100000, -10000);
         assertEquals(-10000, RecursionFunctions.getSecondMaxRecursive(integerArray));
 
-        integerArray = new int[]{-100000, -10000};
+        integerArray = Arrays.asList(-100000, -10000);
         assertEquals(-100000, RecursionFunctions.getSecondMaxRecursive(integerArray));
 
-        integerArray = new int[]{5, 5, 5, 5, 5, 5};
+        integerArray = Arrays.asList(5, 5, 5, 5, 5, 5);
         assertEquals(5, RecursionFunctions.getSecondMaxRecursive(integerArray));
 
-        integerArray = new int[]{1, 2, 3, 4, 5};
+        integerArray = Arrays.asList(1, 2, 3, 4, 5);
         assertEquals(4, RecursionFunctions.getSecondMaxRecursive(integerArray));
+    }
+
+    @Test
+    void testGetSecondMaxRecursiveDoubleValidInput() {
+        final double delta = 0.0001;
+        List<Double> doubleArray = Arrays.asList(-0.3, 5.85, 3.0, 1.5, 4.9, 5.8);
+        assertEquals(5.8, RecursionFunctions.getSecondMaxRecursive(doubleArray), delta);
+
+        doubleArray = Arrays.asList(5.9, 6.0);
+        assertEquals(5.9, RecursionFunctions.getSecondMaxRecursive(doubleArray), delta);
+
+        doubleArray = Arrays.asList(-10000.9, 100000.9);
+        assertEquals(-10000.9, RecursionFunctions.getSecondMaxRecursive(doubleArray), delta);
+
+        doubleArray = Arrays.asList(100000.9, -10000.9);
+        assertEquals(-10000.9, RecursionFunctions.getSecondMaxRecursive(doubleArray), delta);
+
+        doubleArray = Arrays.asList(-100000.9, -10000.9);
+        assertEquals(-100000.9, RecursionFunctions.getSecondMaxRecursive(doubleArray), delta);
+
+        doubleArray = Arrays.asList(5.0, 5.0, 5.0, 5.0, 5.0, 5.0);
+        assertEquals(5.0, RecursionFunctions.getSecondMaxRecursive(doubleArray), delta);
+
+        doubleArray = Arrays.asList(1.1, 2.2, 3.3, 4.4, 5.5);
+        assertEquals(4.4, RecursionFunctions.getSecondMaxRecursive(doubleArray),delta);
+    }
+
+    @Test
+    void testGetSecondMaxRecursiveStringsValidInput() {
+        List<String> stringArray = Arrays.asList("apple", "banana", "orange", "hello");
+        assertEquals("hello", RecursionFunctions.getSecondMaxRecursive(stringArray));
+
+        stringArray = Arrays.asList("apple", "banana");
+        assertEquals("apple", RecursionFunctions.getSecondMaxRecursive(stringArray));
+
+        stringArray = Arrays.asList("banana", "apple");
+        assertEquals("apple", RecursionFunctions.getSecondMaxRecursive(stringArray));
+    }
+
+    @Test
+    void testGenerateBalancedBracketsSequencesEmpty() {
+        List<String> result = RecursionFunctions.generateBalancedBracketsSequences(0);
+        assertTrue(result.isEmpty());
+
+        result = RecursionFunctions.generateBalancedBracketsSequences(-10);
+        assertTrue(result.isEmpty());
+
+        result = RecursionFunctions.generateBalancedBracketsSequences(-1);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGenerateBalancedBracketsSequencesValid() {
+        List<String> result = RecursionFunctions.generateBalancedBracketsSequences(1);
+        assertTrue(result.contains("()"));
+        assertTrue(result.size() == 1);
+
+        result = RecursionFunctions.generateBalancedBracketsSequences(2);
+        assertTrue(result.contains("()()"));
+        assertTrue(result.contains("(())"));
+        assertTrue(result.size() == 2);
+
+        result = RecursionFunctions.generateBalancedBracketsSequences(3);
+        assertTrue(result.contains("()()()"));
+        assertTrue(result.contains("((()))"));
+        assertTrue(result.contains("(()())"));
+        assertTrue(result.contains("(())()"));
+        assertTrue(result.contains("()(())"));
+        assertTrue(result.size() == 5);
+
+        result = RecursionFunctions.generateBalancedBracketsSequences(4);
+        assertTrue(result.contains("()()()()"));
+        assertTrue(result.contains("(())()()"));
+        assertTrue(result.contains("()(())()"));
+        assertTrue(result.contains("()()(())"));
+        assertTrue(result.contains("((()))()"));
+        assertTrue(result.contains("(()())()"));
+        assertTrue(result.contains("(()()())"));
+        assertTrue(result.contains("((())())"));
+        assertTrue(result.contains("(()(()))"));
+        assertTrue(result.contains("(((())))"));
+        assertTrue(result.contains("()((()))"));
+        assertTrue(result.contains("()(()())"));
+        assertTrue(result.contains("(())(())"));
+        assertTrue(result.contains("((()()))"));
+        assertTrue(result.size() == 14);
     }
 
 }
