@@ -103,7 +103,16 @@ public class RecursionFunctions {
         if ((array == null) || (array.size() < 2)) {
             throw new IllegalArgumentException("Array must contain at least 2 non null elements.");
         }
-        return getSecondMaxRecursive(array, 1, array.get(0), array.get(1));
+
+        T initialMax = array.get(0);
+        T initialSecondMax = array.get(1);
+
+        if (initialMax.compareTo(initialSecondMax) <= 0) {
+            T initialMaxSwap = initialMax;
+            initialMax = initialSecondMax;
+            initialSecondMax = initialMaxSwap;
+        }
+        return getSecondMaxRecursive(array, 2, initialMax, initialSecondMax);
     }
 
     private static <T extends Comparable<T>> T getSecondMaxRecursive(List<T> array,
