@@ -106,7 +106,7 @@ public class RecursionFunctions {
         T initialMax = array.get(0);
         T initialSecondMax = array.get(1);
 
-        if (initialMax.compareTo(initialSecondMax) <= 0) {
+        if (initialMax.compareTo(initialSecondMax) < 0) {
             T initialMaxSwap = initialMax;
             initialMax = initialSecondMax;
             initialSecondMax = initialMaxSwap;
