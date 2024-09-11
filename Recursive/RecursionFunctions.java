@@ -1,7 +1,6 @@
 package ru.ads.recursion;
 
 import java.io.File;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -103,7 +102,16 @@ public class RecursionFunctions {
         if ((array == null) || (array.size() < 2)) {
             throw new IllegalArgumentException("Array must contain at least 2 non null elements.");
         }
-        return getSecondMaxRecursive(array, 1, array.get(0), array.get(1));
+
+        T initialMax = array.get(0);
+        T initialSecondMax = array.get(1);
+
+        if (initialMax.compareTo(initialSecondMax) <= 0) {
+            T initialMaxSwap = initialMax;
+            initialMax = initialSecondMax;
+            initialSecondMax = initialMaxSwap;
+        }
+        return getSecondMaxRecursive(array, 2, initialMax, initialSecondMax);
     }
 
     private static <T extends Comparable<T>> T getSecondMaxRecursive(List<T> array,
@@ -151,33 +159,6 @@ public class RecursionFunctions {
             }
         }
         return dirNames;
-    }
-
-    public static List<String> generateBalancedBracketsSequences(int numberOfBrackets) {
-        if (numberOfBrackets <= 0) {
-            return new ArrayList<>();
-        }
-
-        List<String> balancedBracketsVariants = new ArrayList<>();
-        generateBalancedBracketsSequence(numberOfBrackets, 0, 0, "", balancedBracketsVariants);
-        return balancedBracketsVariants;
-    }
-
-    private static void generateBalancedBracketsSequence(int numberOfBrackets,
-                                                         int current_open,
-                                                         int current_closed,
-                                                         String sequence,
-                                                         List<String> result) {
-        if (current_open + current_closed == 2 * numberOfBrackets) {
-            result.add(sequence);
-            return;
-        }
-        if (current_open < numberOfBrackets) {
-            generateBalancedBracketsSequence(numberOfBrackets, current_open + 1, current_closed, sequence + "(", result);
-        }
-        if (current_open > current_closed) {
-            generateBalancedBracketsSequence(numberOfBrackets, current_open, current_closed + 1, sequence + ")", result);
-        }
     }
 
 }
