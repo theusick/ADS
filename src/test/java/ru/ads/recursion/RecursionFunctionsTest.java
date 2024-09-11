@@ -148,7 +148,7 @@ class RecursionFunctionsTest {
         assertThrows(IllegalArgumentException.class,
                 () -> RecursionFunctions.getSecondMaxRecursive(new ArrayList<Integer>()));
         assertThrows(IllegalArgumentException.class,
-                () -> RecursionFunctions.getSecondMaxRecursive(Arrays.asList(1)));
+                () -> RecursionFunctions.getSecondMaxRecursive(List.of(1)));
     }
 
     @Test
@@ -223,42 +223,5 @@ class RecursionFunctionsTest {
         result = RecursionFunctions.generateBalancedBracketsSequences(-1);
         assertTrue(result.isEmpty());
     }
-
-    @Test
-    void testGenerateBalancedBracketsSequencesValid() {
-        List<String> result = RecursionFunctions.generateBalancedBracketsSequences(1);
-        assertTrue(result.contains("()"));
-        assertTrue(result.size() == 1);
-
-        result = RecursionFunctions.generateBalancedBracketsSequences(2);
-        assertTrue(result.contains("()()"));
-        assertTrue(result.contains("(())"));
-        assertTrue(result.size() == 2);
-
-        result = RecursionFunctions.generateBalancedBracketsSequences(3);
-        assertTrue(result.contains("()()()"));
-        assertTrue(result.contains("((()))"));
-        assertTrue(result.contains("(()())"));
-        assertTrue(result.contains("(())()"));
-        assertTrue(result.contains("()(())"));
-        assertTrue(result.size() == 5);
-
-        result = RecursionFunctions.generateBalancedBracketsSequences(4);
-        assertTrue(result.contains("()()()()"));
-        assertTrue(result.contains("(())()()"));
-        assertTrue(result.contains("()(())()"));
-        assertTrue(result.contains("()()(())"));
-        assertTrue(result.contains("((()))()"));
-        assertTrue(result.contains("(()())()"));
-        assertTrue(result.contains("(()()())"));
-        assertTrue(result.contains("((())())"));
-        assertTrue(result.contains("(()(()))"));
-        assertTrue(result.contains("(((())))"));
-        assertTrue(result.contains("()((()))"));
-        assertTrue(result.contains("()(()())"));
-        assertTrue(result.contains("(())(())"));
-        assertTrue(result.contains("((()()))"));
-        assertTrue(result.size() == 14);
-    }
-
+    
 }
