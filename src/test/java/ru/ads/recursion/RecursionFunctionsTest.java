@@ -223,5 +223,5 @@ class RecursionFunctionsTest {
         result = RecursionFunctions.generateBalancedBracketsSequences(-1);
         assertTrue(result.isEmpty());
     }
-    
+
 }

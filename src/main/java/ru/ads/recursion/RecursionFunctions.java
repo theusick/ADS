@@ -161,31 +161,4 @@ public class RecursionFunctions {
         return dirNames;
     }
 
-    public static List<String> generateBalancedBracketsSequences(int numberOfBrackets) {
-        if (numberOfBrackets <= 0) {
-            return new ArrayList<>();
-        }
-
-        List<String> balancedBracketsVariants = new ArrayList<>();
-        generateBalancedBracketsSequence(numberOfBrackets, 0, 0, "", balancedBracketsVariants);
-        return balancedBracketsVariants;
-    }
-
-    private static void generateBalancedBracketsSequence(int numberOfBrackets,
-                                                         int current_open,
-                                                         int current_closed,
-                                                         String sequence,
-                                                         List<String> result) {
-        if (current_open + current_closed == 2 * numberOfBrackets) {
-            result.add(sequence);
-            return;
-        }
-        if (current_open < numberOfBrackets) {
-            generateBalancedBracketsSequence(numberOfBrackets, current_open + 1, current_closed, sequence + "(", result);
-        }
-        if (current_open > current_closed) {
-            generateBalancedBracketsSequence(numberOfBrackets, current_open, current_closed + 1, sequence + ")", result);
-        }
-    }
-
 }
