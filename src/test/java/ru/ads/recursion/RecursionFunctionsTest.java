@@ -212,16 +212,4 @@ class RecursionFunctionsTest {
         assertEquals("apple", RecursionFunctions.getSecondMaxRecursive(stringArray));
     }
 
-    @Test
-    void testGenerateBalancedBracketsSequencesEmpty() {
-        List<String> result = RecursionFunctions.generateBalancedBracketsSequences(0);
-        assertTrue(result.isEmpty());
-
-        result = RecursionFunctions.generateBalancedBracketsSequences(-10);
-        assertTrue(result.isEmpty());
-
-        result = RecursionFunctions.generateBalancedBracketsSequences(-1);
-        assertTrue(result.isEmpty());
-    }
-
 }

@@ -9,6 +9,18 @@ import static org.junit.jupiter.api.Assertions.*;
 class BalancedBracketsSequencesTest {
 
     @Test
+    void testGenerateEmptySequence() {
+        List<String> result = BalancedBracketsSequences.generate(0);
+        assertTrue(result.isEmpty());
+
+        result = BalancedBracketsSequences.generate(-10);
+        assertTrue(result.isEmpty());
+
+        result = BalancedBracketsSequences.generate(-1);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
     void testGenerateOnePair() {
         List<String> result = BalancedBracketsSequences.generate(1);
         assertTrue(result.contains("()"));
