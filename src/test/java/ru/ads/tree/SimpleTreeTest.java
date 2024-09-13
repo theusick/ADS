@@ -19,7 +19,7 @@ class SimpleTreeTest {
     }
 
     @Test
-    void testAddChild_NullParent() {
+    void testAddChildNullParent() {
         SimpleTreeNode<Integer> newRoot = new SimpleTreeNode<>(20, null);
         tree.AddChild(null, newRoot);
 
@@ -28,13 +28,51 @@ class SimpleTreeTest {
     }
 
     @Test
-    void testAddChild() {
+    void testAddChildToRoot() {
         SimpleTreeNode<Integer> child = new SimpleTreeNode<>(5, null);
         tree.AddChild(root, child);
 
         assertEquals(1, root.Children.size());
         assertEquals(child, root.Children.get(0));
-        assertEquals(1, child.Level);  // Проверяем уровень
+        assertEquals(1, child.Level);
+    }
+
+    @Test
+    void testAddChildToNode() {
+        SimpleTreeNode<Integer> child = new SimpleTreeNode<>(5, null);
+        tree.AddChild(root, child);
+
+        SimpleTreeNode<Integer> grandChild = new SimpleTreeNode<>(15, null);
+        tree.AddChild(child, grandChild);
+
+        assertEquals(1, root.Children.size());
+        assertEquals(child, root.Children.get(0));
+
+        assertEquals(1, root.Children.get(0).Children.size());
+        assertEquals(grandChild, root.Children.get(0).Children.get(0));
+        assertEquals(1, child.Level);
+        assertEquals(2, grandChild.Level);
+    }
+
+    @Test
+    void testAddChildSeveralChildren() {
+        SimpleTreeNode<Integer> child = new SimpleTreeNode<>(5, null);
+        tree.AddChild(root, child);
+
+        SimpleTreeNode<Integer> grandChild1 = new SimpleTreeNode<>(15, null);
+        SimpleTreeNode<Integer> grandChild2 = new SimpleTreeNode<>(17, null);
+        SimpleTreeNode<Integer> grandChild3 = new SimpleTreeNode<>(-1, null);
+        tree.AddChild(child, grandChild1);
+        tree.AddChild(child, grandChild2);
+        tree.AddChild(child, grandChild3);
+
+        assertEquals(1, root.Children.size());
+
+        assertEquals(3, root.Children.get(0).Children.size());
+        assertEquals(1, child.Level);
+        assertEquals(2, grandChild1.Level);
+        assertEquals(2, grandChild2.Level);
+        assertEquals(2, grandChild3.Level);
     }
 
     @Test
@@ -48,11 +86,11 @@ class SimpleTreeTest {
 
         assertNull(child1.Parent);
         assertFalse(root.Children.contains(child1));
-        assertEquals(1, root.Children.size());  // Остается только один ребенок
+        assertEquals(1, root.Children.size());
     }
 
     @Test
-    void testDeleteNode_WithChildren() {
+    void testDeleteNodeWithChildren() {
         SimpleTreeNode<Integer> child1 = new SimpleTreeNode<>(5, root);
         SimpleTreeNode<Integer> grandChild = new SimpleTreeNode<>(2, child1);
         tree.AddChild(root, child1);
@@ -62,6 +100,20 @@ class SimpleTreeTest {
 
         assertFalse(root.Children.contains(child1));
         assertNull(grandChild.Parent);
+    }
+
+    @Test
+    void testGetAllNodesEmptyTree() {
+        SimpleTree<Integer> emptyTree = new SimpleTree<>(null);
+
+        List<SimpleTreeNode<Integer>> nodes = emptyTree.GetAllNodes();
+        assertTrue(nodes.isEmpty());
+    }
+
+    @Test
+    void testGetAllNodesOnlyRoot() {
+        List<SimpleTreeNode<Integer>> nodes = tree.GetAllNodes();
+        assertEquals(1, nodes.size());
     }
 
     @Test
@@ -76,6 +128,25 @@ class SimpleTreeTest {
     }
 
     @Test
+    void testFindNodesByValueEmptyTree() {
+        SimpleTree<Integer> emptyTree = new SimpleTree<>(null);
+
+        List<SimpleTreeNode<Integer>> result = emptyTree.FindNodesByValue(5);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testFindNodesByValueEmpty() {
+        SimpleTreeNode<Integer> child1 = new SimpleTreeNode<>(5, root);
+        SimpleTreeNode<Integer> child2 = new SimpleTreeNode<>(5, root);
+        tree.AddChild(root, child1);
+        tree.AddChild(root, child2);
+
+        List<SimpleTreeNode<Integer>> result = tree.FindNodesByValue(3);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
     void testFindNodesByValue() {
         SimpleTreeNode<Integer> child1 = new SimpleTreeNode<>(5, root);
         SimpleTreeNode<Integer> child2 = new SimpleTreeNode<>(5, root);
@@ -87,10 +158,84 @@ class SimpleTreeTest {
     }
 
     @Test
+    void testFindNodesByValueWithChildren() {
+        SimpleTreeNode<Integer> child1 = new SimpleTreeNode<>(4, root);
+        SimpleTreeNode<Integer> child2 = new SimpleTreeNode<>(5, root);
+
+        tree.AddChild(root, child1);
+        tree.AddChild(root, child2);
+
+        SimpleTreeNode<Integer> grandChild1 = new SimpleTreeNode<>(1, root);
+        SimpleTreeNode<Integer> grandChild2 = new SimpleTreeNode<>(8, root);
+        SimpleTreeNode<Integer> grandChild3 = new SimpleTreeNode<>(4, root);
+
+        tree.AddChild(child1, grandChild1);
+        tree.AddChild(child1, grandChild2);
+        tree.AddChild(child2, grandChild3);
+
+        List<SimpleTreeNode<Integer>> result = tree.FindNodesByValue(4);
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    void testMoveNodeNullOriginalNode() {
+        SimpleTreeNode<Integer> newParent = new SimpleTreeNode<>(20, null);
+        tree.AddChild(root, newParent);
+
+        tree.MoveNode(null, newParent);
+
+        assertEquals(2, tree.Count());
+        assertNull(newParent.Children);
+        assertTrue(root.Children.contains(newParent));
+    }
+
+    @Test
+    void testMoveNodeNullNewParent() {
+        SimpleTreeNode<Integer> child1 = new SimpleTreeNode<>(5, root);
+        tree.AddChild(root, child1);
+
+        tree.MoveNode(child1, null);
+
+        assertEquals(2, tree.Count());
+        assertTrue(root.Children.contains(child1));
+        assertEquals(1, child1.Level);
+    }
+
+    @Test
+    void testMoveNodeOriginalNodeIsAncestorOfNewParent() {
+        SimpleTreeNode<Integer> child1 = new SimpleTreeNode<>(5, root);
+        SimpleTreeNode<Integer> grandChild = new SimpleTreeNode<>(2, child1);
+
+        tree.AddChild(root, child1);
+        tree.AddChild(child1, grandChild);
+
+        tree.MoveNode(child1, grandChild);
+
+        assertEquals(3, tree.Count());
+        assertTrue(child1.Children.contains(grandChild));
+        assertEquals(1, child1.Level);
+        assertEquals(2, grandChild.Level);
+    }
+
+    @Test
+    void testMoveNodeOriginalNodeIsRoot() {
+        SimpleTreeNode<Integer> child1 = new SimpleTreeNode<>(5, root);
+        tree.AddChild(root, child1);
+
+        tree.MoveNode(root, child1);
+
+        assertEquals(2, tree.Count());
+        assertTrue(root.Children.contains(child1));
+        assertEquals(0, root.Level);
+        assertEquals(1, child1.Level);
+    }
+
+    @Test
     void testMoveNode() {
         SimpleTreeNode<Integer> child1 = new SimpleTreeNode<>(5, root);
         SimpleTreeNode<Integer> child2 = new SimpleTreeNode<>(15, root);
         SimpleTreeNode<Integer> grandChild = new SimpleTreeNode<>(2, child1);
+
         tree.AddChild(root, child1);
         tree.AddChild(root, child2);
         tree.AddChild(child1, grandChild);
@@ -103,9 +248,22 @@ class SimpleTreeTest {
     }
 
     @Test
+    void testCountEmptyTree() {
+        SimpleTree<Integer> emptyTree = new SimpleTree<>(null);
+
+        assertEquals(0, emptyTree.Count());
+    }
+
+    @Test
+    void testCountOnlyRoot() {
+        assertEquals(1, tree.Count());
+    }
+
+    @Test
     void testCount() {
         SimpleTreeNode<Integer> child1 = new SimpleTreeNode<>(5, root);
         SimpleTreeNode<Integer> child2 = new SimpleTreeNode<>(15, root);
+
         tree.AddChild(root, child1);
         tree.AddChild(root, child2);
 
@@ -113,10 +271,23 @@ class SimpleTreeTest {
     }
 
     @Test
+    void testLeafCountEmptyTree() {
+        SimpleTree<Integer> emptyTree = new SimpleTree<>(null);
+
+        assertEquals(0, emptyTree.LeafCount());
+    }
+
+    @Test
+    void testLeafCountOnlyRoot() {
+        assertEquals(1, tree.LeafCount());
+    }
+
+    @Test
     void testLeafCount() {
         SimpleTreeNode<Integer> child1 = new SimpleTreeNode<>(5, root);
         SimpleTreeNode<Integer> child2 = new SimpleTreeNode<>(15, root);
         SimpleTreeNode<Integer> grandChild = new SimpleTreeNode<>(20, child2);
+
         tree.AddChild(root, child1);
         tree.AddChild(root, child2);
         tree.AddChild(child2, grandChild);
