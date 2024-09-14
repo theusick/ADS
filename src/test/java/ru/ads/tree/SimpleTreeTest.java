@@ -33,7 +33,7 @@ class SimpleTreeTest {
         tree.AddChild(root, child);
 
         assertEquals(1, root.Children.size());
-        assertEquals(child, root.Children.get(0));
+        assertEquals(child, root.Children.getFirst());
         assertEquals(1, child.Level);
     }
 
@@ -46,10 +46,10 @@ class SimpleTreeTest {
         tree.AddChild(child, grandChild);
 
         assertEquals(1, root.Children.size());
-        assertEquals(child, root.Children.get(0));
+        assertEquals(child, root.Children.getFirst());
 
-        assertEquals(1, root.Children.get(0).Children.size());
-        assertEquals(grandChild, root.Children.get(0).Children.get(0));
+        assertEquals(1, root.Children.getFirst().Children.size());
+        assertEquals(grandChild, root.Children.getFirst().Children.getFirst());
         assertEquals(1, child.Level);
         assertEquals(2, grandChild.Level);
     }
@@ -68,11 +68,26 @@ class SimpleTreeTest {
 
         assertEquals(1, root.Children.size());
 
-        assertEquals(3, root.Children.get(0).Children.size());
+        assertEquals(3, root.Children.getFirst().Children.size());
         assertEquals(1, child.Level);
         assertEquals(2, grandChild1.Level);
         assertEquals(2, grandChild2.Level);
         assertEquals(2, grandChild3.Level);
+    }
+
+    @Test
+    void testDeleteNodeRoot() {
+        SimpleTreeNode<Integer> child1 = new SimpleTreeNode<>(5, root);
+        SimpleTreeNode<Integer> child2 = new SimpleTreeNode<>(15, root);
+        tree.AddChild(root, child1);
+        tree.AddChild(root, child2);
+
+        tree.DeleteNode(root);
+
+        assertNotNull(tree.Root);
+        assertEquals(root, tree.Root);
+        assertNull(root.Parent);
+        assertEquals(2, root.Children.size());
     }
 
     @Test

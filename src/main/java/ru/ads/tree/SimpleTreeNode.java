@@ -59,17 +59,23 @@ class SimpleTree<T> {
             return;
         }
 
-        if (NodeToDelete.Children != null) {
-            for (SimpleTreeNode<T> child : new ArrayList<>(NodeToDelete.Children)) {
-                DeleteNode(child);
-            }
-            NodeToDelete.Children = null;
-        }
+        DeleteChildrenNodes(NodeToDelete);
 
         if ((NodeToDelete.Parent != null) && (NodeToDelete.Parent.Children != null)) {
             NodeToDelete.Parent.Children.remove(NodeToDelete);
             NodeToDelete.Parent = null;
         }
+    }
+
+    private void DeleteChildrenNodes(SimpleTreeNode<T> node) {
+        if (node.Children == null) {
+            return;
+        }
+
+        for (SimpleTreeNode<T> child : new ArrayList<>(node.Children)) {
+            DeleteNode(child);
+        }
+        node.Children = null;
     }
 
     public List<SimpleTreeNode<T>> GetAllNodes() {
@@ -85,10 +91,11 @@ class SimpleTree<T> {
 
         nodes.add(currentNode);
 
-        if (currentNode.Children != null) {
-            for (SimpleTreeNode<T> child : currentNode.Children) {
-                GetAllNodes(child, nodes);
-            }
+        if (currentNode.Children == null) {
+            return;
+        }
+        for (SimpleTreeNode<T> child : currentNode.Children) {
+            GetAllNodes(child, nodes);
         }
     }
 
@@ -106,10 +113,12 @@ class SimpleTree<T> {
         if (currentNode.NodeValue.equals(val)) {
             nodes.add(currentNode);
         }
-        if (currentNode.Children != null) {
-            for (SimpleTreeNode<T> child : currentNode.Children) {
-                FindNodesByValue(child, val, nodes);
-            }
+
+        if (currentNode.Children == null) {
+            return;
+        }
+        for (SimpleTreeNode<T> child : currentNode.Children) {
+            FindNodesByValue(child, val, nodes);
         }
     }
 
@@ -155,11 +164,13 @@ class SimpleTree<T> {
             return 0;
         }
 
+        if ((currentNode.Children == null) || currentNode.Children.isEmpty()) {
+            return 1;
+        }
+
         int nodesCounter = 1;
-        if (currentNode.Children != null) {
-            for (SimpleTreeNode<T> child : currentNode.Children) {
-                nodesCounter += CountAllNodes(child);
-            }
+        for (SimpleTreeNode<T> child : currentNode.Children) {
+            nodesCounter += CountAllNodes(child);
         }
         return nodesCounter;
     }
@@ -173,7 +184,7 @@ class SimpleTree<T> {
             return 0;
         }
 
-        if ((currentNode.Children == null) || (currentNode.Children.isEmpty())) {
+        if ((currentNode.Children == null) || currentNode.Children.isEmpty()) {
             return 1;
         }
 
@@ -195,10 +206,11 @@ class SimpleTree<T> {
 
         currentNode.Level = currentLevel;
 
-        if (currentNode.Children != null) {
-            for (SimpleTreeNode<T> child : currentNode.Children) {
-                AssignNodesLevels(child, currentLevel + 1);
-            }
+        if (currentNode.Children == null) {
+            return;
+        }
+        for (SimpleTreeNode<T> child : currentNode.Children) {
+            AssignNodesLevels(child, currentLevel + 1);
         }
     }
 
