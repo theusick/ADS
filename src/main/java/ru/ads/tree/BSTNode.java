@@ -103,9 +103,8 @@ class BST<T> {
 
         if (FindMax) {
             return FromNode.RightChild == null ? FromNode : FinMinMax(FromNode.RightChild, FindMax);
-        } else {
-            return FromNode.LeftChild == null ? FromNode : FinMinMax(FromNode.LeftChild, FindMax);
         }
+        return FromNode.LeftChild == null ? FromNode : FinMinMax(FromNode.LeftChild, FindMax);
     }
 
     public boolean DeleteNodeByKey(int key) {
