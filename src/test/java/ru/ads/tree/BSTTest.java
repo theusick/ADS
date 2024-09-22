@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -392,6 +394,161 @@ public class BSTTest {
         assertEquals(15, tree.Root.RightChild.NodeKey);
         assertEquals(18, tree.Root.RightChild.RightChild.NodeKey);
         assertNull(tree.Root.RightChild.LeftChild);
+    }
+
+    @Test
+    void testWideAllNodesEmptyTree() {
+        BST<Integer> emptyTree = new BST<>(null);
+
+        assertTrue(emptyTree.WideAllNodes().isEmpty());
+    }
+
+    @Test
+    void testWideAllNodesSingleNode() {
+        ArrayList<BSTNode> bfsResult = tree.WideAllNodes();
+
+        assertEquals(1, bfsResult.size());
+        assertEquals(root, bfsResult.getFirst());
+    }
+
+    @Test
+    void testWideAllNodesSmallTree() {
+        tree.AddKeyValue(5, 5);
+        tree.AddKeyValue(15, 15);
+
+        ArrayList<BSTNode> bfsResult = tree.WideAllNodes();
+
+        assertEquals(3, bfsResult.size());
+        assertEquals(root, bfsResult.getFirst());
+        assertEquals(5, bfsResult.get(1).NodeKey);
+        assertEquals(15, bfsResult.getLast().NodeKey);
+    }
+
+    @Test
+    void testWideAllNodesLargeTree() {
+        tree.AddKeyValue(5, 5);
+        tree.AddKeyValue(15, 15);
+        tree.AddKeyValue(3, 3);
+        tree.AddKeyValue(7, 7);
+        tree.AddKeyValue(12, 12);
+        tree.AddKeyValue(18, 18);
+
+        ArrayList<BSTNode> bfsResult = tree.WideAllNodes();
+
+        assertEquals(7, bfsResult.size());
+        assertEquals(root, bfsResult.getFirst());
+        assertEquals(5, bfsResult.get(1).NodeKey);
+        assertEquals(15, bfsResult.get(2).NodeKey);
+        assertEquals(3, bfsResult.get(3).NodeKey);
+        assertEquals(7, bfsResult.get(4).NodeKey);
+        assertEquals(12, bfsResult.get(5).NodeKey);
+        assertEquals(18, bfsResult.getLast().NodeKey);
+    }
+
+    @Test
+    void testDeepAllNodesEmptyTree() {
+        BST<Integer> emptyTree = new BST<>(null);
+
+        assertTrue(emptyTree.DeepAllNodes(0).isEmpty());
+        assertTrue(emptyTree.DeepAllNodes(1).isEmpty());
+        assertTrue(emptyTree.DeepAllNodes(2).isEmpty());
+
+        assertTrue(emptyTree.DeepAllNodes(-1).isEmpty());
+        assertTrue(emptyTree.DeepAllNodes(3).isEmpty());
+    }
+
+    @Test
+    void testDeepAllNodesSingleNode() {
+        ArrayList<BSTNode> dfsInOrderResult = tree.DeepAllNodes(0);
+
+        assertEquals(1, dfsInOrderResult.size());
+        assertEquals(root, dfsInOrderResult.getFirst());
+
+        ArrayList<BSTNode> dfsPostOrderResult = tree.DeepAllNodes(1);
+
+        assertEquals(1, dfsPostOrderResult.size());
+        assertEquals(root, dfsPostOrderResult.getFirst());
+
+        ArrayList<BSTNode> dfsPreOrderResult = tree.DeepAllNodes(2);
+
+        assertEquals(1, dfsPreOrderResult.size());
+        assertEquals(root, dfsPreOrderResult.getFirst());
+    }
+
+    @Test
+    void testDeepAllNodesSingleNodeInvalidOrder() {
+        assertTrue(tree.DeepAllNodes(-1).isEmpty());
+        assertTrue(tree.DeepAllNodes(3).isEmpty());
+    }
+
+    @Test
+    void testDeepAllNodesSmallTree() {
+        tree.AddKeyValue(5, 5);
+        tree.AddKeyValue(15, 15);
+
+        ArrayList<BSTNode> dfsInOrderResult = tree.DeepAllNodes(0);
+
+        assertEquals(3, dfsInOrderResult.size());
+        assertEquals(5, dfsInOrderResult.getFirst().NodeKey);
+        assertEquals(root, dfsInOrderResult.get(1));
+        assertEquals(15, dfsInOrderResult.getLast().NodeKey);
+
+        ArrayList<BSTNode> dfsPostOrderResult = tree.DeepAllNodes(1);
+
+        assertEquals(3, dfsPostOrderResult.size());
+        assertEquals(5, dfsPostOrderResult.getFirst().NodeKey);
+        assertEquals(15, dfsPostOrderResult.get(1).NodeKey);
+        assertEquals(root, dfsPostOrderResult.getLast());
+
+        ArrayList<BSTNode> dfsPreOrderResult = tree.DeepAllNodes(2);
+
+        assertEquals(3, dfsPreOrderResult.size());
+        assertEquals(root, dfsPreOrderResult.getFirst());
+        assertEquals(5, dfsPreOrderResult.get(1).NodeKey);
+        assertEquals(15, dfsPreOrderResult.getLast().NodeKey);
+    }
+
+    @Test
+    void testDeepAllNodesLargeTree() {
+        tree.AddKeyValue(5, 5);
+        tree.AddKeyValue(15, 15);
+        tree.AddKeyValue(3, 3);
+        tree.AddKeyValue(7, 7);
+        tree.AddKeyValue(12, 12);
+        tree.AddKeyValue(18, 18);
+
+        ArrayList<BSTNode> dfsInOrderResult = tree.DeepAllNodes(0);
+
+        assertEquals(7, dfsInOrderResult.size());
+        assertEquals(3, dfsInOrderResult.getFirst().NodeKey);
+        assertEquals(5, dfsInOrderResult.get(1).NodeKey);
+        assertEquals(7, dfsInOrderResult.get(2).NodeKey);
+        assertEquals(root, dfsInOrderResult.get(3));
+        assertEquals(12, dfsInOrderResult.get(4).NodeKey);
+        assertEquals(15, dfsInOrderResult.get(5).NodeKey);
+        assertEquals(18, dfsInOrderResult.getLast().NodeKey);
+
+        ArrayList<BSTNode> dfsPostOrderResult = tree.DeepAllNodes(1);
+
+        assertEquals(7, dfsPostOrderResult.size());
+        assertEquals(3, dfsPostOrderResult.getFirst().NodeKey);
+        assertEquals(7, dfsPostOrderResult.get(1).NodeKey);
+        assertEquals(5, dfsPostOrderResult.get(2).NodeKey);
+        assertEquals(12, dfsPostOrderResult.get(3).NodeKey);
+        assertEquals(18, dfsPostOrderResult.get(4).NodeKey);
+        assertEquals(15, dfsPostOrderResult.get(5).NodeKey);
+        assertEquals(root, dfsPostOrderResult.getLast());
+
+        ArrayList<BSTNode> dfsPreOrderResult = tree.DeepAllNodes(2);
+
+        assertEquals(7, dfsPreOrderResult.size());
+        assertEquals(root, dfsPreOrderResult.getFirst());
+        assertEquals(5, dfsPreOrderResult.get(1).NodeKey);
+        assertEquals(3, dfsPreOrderResult.get(2).NodeKey);
+        assertEquals(7, dfsPreOrderResult.get(3).NodeKey);
+        assertEquals(15, dfsPreOrderResult.get(4).NodeKey);
+        assertEquals(12, dfsPreOrderResult.get(5).NodeKey);
+        assertEquals(18, dfsPreOrderResult.getLast().NodeKey);
     }
 
 }
