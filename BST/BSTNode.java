@@ -193,4 +193,61 @@ class BST<T> {
         return 1 + CountAllNodes(currentNode.LeftChild) + CountAllNodes(currentNode.RightChild);
     }
 
+    public ArrayList<BSTNode> WideAllNodes() {
+        ArrayList<BSTNode> traversedNodes = new ArrayList<>();
+        Queue<BSTNode> queue = new LinkedList<>();
+
+        queue.add(Root);
+        WideAllNodes(queue, traversedNodes);
+
+        return traversedNodes;
+    }
+
+    private void WideAllNodes(Queue<BSTNode> queue, ArrayList<BSTNode> result) {
+        if (queue.isEmpty() || (queue.peek() == null)) {
+            return;
+        }
+
+        BSTNode currentNode = queue.poll();
+        result.add(currentNode);
+
+        if (currentNode.LeftChild != null) {
+            queue.add(currentNode.LeftChild);
+        }
+        if (currentNode.RightChild != null) {
+            queue.add(currentNode.RightChild);
+        }
+        WideAllNodes(queue, result);
+    }
+
+    public ArrayList<BSTNode> DeepAllNodes(int order) {
+        ArrayList<BSTNode> traversedNodes = new ArrayList<>();
+        DeepAllNodes(Root, traversedNodes, order);
+        return traversedNodes;
+    }
+
+    private void DeepAllNodes(BSTNode<T> currentNode, ArrayList<BSTNode> result, int order) {
+        if ((currentNode == null) || (order < 0) || (order > 2)) {
+            return;
+        }
+
+        if (order == 2) {
+            result.add(currentNode);
+        }
+
+        if (currentNode.LeftChild != null) {
+            DeepAllNodes(currentNode.LeftChild, result, order);
+        }
+        if (order == 0) {
+            result.add(currentNode);
+        }
+        if (currentNode.RightChild != null) {
+            DeepAllNodes(currentNode.RightChild, result, order);
+        }
+
+        if (order == 1) {
+            result.add(currentNode);
+        }
+    }
+
 }
