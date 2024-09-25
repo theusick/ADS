@@ -252,4 +252,24 @@ class BST<T> {
         }
     }
 
+    public boolean Equals(BST<T> tree) {
+        return AreNodesIdentical(Root, tree.Root);
+    }
+
+    private boolean AreNodesIdentical(BSTNode<T> leftNode, BSTNode<T> rightNode) {
+        if ((leftNode == null) && (rightNode == null)) {
+            return true;
+        }
+        if (OneNodeIsNull(leftNode, rightNode) || (leftNode.NodeKey != rightNode.NodeKey)) {
+            return false;
+        }
+
+        return AreNodesIdentical(leftNode.LeftChild, rightNode.LeftChild)
+            && AreNodesIdentical(leftNode.RightChild, rightNode.RightChild);
+    }
+
+    private boolean OneNodeIsNull(BSTNode<T> leftNode, BSTNode<T> rightNode) {
+        return ((leftNode == null) && (rightNode != null)) || ((leftNode != null) && (rightNode == null));
+    }
+
 }

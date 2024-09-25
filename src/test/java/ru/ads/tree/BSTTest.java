@@ -551,4 +551,121 @@ public class BSTTest {
         assertEquals(18, dfsPreOrderResult.getLast().NodeKey);
     }
 
+    @Test
+    void testEqualsEmptyTree() {
+        BST<Integer> emptyTree = new BST<>(null);
+
+        assertTrue(emptyTree.Equals(emptyTree));
+        assertFalse(emptyTree.equals(tree));
+        assertFalse(tree.Equals(emptyTree));
+    }
+
+    @Test
+    void testEqualsLeftSmallTreesNonIdentical() {
+        tree.AddKeyValue(5, 5);
+        tree.AddKeyValue(15, 15);
+
+        BST<Integer> nonIdenticalTree = new BST<>(new BSTNode<>(10, 10, null));
+        nonIdenticalTree.AddKeyValue(4, 4);
+        nonIdenticalTree.AddKeyValue(15, 15);
+
+        assertFalse(tree.Equals(nonIdenticalTree));
+        assertFalse(nonIdenticalTree.Equals(tree));
+        assertTrue(nonIdenticalTree.Equals(nonIdenticalTree));
+    }
+
+    @Test
+    void testEqualsRightSmallTreesNonIdentical() {
+        tree.AddKeyValue(5, 5);
+        tree.AddKeyValue(15, 15);
+
+        BST<Integer> nonIdenticalTree = new BST<>(new BSTNode<>(10, 10, null));
+        nonIdenticalTree.AddKeyValue(5, 5);
+        nonIdenticalTree.AddKeyValue(12, 12);
+
+        assertFalse(tree.Equals(nonIdenticalTree));
+        assertFalse(nonIdenticalTree.Equals(tree));
+        assertTrue(nonIdenticalTree.Equals(nonIdenticalTree));
+    }
+
+    @Test
+    void testEqualsSmallTreesIdentical() {
+        tree.AddKeyValue(5, 5);
+        tree.AddKeyValue(15, 15);
+
+        BST<Integer> identicalTree = new BST<>(new BSTNode<>(10, 10, null));
+        identicalTree.AddKeyValue(5, 5);
+        identicalTree.AddKeyValue(15, 15);
+
+        assertTrue(tree.Equals(tree));
+        assertTrue(tree.Equals(identicalTree));
+        assertTrue(identicalTree.Equals(tree));
+    }
+
+    @Test
+    void testEqualsLeftLargeTreesNonIdentical() {
+        tree.AddKeyValue(5, 5);
+        tree.AddKeyValue(15, 15);
+        tree.AddKeyValue(3, 3);
+        tree.AddKeyValue(7, 7);
+        tree.AddKeyValue(12, 12);
+        tree.AddKeyValue(18, 18);
+
+        BST<Integer> nonIdenticalTree = new BST<>(new BSTNode<>(10, 10, null));
+        nonIdenticalTree.AddKeyValue(5, 5);
+        nonIdenticalTree.AddKeyValue(15, 15);
+        nonIdenticalTree.AddKeyValue(3, 3);
+        nonIdenticalTree.AddKeyValue(6, 6);
+        nonIdenticalTree.AddKeyValue(11, 11);
+        nonIdenticalTree.AddKeyValue(21, 21);
+
+        assertFalse(tree.Equals(nonIdenticalTree));
+        assertFalse(nonIdenticalTree.Equals(tree));
+        assertTrue(nonIdenticalTree.Equals(nonIdenticalTree));
+    }
+
+    @Test
+    void testEqualsRightLargeTreesNonIdentical() {
+        tree.AddKeyValue(5, 5);
+        tree.AddKeyValue(15, 15);
+        tree.AddKeyValue(3, 3);
+        tree.AddKeyValue(7, 7);
+        tree.AddKeyValue(12, 12);
+        tree.AddKeyValue(18, 18);
+
+        BST<Integer> nonIdenticalTree = new BST<>(new BSTNode<>(10, 10, null));
+        nonIdenticalTree.AddKeyValue(5, 5);
+        nonIdenticalTree.AddKeyValue(15, 15);
+        nonIdenticalTree.AddKeyValue(3, 3);
+        nonIdenticalTree.AddKeyValue(7, 7);
+        nonIdenticalTree.AddKeyValue(11, 11);
+        nonIdenticalTree.AddKeyValue(21, 21);
+
+        assertFalse(tree.Equals(nonIdenticalTree));
+        assertFalse(nonIdenticalTree.Equals(tree));
+        assertTrue(nonIdenticalTree.Equals(nonIdenticalTree));
+    }
+
+    @Test
+    void testEqualsLargeTreesIdentical() {
+        tree.AddKeyValue(5, 5);
+        tree.AddKeyValue(15, 15);
+        tree.AddKeyValue(3, 3);
+        tree.AddKeyValue(7, 7);
+        tree.AddKeyValue(12, 12);
+        tree.AddKeyValue(18, 18);
+
+        BST<Integer> identicalTree = new BST<>(new BSTNode<>(10, 10, null));
+        identicalTree.AddKeyValue(5, 5);
+        identicalTree.AddKeyValue(15, 15);
+        identicalTree.AddKeyValue(3, 3);
+        identicalTree.AddKeyValue(7, 7);
+        identicalTree.AddKeyValue(12, 12);
+        identicalTree.AddKeyValue(18, 18);
+
+        assertTrue(tree.Equals(tree));
+        assertTrue(tree.Equals(identicalTree));
+        assertTrue(identicalTree.Equals(tree));
+    }
+
 }
