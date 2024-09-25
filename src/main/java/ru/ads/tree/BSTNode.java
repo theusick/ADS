@@ -271,5 +271,35 @@ class BST<T> {
     private boolean OneNodeIsNull(BSTNode<T> leftNode, BSTNode<T> rightNode) {
         return ((leftNode == null) && (rightNode != null)) || ((leftNode != null) && (rightNode == null));
     }
+    
+    public ArrayList<ArrayList<BSTNode>> FindLeafPathsByLength(int pathLength) {
+        ArrayList<ArrayList<BSTNode>> leafPathsByLength = new ArrayList<>();
+        FindLeafPathsByLength(Root, pathLength, leafPathsByLength, new ArrayList<>());
+        return leafPathsByLength;
+    }
+
+    private void FindLeafPathsByLength(BSTNode<T> currentNode,
+                                       int pathLength,
+                                       ArrayList<ArrayList<BSTNode>> result,
+                                       ArrayList<BSTNode> currentPathNodes) {
+        if ((currentNode == null) || (currentPathNodes.size() >= pathLength)) {
+            return;
+        }
+
+        currentPathNodes.add(currentNode);
+
+        if ((currentPathNodes.size() == pathLength) && IsLeaf(currentNode)) {
+            result.add(new ArrayList<>(currentPathNodes));
+        }
+
+        FindLeafPathsByLength(currentNode.LeftChild, pathLength, result, currentPathNodes);
+        FindLeafPathsByLength(currentNode.RightChild, pathLength, result, currentPathNodes);
+
+        currentPathNodes.removeLast();
+    }
+
+    private boolean IsLeaf(BSTNode<T> node) {
+        return (node.LeftChild == null) && (node.RightChild == null);
+    }
 
 }

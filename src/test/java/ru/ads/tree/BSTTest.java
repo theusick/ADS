@@ -668,4 +668,68 @@ public class BSTTest {
         assertTrue(identicalTree.Equals(tree));
     }
 
+    @Test
+    void testFindLeafPathsByLengthEmptyTree() {
+        BST<Integer> emptyTree = new BST<>(null);
+
+        assertTrue(emptyTree.FindLeafPathsByLength(1).isEmpty());
+    }
+
+    @Test
+    void testFindLeafPathsByLengthSingleNode() {
+        ArrayList<ArrayList<BSTNode>> singleNodesPaths = tree.FindLeafPathsByLength(1);
+
+        assertEquals(1, singleNodesPaths.size());
+        assertEquals(1, singleNodesPaths.getFirst().size());
+        assertEquals(root, singleNodesPaths.getFirst().getFirst());
+    }
+
+    @Test
+    void testFindLeafPathsByLengthSmallTree() {
+        tree.AddKeyValue(5, 5);
+        tree.AddKeyValue(15, 15);
+
+        ArrayList<ArrayList<BSTNode>> singleNodesPaths = tree.FindLeafPathsByLength(1);
+        assertTrue(singleNodesPaths.isEmpty());
+
+        ArrayList<ArrayList<BSTNode>> twoNodesPaths = tree.FindLeafPathsByLength(2);
+        assertEquals(2, twoNodesPaths.size());
+        assertEquals(2, twoNodesPaths.getFirst().size());
+        assertEquals(2, twoNodesPaths.getLast().size());
+        assertEquals(root, twoNodesPaths.getFirst().getFirst());
+        assertEquals(root.LeftChild, twoNodesPaths.getFirst().getLast());
+        assertEquals(root, twoNodesPaths.getLast().getFirst());
+        assertEquals(root.RightChild, twoNodesPaths.getLast().getLast());
+    }
+
+    @Test
+    void testFindLeafPathsByLengthLargeTree() {
+        tree.AddKeyValue(5, 5);
+        tree.AddKeyValue(15, 15);
+        tree.AddKeyValue(3, 3);
+        tree.AddKeyValue(2, 2);
+        tree.AddKeyValue(7, 7);
+        tree.AddKeyValue(12, 12);
+        tree.AddKeyValue(18, 18);
+
+        ArrayList<ArrayList<BSTNode>> singleNodesPaths = tree.FindLeafPathsByLength(1);
+        assertTrue(singleNodesPaths.isEmpty());
+
+        ArrayList<ArrayList<BSTNode>> fourNodesPaths = tree.FindLeafPathsByLength(4);
+        assertEquals(1, fourNodesPaths.size());
+        assertEquals(4, fourNodesPaths.getFirst().size());
+        assertEquals(root, fourNodesPaths.getFirst().getFirst());
+        assertEquals(root.LeftChild, fourNodesPaths.getFirst().get(1));
+        assertEquals(root.LeftChild.LeftChild, fourNodesPaths.getFirst().get(2));
+        assertEquals(root.LeftChild.LeftChild.LeftChild, fourNodesPaths.getFirst().getLast());
+
+        ArrayList<ArrayList<BSTNode>> threeNodesPaths = tree.FindLeafPathsByLength(3);
+        assertEquals(3, threeNodesPaths.size());
+        assertEquals(3, threeNodesPaths.getFirst().size());
+        assertEquals(3, threeNodesPaths.getLast().size());
+        assertEquals(root, threeNodesPaths.getFirst().getFirst());
+        assertEquals(root.LeftChild, threeNodesPaths.getFirst().get(1));
+        assertEquals(root.LeftChild.RightChild, threeNodesPaths.getFirst().getLast());
+    }
+
 }
