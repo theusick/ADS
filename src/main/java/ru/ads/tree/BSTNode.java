@@ -1,6 +1,5 @@
 package ru.ads.tree;
 
-import java.io.*;
 import java.util.*;
 
 class BSTNode<T> {
@@ -271,7 +270,7 @@ class BST<T> {
     private boolean OneNodeIsNull(BSTNode<T> leftNode, BSTNode<T> rightNode) {
         return ((leftNode == null) && (rightNode != null)) || ((leftNode != null) && (rightNode == null));
     }
-    
+
     public ArrayList<ArrayList<BSTNode>> FindLeafPathsByLength(int pathLength) {
         ArrayList<ArrayList<BSTNode>> leafPathsByLength = new ArrayList<>();
         FindLeafPathsByLength(Root, pathLength, leafPathsByLength, new ArrayList<>());
@@ -300,6 +299,54 @@ class BST<T> {
 
     private boolean IsLeaf(BSTNode<T> node) {
         return (node.LeftChild == null) && (node.RightChild == null);
+    }
+
+    public ArrayList<ArrayList<BSTNode>> FindMaxSumLeafPaths() {
+        ArrayList<ArrayList<BSTNode>> maxSumPaths = new ArrayList<>();
+        int[] maxSum = new int[]{CalculateInitialMaxSumPath((BSTNode<? extends Number>) Root, 0)};
+        FindMaxSumLeafPaths((BSTNode<? extends Number>) Root,
+            0,
+            maxSum,
+            maxSumPaths,
+            new ArrayList<>());
+        return maxSumPaths;
+    }
+
+    private int CalculateInitialMaxSumPath(BSTNode<? extends Number> currentNode, int currentSum) {
+        if (currentNode == null) {
+            return currentSum;
+        }
+        currentSum += currentNode.NodeValue.intValue();
+        return CalculateInitialMaxSumPath(currentNode.LeftChild, currentSum);
+    }
+
+    public void FindMaxSumLeafPaths(BSTNode<? extends Number> currentNode,
+                                    int currentPathSum,
+                                    int[] maxSum,
+                                    ArrayList<ArrayList<BSTNode>> result,
+                                    ArrayList<BSTNode> currentPathNodes) {
+        if (currentNode == null) {
+            return;
+        }
+
+        currentPathNodes.add(currentNode);
+        currentPathSum += currentNode.NodeValue.intValue();
+
+
+        if (IsLeaf((BSTNode<T>) currentNode) && (currentPathSum > maxSum[0])) {
+            maxSum[0] = currentPathSum;
+            result.clear();
+            result.add(new ArrayList<>(currentPathNodes));
+        } else if (IsLeaf((BSTNode<T>) currentNode) && (currentPathSum == maxSum[0])) {
+            result.add(new ArrayList<>(currentPathNodes));
+        }
+
+        FindMaxSumLeafPaths(currentNode.LeftChild, currentPathSum, maxSum, result,
+            currentPathNodes);
+        FindMaxSumLeafPaths(currentNode.RightChild, currentPathSum, maxSum, result,
+            currentPathNodes);
+
+        currentPathNodes.removeLast();
     }
 
 }

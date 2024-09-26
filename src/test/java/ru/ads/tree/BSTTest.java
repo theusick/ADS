@@ -732,4 +732,68 @@ public class BSTTest {
         assertEquals(root.LeftChild.RightChild, threeNodesPaths.getFirst().getLast());
     }
 
+    @Test
+    void testFindMaxSumLeafPathsEmptyTree() {
+        BST<Integer> emptyTree = new BST<>(null);
+
+        assertTrue(emptyTree.FindMaxSumLeafPaths().isEmpty());
+    }
+
+    @Test
+    void testFindMaxSumLeafPathsSingleNode() {
+        ArrayList<ArrayList<BSTNode>> result = tree.FindMaxSumLeafPaths();
+
+        assertEquals(1, result.size());
+        assertEquals(1, result.getFirst().size());
+        assertEquals(root, result.getFirst().getFirst());
+    }
+
+    @Test
+    void testFindMaxSumLeafPathsSmallTree() {
+        tree.AddKeyValue(5, 5);
+        tree.AddKeyValue(15, 15);
+
+        ArrayList<ArrayList<BSTNode>> result = tree.FindMaxSumLeafPaths();
+
+        assertEquals(1, result.size());
+        assertEquals(2, result.getFirst().size());
+        assertEquals(root, result.getFirst().getFirst());
+        assertEquals(root.RightChild, result.getFirst().getLast());
+    }
+
+    @Test
+    void testFindMaxSumLeafPathsEqualSumPaths() {
+        tree.AddKeyValue(5, 5);
+        tree.AddKeyValue(15, 5);
+
+        ArrayList<ArrayList<BSTNode>> result = tree.FindMaxSumLeafPaths();
+
+        assertEquals(2, result.size());
+
+        assertEquals(root, result.getFirst().getFirst());
+        assertEquals(root.LeftChild, result.getFirst().getLast());
+
+        assertEquals(root, result.get(1).getFirst());
+        assertEquals(root.RightChild, result.getLast().getLast());
+    }
+
+    @Test
+    void testFindMaxSumLeafPathsLargeTree() {
+        tree.AddKeyValue(5, 5);
+        tree.AddKeyValue(15, 15);
+        tree.AddKeyValue(3, 3);
+        tree.AddKeyValue(7, 7);
+        tree.AddKeyValue(20, 20);
+
+        ArrayList<ArrayList<BSTNode>> result = tree.FindMaxSumLeafPaths();
+
+        // Максимальная сумма через правую ветвь (10 -> 15 -> 20)
+        assertEquals(1, result.size());
+        assertEquals(3, result.getFirst().size());
+
+        assertEquals(root, result.getFirst().getFirst());
+        assertEquals(root.RightChild, result.getFirst().get(1));
+        assertEquals(root.RightChild.RightChild, result.getFirst().getLast());
+    }
+
 }
