@@ -82,15 +82,15 @@ class BST<T> {
             return true;
         }
 
-        BSTFind<T> findNodePlace = FindNodeByKey(key);
-        if (findNodePlace.NodeHasKey) {
+        BSTFind<T> foundNodePlace = FindNodeByKey(key);
+        if (foundNodePlace.NodeHasKey) {
             return false;
         }
 
-        if (findNodePlace.ToLeft) {
-            findNodePlace.Node.LeftChild = new BSTNode<T>(key, val, findNodePlace.Node);
+        if (foundNodePlace.ToLeft) {
+            foundNodePlace.Node.LeftChild = new BSTNode<T>(key, val, foundNodePlace.Node);
         } else {
-            findNodePlace.Node.RightChild = new BSTNode<T>(key, val, findNodePlace.Node);
+            foundNodePlace.Node.RightChild = new BSTNode<T>(key, val, foundNodePlace.Node);
         }
         return true;
     }
