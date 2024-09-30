@@ -310,7 +310,7 @@ class BST<T extends Number> {
         return CalculateInitialMaxSumPath(currentNode.LeftChild, currentSum);
     }
 
-    public void FindMaxSumLeafPaths(BSTNode<T> currentNode,
+    private void FindMaxSumLeafPaths(BSTNode<T> currentNode,
                                     int currentPathSum,
                                     int[] maxSum,
                                     ArrayList<ArrayList<BSTNode>> result,
