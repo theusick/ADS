@@ -2,6 +2,7 @@ package ru.ads.tree;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -794,6 +795,175 @@ public class BSTTest {
         assertEquals(root, result.getFirst().getFirst());
         assertEquals(root.RightChild, result.getFirst().get(1));
         assertEquals(root.RightChild.RightChild, result.getFirst().getLast());
+    }
+
+    @Test
+    void testInvertBSTEmptyTree() {
+        BST<Integer> emptyTree = new BST<>(null);
+        emptyTree.InvertBST();
+
+        assertNull(emptyTree.Root);
+    }
+
+    @Test
+    void testInvertBSTSingleNode() {
+        tree.InvertBST();
+
+        assertEquals(10, tree.Root.NodeKey);
+        assertNull(tree.Root.LeftChild);
+        assertNull(tree.Root.RightChild);
+    }
+
+    @Test
+    void testInvertBSTSmallTree() {
+        tree.AddKeyValue(5, 5);
+        tree.AddKeyValue(15, 5);
+
+        tree.InvertBST();
+
+        assertEquals(10, tree.Root.NodeKey);
+        assertEquals(15, tree.Root.LeftChild.NodeKey);
+        assertEquals(5, tree.Root.RightChild.NodeKey);
+    }
+
+    @Test
+    void testInvertBSTLargerTree() {
+        tree.AddKeyValue(5, 5);
+        tree.AddKeyValue(15, 15);
+        tree.AddKeyValue(3, 3);
+        tree.AddKeyValue(7, 7);
+        tree.AddKeyValue(20, 20);
+
+        tree.InvertBST();
+
+        assertEquals(10, tree.Root.NodeKey);
+        assertEquals(15, tree.Root.LeftChild.NodeKey);
+        assertEquals(5, tree.Root.RightChild.NodeKey);
+        assertEquals(20, tree.Root.LeftChild.LeftChild.NodeKey);
+        assertEquals(7, tree.Root.RightChild.LeftChild.NodeKey);
+        assertEquals(3, tree.Root.RightChild.RightChild.NodeKey);
+    }
+
+    @Test
+    void testFindMaxSumLevelEmptyTree() {
+        BST<Integer> emptyTree = new BST<>(null);
+        assertNull(emptyTree.FindMaxSumLevel());
+    }
+
+    @Test
+    void testFindMaxSumLevelSingleNode() {
+        assertEquals(0, tree.FindMaxSumLevel());
+    }
+
+    @Test
+    void testFindMaxSumLevelSmallTree() {
+        tree.AddKeyValue(5, 5);
+        tree.AddKeyValue(15, 15);
+
+        assertEquals(1, tree.FindMaxSumLevel());
+    }
+
+    @Test
+    void testFindMaxSumLevelLargerTree() {
+        tree.AddKeyValue(5, 5);
+        tree.AddKeyValue(15, 5);
+        tree.AddKeyValue(3, 3);
+        tree.AddKeyValue(7, 7);
+        tree.AddKeyValue(20, 20);
+
+        assertEquals(2, tree.FindMaxSumLevel());
+    }
+
+    @Test
+    void testFindMaxSumLevelUnequalValues() {
+        tree.AddKeyValue(5, 1);
+        tree.AddKeyValue(15, 2);
+        tree.AddKeyValue(3, 3);
+        tree.AddKeyValue(7, 4);
+        tree.AddKeyValue(20, 5);
+
+        assertEquals(2, tree.FindMaxSumLevel());
+    }
+
+    @Test
+    void testFindMaxSumLevelAllNegativeValues() {
+        tree.AddKeyValue(5, -1);
+        tree.AddKeyValue(15, -2);
+        tree.AddKeyValue(3, -3);
+        tree.AddKeyValue(7, -4);
+        tree.AddKeyValue(20, -5);
+
+        assertEquals(0, tree.FindMaxSumLevel());
+    }
+
+    @Test
+    void testBuildBSTEmptyTrees() {
+        int[] preorderTree = {};
+        int[] inorderTree = {};
+
+        BST<Integer> result = new BST<>(null);
+        result.BuildBST(preorderTree, inorderTree);
+
+        assertNull(result.Root);
+    }
+
+    @Test
+    void testBuildBSTSingleNode() {
+        int[] preorderTree = {1};
+        int[] inorderTree = {1};
+
+        BST<Integer> result = new BST<>(null);
+        result.BuildBST(preorderTree, inorderTree);
+
+        assertNotNull(result.Root);
+        assertEquals(1, result.Root.NodeKey);
+        assertNull(result.Root.LeftChild);
+        assertNull(result.Root.RightChild);
+    }
+
+    @Test
+    void testBuildBSTSmallTree() {
+        int[] preorderTree = {1, 2, 3};
+        int[] inorderTree = {2, 1, 3};
+
+        BST<Integer> result = new BST<>(null);
+        result.BuildBST(preorderTree, inorderTree);
+
+        assertNotNull(result.Root);
+        assertEquals(1, result.Root.NodeKey);
+        assertNotNull(result.Root.LeftChild);
+        assertNotNull(result.Root.RightChild);
+        assertEquals(2, result.Root.LeftChild.NodeKey);
+        assertEquals(3, result.Root.RightChild.NodeKey);
+    }
+
+    @Test
+    void testBuildBSTLargerTree() {
+        int[] preorderTree = {1, 2, 4, 5, 3, 6, 7};
+        int[] inorderTree = {4, 2, 5, 1, 6, 3, 7};
+
+        BST<Integer> result = new BST<>(null);
+        result.BuildBST(preorderTree, inorderTree);
+
+        assertNotNull(result.Root);
+        assertEquals(1, result.Root.NodeKey);
+        assertEquals(2, result.Root.LeftChild.NodeKey);
+        assertEquals(3, result.Root.RightChild.NodeKey);
+        assertEquals(4, result.Root.LeftChild.LeftChild.NodeKey);
+        assertEquals(5, result.Root.LeftChild.RightChild.NodeKey);
+        assertEquals(6, result.Root.RightChild.LeftChild.NodeKey);
+        assertEquals(7, result.Root.RightChild.RightChild.NodeKey);
+    }
+
+    @Test
+    void testBuildBSTArraysNotMatch() {
+        int[] preorderTree = {1, 2};
+        int[] inorderTree = {2, 1, 3};
+
+        BST<Integer> result = new BST<>(null);
+        result.BuildBST(preorderTree, inorderTree);
+
+        assertNull(result.Root);
     }
 
 }

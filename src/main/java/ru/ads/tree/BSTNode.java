@@ -2,7 +2,7 @@ package ru.ads.tree;
 
 import java.util.*;
 
-class BSTNode<T> {
+class BSTNode<T extends Number> {
     public int NodeKey;
     public T NodeValue;
     public BSTNode<T> Parent;
@@ -18,7 +18,7 @@ class BSTNode<T> {
     }
 }
 
-class BSTFind<T> {
+class BSTFind<T extends Number> {
     public BSTNode<T> Node;
     public boolean NodeHasKey;
     public boolean ToLeft;
@@ -28,7 +28,7 @@ class BSTFind<T> {
     }
 }
 
-class BST<T> {
+class BST<T extends Number> {
     BSTNode<T> Root;
 
     public BST(BSTNode<T> node) {
@@ -49,23 +49,17 @@ class BST<T> {
         }
 
         if (key < currentNode.NodeKey) {
-            return HandleLeftBranch(key, currentNode);
+            return HandleBranch(currentNode.LeftChild, key, currentNode, true);
         }
-        return HandleRightBranch(key, currentNode);
+        return HandleBranch(currentNode.RightChild, key, currentNode, false);
     }
 
-    private BSTFind<T> HandleLeftBranch(int key, BSTNode<T> currentNode) {
-        if (currentNode.LeftChild == null) {
-            return CreateBSTFindResult(currentNode, false, true);
+    private BSTFind<T> HandleBranch(BSTNode<T> childNode, int key, BSTNode<T> parentNode,
+                                    boolean toLeft) {
+        if (childNode == null) {
+            return CreateBSTFindResult(parentNode, false, toLeft);
         }
-        return FindNodeRecursive(key, currentNode.LeftChild);
-    }
-
-    private BSTFind<T> HandleRightBranch(int key, BSTNode<T> currentNode) {
-        if (currentNode.RightChild == null) {
-            return CreateBSTFindResult(currentNode, false, false);
-        }
-        return FindNodeRecursive(key, currentNode.RightChild);
+        return FindNodeRecursive(key, childNode);
     }
 
     private BSTFind<T> CreateBSTFindResult(BSTNode<T> node, boolean nodeHasKey, boolean toLeft) {
@@ -303,16 +297,12 @@ class BST<T> {
 
     public ArrayList<ArrayList<BSTNode>> FindMaxSumLeafPaths() {
         ArrayList<ArrayList<BSTNode>> maxSumPaths = new ArrayList<>();
-        int[] maxSum = new int[]{CalculateInitialMaxSumPath((BSTNode<? extends Number>) Root, 0)};
-        FindMaxSumLeafPaths((BSTNode<? extends Number>) Root,
-            0,
-            maxSum,
-            maxSumPaths,
-            new ArrayList<>());
+        int[] maxSum = new int[]{CalculateInitialMaxSumPath(Root, 0)};
+        FindMaxSumLeafPaths(Root, 0, maxSum, maxSumPaths, new ArrayList<>());
         return maxSumPaths;
     }
 
-    private int CalculateInitialMaxSumPath(BSTNode<? extends Number> currentNode, int currentSum) {
+    private int CalculateInitialMaxSumPath(BSTNode<T> currentNode, int currentSum) {
         if (currentNode == null) {
             return currentSum;
         }
@@ -320,7 +310,7 @@ class BST<T> {
         return CalculateInitialMaxSumPath(currentNode.LeftChild, currentSum);
     }
 
-    public void FindMaxSumLeafPaths(BSTNode<? extends Number> currentNode,
+    public void FindMaxSumLeafPaths(BSTNode<T> currentNode,
                                     int currentPathSum,
                                     int[] maxSum,
                                     ArrayList<ArrayList<BSTNode>> result,
@@ -333,11 +323,11 @@ class BST<T> {
         currentPathSum += currentNode.NodeValue.intValue();
 
 
-        if (IsLeaf((BSTNode<T>) currentNode) && (currentPathSum > maxSum[0])) {
+        if (IsLeaf(currentNode) && (currentPathSum > maxSum[0])) {
             maxSum[0] = currentPathSum;
             result.clear();
             result.add(new ArrayList<>(currentPathNodes));
-        } else if (IsLeaf((BSTNode<T>) currentNode) && (currentPathSum == maxSum[0])) {
+        } else if (IsLeaf(currentNode) && (currentPathSum == maxSum[0])) {
             result.add(new ArrayList<>(currentPathNodes));
         }
 
@@ -347,6 +337,131 @@ class BST<T> {
             currentPathNodes);
 
         currentPathNodes.removeLast();
+    }
+
+    public void InvertBST() {
+        InvertNodesRecursive(Root);
+    }
+
+    private void InvertNodesRecursive(BSTNode<T> currentNode) {
+        if ((currentNode == null) || IsLeaf(currentNode)) {
+            return;
+        }
+
+        BSTNode<T> leftChild = currentNode.LeftChild;
+        currentNode.LeftChild = currentNode.RightChild;
+        currentNode.RightChild = leftChild;
+
+        InvertNodesRecursive(currentNode.LeftChild);
+        InvertNodesRecursive(currentNode.RightChild);
+    }
+
+    public Integer FindMaxSumLevel() {
+        if (Root == null) {
+            return null;
+        }
+
+        Queue<BSTNode> queue = new LinkedList<>();
+        Integer initialMaxSum = Root.NodeValue.intValue();
+
+        queue.add(Root);
+
+        return FindMaxSumLevel(queue, initialMaxSum, 0, 0);
+    }
+
+    private Integer FindMaxSumLevel(Queue<BSTNode> queue,
+                                    Integer currentMaxSum,
+                                    int currentMaxLevel,
+                                    int currentLevel) {
+        if (queue.isEmpty()) {
+            return currentMaxLevel;
+        }
+
+        int levelSum = 0;
+        int levelSize = queue.size();
+
+        for (int i = 0; i < levelSize; i++) {
+            BSTNode<T> currentNode = queue.poll();
+            if (currentNode == null) {
+                continue;
+            }
+            levelSum += currentNode.NodeValue.intValue();
+
+            if (currentNode.LeftChild != null) {
+                queue.add(currentNode.LeftChild);
+            }
+            if (currentNode.RightChild != null) {
+                queue.add(currentNode.RightChild);
+            }
+        }
+
+        if (levelSum >= currentMaxSum) {
+            currentMaxSum = levelSum;
+            currentMaxLevel = currentLevel;
+        }
+
+        return FindMaxSumLevel(queue, currentMaxSum, currentMaxLevel, currentLevel + 1);
+    }
+
+    public void BuildBST(int[] preorderTree, int[] inorderTree) {
+        if ((preorderTree.length == 0)
+            || (inorderTree.length == 0)
+            || ArraysNotMatch(preorderTree, inorderTree)) {
+            return;
+        }
+
+        Root = BuildRoot(preorderTree,
+                        inorderTree,
+                        0,
+                        0,
+                        inorderTree.length);
+    }
+
+    private boolean ArraysNotMatch(int[] preorderTree, int[] inorderTree) {
+        return (preorderTree.length != inorderTree.length);
+    }
+
+    private BSTNode<T> BuildRoot(int[] preorderTree,
+                                 int[] inorderTree,
+                                 int preorderStartIndex,
+                                 int inorderStartIndex,
+                                 int inorderEndIndex) {
+        if ((preorderStartIndex >= preorderTree.length) || (inorderStartIndex >= inorderEndIndex)) {
+            return null;
+        }
+
+        int rootKey = preorderTree[preorderStartIndex];
+        BSTNode<T> root = new BSTNode<>(rootKey, null, null);
+
+        int rootIndexInInorder = findRootIndexInInorder(inorderTree,
+                                                        rootKey,
+                                                        inorderStartIndex,
+                                                        inorderEndIndex);
+        int leftTreeSize = rootIndexInInorder - inorderStartIndex;
+
+        root.LeftChild = BuildRoot(preorderTree,
+                                    inorderTree,
+                                    preorderStartIndex + 1,
+                                    inorderStartIndex,
+                                    rootIndexInInorder);
+        root.RightChild = BuildRoot(preorderTree,
+                                    inorderTree,
+                                    preorderStartIndex + 1 + leftTreeSize,
+                                    rootIndexInInorder + 1, inorderEndIndex);
+
+        return root;
+    }
+
+    private int findRootIndexInInorder(int[] inorderTree,
+                                       int rootKey,
+                                       int startIndex,
+                                       int endIndex) {
+        for (int i = startIndex; i < endIndex; i++) {
+            if (inorderTree[i] == rootKey) {
+                return i;
+            }
+        }
+        return -1;
     }
 
 }
