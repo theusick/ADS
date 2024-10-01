@@ -265,28 +265,57 @@ class BST<T extends Number> {
 
     public ArrayList<ArrayList<BSTNode>> FindLeafPathsByLength(int pathLength) {
         ArrayList<ArrayList<BSTNode>> leafPathsByLength = new ArrayList<>();
-        FindLeafPathsByLength(Root, pathLength, leafPathsByLength, new ArrayList<>());
+        FindLeafPaths(Root, new ArrayList<>(), leafPathsByLength, null, pathLength, false);
         return leafPathsByLength;
     }
 
-    private void FindLeafPathsByLength(BSTNode<T> currentNode,
-                                       int pathLength,
-                                       ArrayList<ArrayList<BSTNode>> result,
-                                       ArrayList<BSTNode> currentPathNodes) {
-        if ((currentNode == null) || (currentPathNodes.size() >= pathLength)) {
+    private void FindLeafPaths(BSTNode<T> currentNode,
+                               ArrayList<BSTNode> currentPathNodes,
+                               ArrayList<ArrayList<BSTNode>> result,
+                               int[] maxSum,
+                               int pathLength,
+                               boolean isMaxSumSearch) {
+        if (currentNode == null) {
             return;
         }
 
         currentPathNodes.add(currentNode);
 
-        if ((currentPathNodes.size() == pathLength) && IsLeaf(currentNode)) {
-            result.add(new ArrayList<>(currentPathNodes));
+        if (IsLeaf(currentNode) && !isMaxSumSearch) {
+            HandlePathLengthCondition(currentPathNodes, result, pathLength);
+        } else if (IsLeaf(currentNode)) {
+            HandleMaxSumCondition(currentPathNodes, result, maxSum);
         }
 
-        FindLeafPathsByLength(currentNode.LeftChild, pathLength, result, currentPathNodes);
-        FindLeafPathsByLength(currentNode.RightChild, pathLength, result, currentPathNodes);
+        FindLeafPaths(currentNode.LeftChild, currentPathNodes, result, maxSum, pathLength, isMaxSumSearch);
+        FindLeafPaths(currentNode.RightChild, currentPathNodes, result, maxSum, pathLength, isMaxSumSearch);
 
-        currentPathNodes.removeLast();
+        currentPathNodes.remove(currentPathNodes.size() - 1);
+    }
+
+    private void HandlePathLengthCondition(ArrayList<BSTNode> currentPathNodes,
+                                           ArrayList<ArrayList<BSTNode>> result,
+                                           int pathLength) {
+        if (currentPathNodes.size() == pathLength) {
+            result.add(new ArrayList<>(currentPathNodes));
+        }
+    }
+
+    private void HandleMaxSumCondition(ArrayList<BSTNode> currentPathNodes,
+                                       ArrayList<ArrayList<BSTNode>> result,
+                                       int[] maxSum) {
+        int currentPathSum = 0;
+        for (BSTNode node : currentPathNodes) {
+            currentPathSum += node.NodeValue.intValue();
+        }
+
+        if (currentPathSum > maxSum[0]) {
+            maxSum[0] = currentPathSum;
+            result.clear();
+            result.add(new ArrayList<>(currentPathNodes));
+        } else if (currentPathSum == maxSum[0]) {
+            result.add(new ArrayList<>(currentPathNodes));
+        }
     }
 
     private boolean IsLeaf(BSTNode<T> node) {
@@ -296,7 +325,7 @@ class BST<T extends Number> {
     public ArrayList<ArrayList<BSTNode>> FindMaxSumLeafPaths() {
         ArrayList<ArrayList<BSTNode>> maxSumPaths = new ArrayList<>();
         int[] maxSum = new int[]{CalculateInitialMaxSumPath(Root, 0)};
-        FindMaxSumLeafPaths(Root, 0, maxSum, maxSumPaths, new ArrayList<>());
+        FindLeafPaths(Root, new ArrayList<>(), maxSumPaths, maxSum, 0, true);
         return maxSumPaths;
     }
 
@@ -306,35 +335,6 @@ class BST<T extends Number> {
         }
         currentSum += currentNode.NodeValue.intValue();
         return CalculateInitialMaxSumPath(currentNode.LeftChild, currentSum);
-    }
-
-    public void FindMaxSumLeafPaths(BSTNode<T> currentNode,
-                                    int currentPathSum,
-                                    int[] maxSum,
-                                    ArrayList<ArrayList<BSTNode>> result,
-                                    ArrayList<BSTNode> currentPathNodes) {
-        if (currentNode == null) {
-            return;
-        }
-
-        currentPathNodes.add(currentNode);
-        currentPathSum += currentNode.NodeValue.intValue();
-
-
-        if (IsLeaf(currentNode) && (currentPathSum > maxSum[0])) {
-            maxSum[0] = currentPathSum;
-            result.clear();
-            result.add(new ArrayList<>(currentPathNodes));
-        } else if (IsLeaf(currentNode) && (currentPathSum == maxSum[0])) {
-            result.add(new ArrayList<>(currentPathNodes));
-        }
-
-        FindMaxSumLeafPaths(currentNode.LeftChild, currentPathSum, maxSum, result,
-                currentPathNodes);
-        FindMaxSumLeafPaths(currentNode.RightChild, currentPathSum, maxSum, result,
-                currentPathNodes);
-
-        currentPathNodes.removeLast();
     }
 
     public void InvertBST() {
