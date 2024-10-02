@@ -1,12 +1,10 @@
 package ru.ads.tree;
 
-import java.util.*;
+import java.util.Arrays;
 
-public class AlgorithmsDataStructures2
-{
+public class AlgorithmsDataStructures2 {
 
-    public static int[] GenerateBBSTArray(int[] a)
-    {
+    public static int[] GenerateBBSTArray(int[] a) {
         if ((a == null) || (a.length == 0)) {
             return new int[]{};
         }
@@ -15,28 +13,25 @@ public class AlgorithmsDataStructures2
         Arrays.sort(sorted);
 
         int[] result = new int[sorted.length];
-        BuildBSTRoot(sorted, 0, sorted.length - 1, result, 0);
+        BuildBBST(sorted, result, 0, 0, sorted.length - 1);
 
         return result;
     }
 
-    private static int BuildBSTRoot(int[] sorted,
-                                    int startIndex,
-                                    int endIndex,
-                                    int[] result,
-                                    int currentIndex) {
-        if (startIndex > endIndex) {
-            return currentIndex;
+    private static void BuildBBST(int[] sorted,
+                                  int[] result,
+                                  int currentIndex,
+                                  int startIndex,
+                                  int endIndex) {
+        if ((startIndex > endIndex) || (currentIndex >= sorted.length)) {
+            return;
         }
 
         int middleIndex = (startIndex + endIndex) / 2;
         result[currentIndex] = sorted[middleIndex];
 
-        currentIndex++;
-        currentIndex = BuildBSTRoot(sorted, startIndex, middleIndex - 1, result, currentIndex);
-        currentIndex = BuildBSTRoot(sorted, middleIndex + 1, endIndex, result, currentIndex);
-
-        return currentIndex;
+        BuildBBST(sorted, result, 2 * currentIndex + 1, startIndex, middleIndex - 1);
+        BuildBBST(sorted, result, 2 * currentIndex + 2, middleIndex + 1, endIndex);
     }
 
 }
