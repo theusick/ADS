@@ -119,6 +119,7 @@ class aBSTTest {
         aBST tree = new aBST(0);
 
         assertNull(tree.FindLCA(11, 12));
+        assertNull(tree.FindLCAIterative(11, 12));
     }
 
     @Test
@@ -126,6 +127,8 @@ class aBSTTest {
         aBST tree = new aBST(2);
         tree.Tree[0] = 10;
         assertEquals(10, tree.FindLCA(10, 10));
+        assertEquals(10, tree.FindLCAIterative(10, 10));
+
     }
 
     @Test
@@ -136,6 +139,8 @@ class aBSTTest {
         tree.Tree[2] = 15;
 
         assertEquals(10, tree.FindLCA(5, 15));
+        assertEquals(10, tree.FindLCAIterative(5, 15));
+
     }
 
     @Test
@@ -149,6 +154,9 @@ class aBSTTest {
 
         assertEquals(10, tree.FindLCA(3, 15));
         assertEquals(10, tree.FindLCA(7, 15));
+
+        assertEquals(10, tree.FindLCAIterative(3, 15));
+        assertEquals(10, tree.FindLCAIterative(7, 15));
     }
 
     @Test
@@ -161,6 +169,7 @@ class aBSTTest {
         tree.Tree[4] = 7;
 
         assertEquals(5, tree.FindLCA(3, 7));
+        assertEquals(5, tree.FindLCAIterative(3, 7));
     }
 
     @Test
@@ -174,6 +183,9 @@ class aBSTTest {
 
         assertEquals(15, tree.FindLCA(12, 18));
         assertEquals(10, tree.FindLCA(5, 18));
+
+        assertEquals(15, tree.FindLCAIterative(12, 18));
+        assertEquals(10, tree.FindLCAIterative(5, 18));
     }
 
     @Test
@@ -187,6 +199,9 @@ class aBSTTest {
 
         assertEquals(10, tree.FindLCA(10, 7));
         assertEquals(5, tree.FindLCA(5, 3));
+
+        assertEquals(10, tree.FindLCAIterative(10, 7));
+        assertEquals(5, tree.FindLCAIterative(5, 3));
     }
 
     @Test

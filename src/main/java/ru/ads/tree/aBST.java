@@ -64,6 +64,35 @@ class aBST {
         return currentValue;
     }
 
+    public Integer FindLCAIterative(int firstKey, int secondKey) {
+        Integer firstKeyIndex = FindKeyIndex(firstKey);
+        Integer secondKeyIndex = FindKeyIndex(secondKey);
+
+        if (KeyIndexNotExists(firstKeyIndex) || KeyIndexNotExists(secondKeyIndex)) {
+            return null;
+        }
+
+        while (!firstKeyIndex.equals(secondKeyIndex)) {
+            if (firstKeyIndex > secondKeyIndex) {
+                firstKeyIndex = GetParentIndex(firstKeyIndex);
+            } else {
+                secondKeyIndex = GetParentIndex(secondKeyIndex);
+            }
+        }
+        return Tree[firstKeyIndex];
+    }
+
+    private boolean KeyIndexNotExists(Integer keyIndex) {
+        return (keyIndex == null) || (keyIndex < 0);
+    }
+
+    private Integer GetParentIndex(Integer keyIndex) {
+        if (keyIndex == 0) {
+            return 0;
+        }
+        return (keyIndex - 1) / 2;
+    }
+
     public ArrayList<Integer> WideAllNodes() {
         ArrayList<Integer> traversedNodes = new ArrayList<>();
 
