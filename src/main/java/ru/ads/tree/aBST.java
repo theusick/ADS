@@ -2,21 +2,18 @@ package ru.ads.tree;
 
 import java.util.*;
 
-class aBST
-{
+class aBST {
     public Integer[] Tree;
 
-    public aBST(int depth)
-    {
+    public aBST(int depth) {
         int tree_size = (2 << depth) - 1;
         Tree = new Integer[tree_size];
-        for(int i = 0; i < tree_size; i++) {
+        for (int i = 0; i < tree_size; i++) {
             Tree[i] = null;
         }
     }
 
-    public Integer FindKeyIndex(int key)
-    {
+    public Integer FindKeyIndex(int key) {
         return FindKeyIndexRecursive(key, 0);
     }
 
@@ -35,8 +32,7 @@ class aBST
         return FindKeyIndexRecursive(key, nextIndex);
     }
 
-    public int AddKey(int key)
-    {
+    public int AddKey(int key) {
         Integer foundKeyPlace = FindKeyIndex(key);
         if (foundKeyPlace == null) {
             return -1;
@@ -46,6 +42,64 @@ class aBST
             Tree[foundKeyPlace] = key;
         }
         return foundKeyPlace;
+    }
+
+    public Integer FindLCA(int firstKey, int secondKey) {
+        return FindLCARecursive(firstKey, secondKey, 0);
+    }
+
+    private Integer FindLCARecursive(int firstKey, int secondKey, int currentIndex) {
+        if ((currentIndex >= Tree.length) || (Tree[currentIndex] == null)) {
+            return null;
+        }
+
+        int currentValue = Tree[currentIndex];
+
+        if ((firstKey < currentValue) && (secondKey < currentValue)) {
+            return FindLCARecursive(firstKey, secondKey, currentIndex * 2 + 1);
+        }
+        if ((firstKey > currentValue) && (secondKey > currentValue)) {
+            return FindLCARecursive(firstKey, secondKey, currentIndex * 2 + 2);
+        }
+        return currentValue;
+    }
+
+    public ArrayList<Integer> WideAllNodes() {
+        ArrayList<Integer> traversedNodes = new ArrayList<>();
+
+        for (Integer key : Tree) {
+            if (key != null) {
+                traversedNodes.add(key);
+            }
+        }
+        return traversedNodes;
+    }
+
+    public ArrayList<Integer> DeepAllNodes(int order) {
+        ArrayList<Integer> traversedNodes = new ArrayList<>();
+        DeepAllNodes(0, traversedNodes, order);
+        return traversedNodes;
+    }
+
+    private void DeepAllNodes(int currentIndex, ArrayList<Integer> result, int order) {
+        if ((currentIndex >= Tree.length) || (Tree[currentIndex] == null)) {
+            return;
+        }
+
+        Integer currentValue = Tree[currentIndex];
+
+        if (order == 2) {
+            result.add(currentValue);
+        }
+
+        DeepAllNodes(currentIndex * 2 + 1, result, order);
+        if (order == 0) {
+            result.add(currentValue);
+        }
+        DeepAllNodes(currentIndex * 2 + 2, result, order);
+        if (order == 1) {
+            result.add(currentValue);
+        }
     }
 
 }
