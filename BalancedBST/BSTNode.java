@@ -52,27 +52,25 @@ class BalancedBST {
     }
 
     public boolean IsBalanced(BSTNode root_node) {
-        return GetTreeLevel(root_node) != -1;
+        return IsBalancedRecursive(root_node) != -1;
     }
 
-    private int GetTreeLevel(BSTNode node) {
+    private int IsBalancedRecursive(BSTNode node) {
         if (node == null) {
             return 0;
         }
 
-        int leftHeight = GetTreeLevel(node.LeftChild);
-        if (leftHeight == -1) {
-            return -1;
-        }
-
-        int rightHeight = GetTreeLevel(node.RightChild);
-        if (rightHeight == -1) {
-            return -1;
-        }
+        int leftHeight = IsBalancedRecursive(node.LeftChild);
+        int rightHeight = IsBalancedRecursive(node.RightChild);
 
         if ((Math.abs(leftHeight - rightHeight) > 1) || !AreChildrenBalanced(node)) {
             return -1;
         }
+
+        if ((leftHeight == -1) || (rightHeight == -1)) {
+            return -1;
+        }
+
         return Math.max(leftHeight, rightHeight) + 1;
     }
 
