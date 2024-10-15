@@ -1,5 +1,7 @@
 package ru.ads.tree;
 
+import java.util.*;
+
 class Heap {
     public int[] HeapArray;
     public int currentSize = 0;
@@ -38,15 +40,15 @@ class Heap {
     }
 
     private void SiftDown(int index) {
-        int leftChild = 2 * index + 1;
-        int rightChild = 2 * index + 2;
+        int leftChild = GetLeftChildIndex(index);
+        int rightChild = GetRightChildIndex(index);
 
-        if (leftChild >= currentSize) {
+        if (IndexOutOfBounds(leftChild)) {
             return;
         }
 
         int largerChild = leftChild;
-        if (rightChild < currentSize && HeapArray[rightChild] > HeapArray[leftChild]) {
+        if ((rightChild < currentSize) && (HeapArray[rightChild] > HeapArray[leftChild])) {
             largerChild = rightChild;
         }
 
@@ -97,8 +99,8 @@ class Heap {
 
         int maxHeapSize = HeapArray.length;
         for (int i = 0; i <= (maxHeapSize - 2) / 2; i++) {
-            int leftIndex = 2 * i + 1;
-            int rightIndex = 2 * i + 2;
+            int leftIndex = GetLeftChildIndex(i);
+            int rightIndex = GetRightChildIndex(i);
 
             if ((leftIndex < maxHeapSize) && (HeapArray[i] < HeapArray[leftIndex])) {
                 return false;
@@ -109,6 +111,54 @@ class Heap {
             }
         }
         return true;
+    }
+
+    public Integer GetMaxInRange(int leftIndex, int rightIndex) {
+        if (IndexOutOfBounds(leftIndex) || IndexOutOfBounds(rightIndex)
+            || (leftIndex > rightIndex)) {
+            return null;
+        }
+
+        int max = HeapArray[leftIndex];
+        for (int i = leftIndex + 1; i <= rightIndex; i++) {
+            if (HeapArray[i] > max) {
+                max = HeapArray[i];
+            }
+        }
+        return max;
+    }
+
+    private boolean IndexOutOfBounds(int index) {
+        return (index < 0) || (index >= currentSize);
+    }
+
+    private static int GetLeftChildIndex(int index) {
+        return 2 * index + 1;
+    }
+
+    private static int GetRightChildIndex(int index) {
+        return 2 * index + 2;
+    }
+
+    // TODO: change: ineffective and incorrect
+    public List<Integer> FindElementsLessThan(int value) {
+        List<Integer> result = new ArrayList<>();
+        findElementsRecursive(0, value, result);
+        return result;
+    }
+
+    private void findElementsRecursive(int index, int value, List<Integer> result) {
+        if (IndexOutOfBounds(index)) {
+            return;
+        }
+
+        if (HeapArray[index] >= value) {
+            findElementsRecursive(GetLeftChildIndex(index), value, result);
+            findElementsRecursive(GetRightChildIndex(index), value, result);
+        }
+        else {
+            result.add(HeapArray[index]);
+        }
     }
 
 }

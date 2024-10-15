@@ -324,4 +324,59 @@ class SimpleTreeTest {
         assertEquals(1, child2.Level);
     }
 
+
+    @Test
+    void testEvenTreesOnlyRoot() {
+        List<Integer> result = tree.EvenTrees();
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testEvenTreesNoCuts() {
+        SimpleTreeNode<Integer> child1 = new SimpleTreeNode<>(5, root);
+        SimpleTreeNode<Integer> child2 = new SimpleTreeNode<>(15, root);
+        tree.AddChild(root, child1);
+        tree.AddChild(root, child2);
+
+        List<Integer> result = tree.EvenTrees();
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testEvenTreesWithCuts() {
+        SimpleTreeNode<Integer> child1 = new SimpleTreeNode<>(5, root);
+        SimpleTreeNode<Integer> child2 = new SimpleTreeNode<>(15, root);
+        SimpleTreeNode<Integer> grandChild = new SimpleTreeNode<>(20, child1);
+        tree.AddChild(root, child1);
+        tree.AddChild(root, child2);
+        tree.AddChild(child1, grandChild);
+
+        List<Integer> result = tree.EvenTrees();
+        assertEquals(2, result.size());
+        assertEquals(10, result.getFirst());
+        assertEquals(5, result.getLast());
+
+    }
+
+    @Test
+    void testEvenTreesMultipleCuts() {
+        SimpleTreeNode<Integer> child1 = new SimpleTreeNode<>(5, root);
+        SimpleTreeNode<Integer> child2 = new SimpleTreeNode<>(15, root);
+        SimpleTreeNode<Integer> grandChild1 = new SimpleTreeNode<>(20, child1);
+        SimpleTreeNode<Integer> grandChild2 = new SimpleTreeNode<>(25, child2);
+        tree.AddChild(root, child1);
+        tree.AddChild(root, child2);
+        tree.AddChild(child1, grandChild1);
+        tree.AddChild(child2, grandChild2);
+
+        List<Integer> result = tree.EvenTrees();
+        assertEquals(4, result.size());
+
+        assertEquals(10, result.getFirst());
+        assertEquals(5, result.get(1));
+
+        assertEquals(10, result.get(2));
+        assertEquals(15, result.getLast());
+    }
+
 }

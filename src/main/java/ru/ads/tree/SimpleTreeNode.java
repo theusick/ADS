@@ -1,5 +1,6 @@
 package ru.ads.tree;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class SimpleTreeNode<T> {
@@ -212,6 +213,29 @@ class SimpleTree<T> {
         for (SimpleTreeNode<T> child : currentNode.Children) {
             AssignNodesLevels(child, currentLevel + 1);
         }
+    }
+
+    public ArrayList<T> EvenTrees() {
+        return GetMaxEdgeCutPairs(Root);
+    }
+
+    public ArrayList<T> GetMaxEdgeCutPairs(SimpleTreeNode<T> node) {
+        ArrayList<T> edgeCutPairs = new ArrayList<>();
+
+        int currentNodesCount = CountAllNodes(node);
+        if (currentNodesCount <= 1) {
+            return edgeCutPairs;
+        }
+
+        if ((currentNodesCount % 2 == 0) && (node.Parent != null)) {
+            edgeCutPairs.add(node.Parent.NodeValue);
+            edgeCutPairs.add(node.NodeValue);
+        }
+
+        for (SimpleTreeNode<T> child : node.Children) {
+            edgeCutPairs.addAll(GetMaxEdgeCutPairs(child));
+        }
+        return edgeCutPairs;
     }
 
 }

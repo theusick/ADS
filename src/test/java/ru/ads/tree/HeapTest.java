@@ -2,6 +2,8 @@ package ru.ads.tree;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class HeapTest {
@@ -144,6 +146,78 @@ class HeapTest {
         Heap heap = new Heap();
         heap.HeapArray = new int[] {1, 8, 9, 4, 7, 6, 5};
         assertFalse(heap.IsHeap());
+    }
+
+    @Test
+    public void testGetMaxInRangeValidRange() {
+        Heap heap = new Heap();
+        heap.MakeHeap(new int[]{10, 5, 3, 2, 8, 1, 9}, 2);
+
+        int result = heap.GetMaxInRange(1, 5);
+        assertEquals(9, result);
+    }
+
+    @Test
+    public void testGetMaxInRangeSingleElementRange() {
+        Heap heap = new Heap();
+        heap.MakeHeap(new int[]{15, 10, 12, 8, 9, 3}, 2);
+
+        int result = heap.GetMaxInRange(3, 3);
+        assertEquals(8, result);
+    }
+
+    @Test
+    public void testGetMaxInRangeFullRange() {
+        Heap heap = new Heap();
+        heap.MakeHeap(new int[]{20, 10, 15, 7, 8, 12}, 2);
+
+        int result = heap.GetMaxInRange(0, 5);
+        assertEquals(20, result);
+    }
+
+    @Test
+    public void testGetMaxInRangeInvalidRange() {
+        Heap heap = new Heap();
+        heap.MakeHeap(new int[]{10, 20, 30, 40, 50}, 2);
+
+        assertNull(heap.GetMaxInRange(-1, 2));
+        assertNull(heap.GetMaxInRange(3, 7));
+        assertNull(heap.GetMaxInRange(5, 2));
+    }
+
+    @Test
+    public void testFindElementsLessThan() {
+        Heap heap = new Heap();
+        heap.MakeHeap(new int[]{20, 15, 10, 8, 7, 9, 5}, 2);
+
+        List<Integer> result = heap.FindElementsLessThan(10);
+
+        assertTrue(result.contains(8));
+        assertTrue(result.contains(7));
+        assertTrue(result.contains(5));
+        assertFalse(result.contains(10));
+        assertFalse(result.contains(15));
+    }
+
+    @Test
+    public void testFindElementsLessThanNoMatches() {
+        Heap heap = new Heap();
+        heap.MakeHeap(new int[]{30, 25, 20, 15, 10}, 2);
+
+        List<Integer> result = heap.FindElementsLessThan(5);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testFindElementsLessThanAllMatches() {
+        Heap heap = new Heap();
+        heap.MakeHeap(new int[]{3, 2, 1}, 1);
+
+        List<Integer> result = heap.FindElementsLessThan(5);
+        assertEquals(3, result.size());
+        assertTrue(result.contains(3));
+        assertTrue(result.contains(2));
+        assertTrue(result.contains(1));
     }
 
 }
