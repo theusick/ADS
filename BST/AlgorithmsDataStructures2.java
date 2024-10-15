@@ -44,12 +44,12 @@ public class AlgorithmsDataStructures2 {
             return false;
         }
 
-        if (key < tree[index]) {
-            DeleteNodeBBSTRecursive(tree, key, GetLeftChildIndex(index));
-        } else if (key > tree[index]) {
-            DeleteNodeBBSTRecursive(tree, key, GetRightChildIndex(index));
-        } else {
+        if (key == tree[index]) {
             DeleteNodeBBSTByIndex(tree, index);
+        } else {
+            int nextIndex = (key < tree[index])
+                    ? GetLeftChildIndex(index) : GetRightChildIndex(index);
+            DeleteNodeBBSTRecursive(tree, key, nextIndex);
         }
         BalanceTree(tree, index);
         return true;
