@@ -1,7 +1,7 @@
 package ru.ads.tree;
 
-import java.lang.reflect.Array;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SimpleTreeNode<T> {
     public T NodeValue;
@@ -219,7 +219,7 @@ class SimpleTree<T> {
         return GetMaxEdgeCutPairs(Root);
     }
 
-    public ArrayList<T> GetMaxEdgeCutPairs(SimpleTreeNode<T> node) {
+    private ArrayList<T> GetMaxEdgeCutPairs(SimpleTreeNode<T> node) {
         ArrayList<T> edgeCutPairs = new ArrayList<>();
 
         int currentNodesCount = CountAllNodes(node);
