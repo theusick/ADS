@@ -212,6 +212,27 @@ class SimpleTree<T> {
         }
     }
 
+    public ArrayList<T> EvenTrees() {
+        return GetMaxEdgeCutPairs(Root);
+    }
+
+    private ArrayList<T> GetMaxEdgeCutPairs(SimpleTreeNode<T> node) {
+        ArrayList<T> edgeCutPairs = new ArrayList<>();
+
+        int currentNodesCount = CountAllNodes(node);
+        if (currentNodesCount <= 1) {
+            return edgeCutPairs;
+        }
+
+        if ((currentNodesCount % 2 == 0) && (node.Parent != null)) {
+            edgeCutPairs.add(node.Parent.NodeValue);
+            edgeCutPairs.add(node.NodeValue);
+        }
+
+        for (SimpleTreeNode<T> child : node.Children) {
+            edgeCutPairs.addAll(GetMaxEdgeCutPairs(child));
+        }
+        return edgeCutPairs;
+    }
+
 }
-
-
