@@ -39,26 +39,31 @@ class Heap {
         return rootValue;
     }
 
+    public int GetMaxSize() {
+        return HeapArray.length;
+    }
+
     private void SiftDown(int index) {
-        int leftChild = GetLeftChildIndex(index);
-        int rightChild = GetRightChildIndex(index);
+        int leftChildIndex = GetLeftChildIndex(index);
+        int rightChildIndex = GetRightChildIndex(index);
 
-        if (IndexOutOfBounds(leftChild)) {
+        if (IndexOutOfBounds(leftChildIndex)) {
             return;
         }
 
-        int largerChild = leftChild;
-        if ((rightChild < currentSize) && (HeapArray[rightChild] > HeapArray[leftChild])) {
-            largerChild = rightChild;
+        int largerChildIndex = leftChildIndex;
+        if ((rightChildIndex < currentSize) &&
+            (HeapArray[rightChildIndex] > HeapArray[leftChildIndex])) {
+            largerChildIndex = rightChildIndex;
         }
 
-        if (HeapArray[index] >= HeapArray[largerChild]) {
+        if (HeapArray[index] >= HeapArray[largerChildIndex]) {
             return;
         }
 
-        SwapChildWithParent(index, largerChild);
+        SwapChildWithParent(index, largerChildIndex);
 
-        SiftDown(largerChild);
+        SiftDown(largerChildIndex);
     }
 
     private void SwapChildWithParent(int parentIndex, int childIndex) {
@@ -84,7 +89,7 @@ class Heap {
             return;
         }
 
-        int parentIndex = (index - 1) / 2;
+        int parentIndex = GetParentIndex(index);
         if (HeapArray[index] > HeapArray[parentIndex]) {
             SwapChildWithParent(parentIndex, index);
 
@@ -140,24 +145,56 @@ class Heap {
         return 2 * index + 2;
     }
 
-    // TODO: change: ineffective and incorrect
-    public List<Integer> FindElementsLessThan(int value) {
+    private static int GetParentIndex(int index) {
+        return (index - 1) / 2;
+    }
+
+    public List<Integer> FindElementsGreaterThan(int value) {
         List<Integer> result = new ArrayList<>();
-        findElementsRecursive(0, value, result);
+        FindElementsGreaterThanRecursive(0, value, result);
         return result;
     }
 
-    private void findElementsRecursive(int index, int value, List<Integer> result) {
+    private void FindElementsGreaterThanRecursive(int index,
+                                                  int value,
+                                                  List<Integer> result) {
         if (IndexOutOfBounds(index)) {
             return;
         }
 
-        if (HeapArray[index] >= value) {
-            findElementsRecursive(GetLeftChildIndex(index), value, result);
-            findElementsRecursive(GetRightChildIndex(index), value, result);
+        int currentValue = HeapArray[index];
+
+        if (currentValue > value) {
+            result.add(currentValue);
+            FindElementsGreaterThanRecursive(GetLeftChildIndex(index), value, result);
+            FindElementsGreaterThanRecursive(GetRightChildIndex(index), value, result);
         }
-        else {
-            result.add(HeapArray[index]);
+    }
+
+    public Integer FindElementLessThan(int value) {
+        if (currentSize == 0) {
+            return null;
+        }
+
+        int lastValueIndex = currentSize - 1;
+        int firstLeafIndex = GetParentIndex(lastValueIndex) + 1;
+
+        for (int i = lastValueIndex; i >= firstLeafIndex; i--) {
+            int currentValue = HeapArray[i];
+            if (currentValue < value) {
+                return currentValue;
+            }
+        }
+        return null;
+    }
+
+    public void MergeHeap(Heap heap) {
+        if ((heap == null) || (this.GetMaxSize() < heap.GetMaxSize())) {
+            return;
+        }
+
+        while (heap.currentSize > 0) {
+            this.Add(heap.GetMax());
         }
     }
 
