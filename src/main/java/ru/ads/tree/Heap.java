@@ -15,13 +15,20 @@ class Heap {
             return;
         }
 
-        HeapArray = new int[(2 << depth) - 1];
+        HeapArray = new int[GetSizeByDepth(depth)];
 
         for (int key : a) {
             if (!Add(key)) {
                 return;
             }
         }
+    }
+
+    private int GetSizeByDepth(int depth) {
+        if (depth < 0) {
+            return 0;
+        }
+        return (2 << depth) - 1;
     }
 
     public int GetMax() {
@@ -124,13 +131,27 @@ class Heap {
             return null;
         }
 
+        int leftIndexLevel = GetIndexLevel(leftIndex);
+
+        int rightLimitIndex = GetSizeByDepth(leftIndexLevel);
+        if (rightIndex < rightLimitIndex) {
+            rightLimitIndex = rightIndex;
+        }
+
         int max = HeapArray[leftIndex];
-        for (int i = leftIndex + 1; i <= rightIndex; i++) {
+        for (int i = leftIndex + 1; i <= rightLimitIndex; i++) {
             if (HeapArray[i] > max) {
                 max = HeapArray[i];
             }
         }
         return max;
+    }
+
+    private int GetIndexLevel(int index) {
+        if (IndexOutOfBounds(index)) {
+            return -1;
+        }
+        return (int) Math.floor(Math.log(index + 1) / Math.log(2.0));
     }
 
     private boolean IndexOutOfBounds(int index) {
