@@ -4,9 +4,11 @@ import java.util.*;
 
 class Vertex {
     public int Value;
+    public boolean Hit;
 
     public Vertex(int val) {
         Value = val;
+        Hit = false;
     }
 
 }
@@ -51,7 +53,7 @@ class SimpleGraph {
     }
 
     private boolean IndexOutOfBounds(int index) {
-        return (index < 0) || (index >= max_vertex);
+        return (index < 0) || (index >= currentSize);
     }
 
     private boolean OneIsOutOfBounds(int v1, int v2) {
@@ -72,6 +74,55 @@ class SimpleGraph {
         }
         m_adjacency[v1][v2] = 0;
         m_adjacency[v2][v1] = 0;
+    }
+
+    public ArrayList<Vertex> DepthFirstSearch(int vFrom, int vTo)
+    {
+        Deque<Integer> stack = new ArrayDeque<>();
+
+        ClearVisitedVertices();
+        DepthFirstSearch(vFrom, vTo, stack);
+
+        ArrayList<Vertex> result = new ArrayList<>();
+        while (!stack.isEmpty()) {
+            result.add(vertex[stack.removeLast()]);
+        }
+        return result;
+    }
+
+    private void ClearVisitedVertices() {
+        for (int i = 0; i < currentSize; i++) {
+            vertex[i].Hit = false;
+        }
+    }
+
+    private void DepthFirstSearch(int vFrom,
+                                  int vTo,
+                                  Deque<Integer> stack) {
+        if (OneIsOutOfBounds(vFrom, vTo)) {
+            return;
+        }
+
+        vertex[vFrom].Hit = true;
+        stack.addFirst(vFrom);
+
+        if (IsEdge(vFrom, vTo)) {
+            stack.addFirst(vTo);
+            return;
+        }
+
+        for (int neighborIndex = 0; neighborIndex < currentSize; neighborIndex++) {
+            if (IsEdge(vFrom, neighborIndex) && (!vertex[neighborIndex].Hit)) {
+                DepthFirstSearch(neighborIndex, vTo, stack);
+                return;
+            }
+        }
+        stack.pop();
+
+        if (stack.isEmpty()) {
+            return;
+        }
+        DepthFirstSearch(stack.pop(), vTo, stack);
     }
 
 }

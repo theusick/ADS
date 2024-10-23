@@ -3,6 +3,8 @@ package ru.ads.graph;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -126,6 +128,76 @@ class SimpleGraphTest {
         assertDoesNotThrow(() -> smallGraph.RemoveVertex(3));
         smallGraph.RemoveVertex(0);
         assertNull(smallGraph.vertex[0]);
+    }
+
+    @Test
+    void testDepthFirstSearchSmallGraph() {
+        List<Vertex> path = smallGraph.DepthFirstSearch(0, 1);
+        assertTrue(path.isEmpty());
+
+        smallGraph.AddEdge(0, 1);
+
+        path = smallGraph.DepthFirstSearch(0, 1);
+        assertEquals(2, path.size());
+        assertEquals(1, path.getFirst().Value);
+        assertEquals(2, path.getLast().Value);
+
+        path = smallGraph.DepthFirstSearch(1, 0);
+        assertEquals(2, path.size());
+        assertEquals(2, path.getFirst().Value);
+        assertEquals(1, path.getLast().Value);
+
+        path = smallGraph.DepthFirstSearch(0, 2);
+        assertTrue(path.isEmpty());
+    }
+
+    @Test
+    void testDepthFirstSearchMediumGraph() {
+        mediumGraph.AddEdge(0, 1);
+        mediumGraph.AddEdge(1, 2);
+        mediumGraph.AddEdge(0, 3);
+
+        List<Vertex> path = mediumGraph.DepthFirstSearch(0, 2);
+        assertEquals(3, path.size());
+        assertEquals(1, path.getFirst().Value);
+        assertEquals(3, path.getLast().Value);
+
+        path = mediumGraph.DepthFirstSearch(0, 4);
+        assertTrue(path.isEmpty());
+
+        path = mediumGraph.DepthFirstSearch(1, 3);
+        assertEquals(3, path.size());
+        assertEquals(2, path.getFirst().Value);
+        assertEquals(4, path.getLast().Value);
+
+        path = mediumGraph.DepthFirstSearch(2, 0);
+        assertEquals(3, path.size());
+        assertEquals(3, path.getFirst().Value);
+        assertEquals(1, path.getLast().Value);
+    }
+
+    @Test
+    void testDepthFirstSearchLargeGraph() {
+        largeGraph.AddEdge(0, 1);
+        largeGraph.AddEdge(1, 2);
+        largeGraph.AddEdge(2, 3);
+        largeGraph.AddEdge(3, 4);
+        largeGraph.AddEdge(0, 5);
+        largeGraph.AddEdge(5, 6);
+        largeGraph.AddEdge(6, 7);
+
+        List<Vertex> path = largeGraph.DepthFirstSearch(0, 3);
+        assertEquals(4, path.size());
+        assertEquals(1, path.getFirst().Value);
+        assertEquals(4, path.getLast().Value);
+
+        path = largeGraph.DepthFirstSearch(5, 7);
+        assertEquals(3, path.size());
+        assertEquals(6, path.getFirst().Value);
+        assertEquals(8, path.getLast().Value);
+
+        path = largeGraph.DepthFirstSearch(2, 8);
+        assertTrue(path.isEmpty());
     }
 
 }
