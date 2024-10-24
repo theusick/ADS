@@ -1,3 +1,5 @@
+package ru.ads.tree;
+
 import java.util.*;
 
 class Heap {
@@ -14,6 +16,7 @@ class Heap {
         }
 
         HeapArray = new int[GetSizeByDepth(depth)];
+        currentSize = 0;
 
         for (int key : a) {
             if (!Add(key)) {
@@ -129,27 +132,13 @@ class Heap {
             return null;
         }
 
-        int leftIndexLevel = GetIndexLevel(leftIndex);
-
-        int rightLimitIndex = GetSizeByDepth(leftIndexLevel);
-        if (rightIndex < rightLimitIndex) {
-            rightLimitIndex = rightIndex;
-        }
-
         int max = HeapArray[leftIndex];
-        for (int i = leftIndex + 1; i <= rightLimitIndex; i++) {
+        for (int i = leftIndex + 1; i <= rightIndex; i++) {
             if (HeapArray[i] > max) {
                 max = HeapArray[i];
             }
         }
         return max;
-    }
-
-    private int GetIndexLevel(int index) {
-        if (IndexOutOfBounds(index)) {
-            return -1;
-        }
-        return (int) Math.floor(Math.log(index + 1) / Math.log(2.0));
     }
 
     private boolean IndexOutOfBounds(int index) {
