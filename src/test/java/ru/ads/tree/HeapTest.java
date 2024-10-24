@@ -165,6 +165,19 @@ class HeapTest {
     }
 
     @Test
+    public void testGetMaxInRangeLowerLevelsMax() {
+        heap.MakeHeap(new int[]{100, 19, 36, 17, 3, 25, 1, 2, 7}, 3);
+
+        int result = heap.GetMaxInRange(6, 8);
+        assertEquals(7, result);
+
+        heap.MakeHeap(new int[]{100, 19, 36, 17, 3, 2, 1, 15, 7}, 3);
+
+        result = heap.GetMaxInRange(4, 8);
+        assertEquals(15, result);
+    }
+
+    @Test
     public void testGetMaxInRangeInvalidRange() {
         heap.MakeHeap(new int[]{10, 20, 30, 40, 50}, 2);
 
