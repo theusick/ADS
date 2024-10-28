@@ -235,4 +235,85 @@ class SimpleTree<T> {
         return edgeCutPairs;
     }
 
+    public boolean BalanceEvenBST() {
+        ArrayList<SimpleTreeNode<T>> inOrderBST = new ArrayList<>();
+        if (!GetInOrderBSTNodes(Root, inOrderBST) || (inOrderBST.size() % 2 != 0)) {
+            return false;
+        }
+
+        Root = BuildBalancedBST(inOrderBST, 0, inOrderBST.size() - 1, null);
+        return true;
+    }
+
+    private boolean GetInOrderBSTNodes(SimpleTreeNode<T> node,
+                                       ArrayList<SimpleTreeNode<T>> result) {
+        if ((node == null) || ((node.Children != null) && (node.Children.size() > 2))) {
+            return false;
+        }
+
+        if (node.Children == null) {
+            result.add(node);
+            return true;
+        }
+
+        if (!node.Children.isEmpty() && !GetInOrderBSTNodes(node.Children.getFirst(), result)) {
+            return false;
+        }
+
+        result.add(node);
+        return (node.Children.size() != 2) || GetInOrderBSTNodes(node.Children.getLast(), result);
+    }
+
+    private SimpleTreeNode<T> BuildBalancedBST(ArrayList<SimpleTreeNode<T>> nodes,
+                                               int startIndex,
+                                               int endIndex,
+                                               SimpleTreeNode<T> parent) {
+        if (startIndex > endIndex) {
+            return null;
+        }
+
+        int midIndex = (startIndex + endIndex) / 2;
+        SimpleTreeNode<T> node = nodes.get(midIndex);
+        node.Parent = parent;
+        node.Level = (parent != null) ? parent.Level + 1 : 0;
+
+        node.Children = new ArrayList<>();
+        SimpleTreeNode<T> leftChild = BuildBalancedBST(nodes, startIndex, midIndex - 1, node);
+        SimpleTreeNode<T> rightChild = BuildBalancedBST(nodes, midIndex + 1, endIndex, node);
+
+        if (leftChild != null) {
+            node.Children.add(leftChild);
+        }
+        if (rightChild != null) {
+            node.Children.add(rightChild);
+        }
+        return node;
+    }
+
+    public int CountEvenSubTrees() {
+        return CountEvenSubTrees(Root);
+    }
+
+    private int CountEvenSubTrees(SimpleTreeNode<T> node) {
+        if (node == null) {
+            return 0;
+        }
+
+        int currentNodesCount = CountAllNodes(node);
+
+        int evenSubtreesCount = 0;
+        if (currentNodesCount % 2 == 0) {
+            evenSubtreesCount++;
+        }
+
+        if (node.Children == null) {
+            return evenSubtreesCount;
+        }
+
+        for (SimpleTreeNode<T> child : node.Children) {
+            evenSubtreesCount += CountEvenSubTrees(child);
+        }
+        return evenSubtreesCount;
+    }
+
 }
