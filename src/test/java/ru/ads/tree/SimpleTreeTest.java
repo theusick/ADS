@@ -379,4 +379,158 @@ class SimpleTreeTest {
         assertEquals(15, result.getLast());
     }
 
+    @Test
+    void testBalanceEvenBSTSingleNodeTree() {
+        assertFalse(tree.BalanceEvenBST());
+        assertEquals(root, tree.Root);
+        assertNull(root.Children);
+    }
+
+    @Test
+    void testBalanceEvenBSTBalancedTwoElemTree() {
+        SimpleTreeNode<Integer> child1 = new SimpleTreeNode<>(5, root);
+        tree.AddChild(root, child1);
+
+        assertTrue(tree.BalanceEvenBST());
+        assertEquals(5, tree.Root.NodeValue);
+        assertEquals(1, tree.Root.Children.size());
+        assertEquals(10, tree.Root.Children.getFirst().NodeValue);
+    }
+
+    @Test
+    void testBalanceEvenBSTBalancedFourElemTree() {
+        SimpleTreeNode<Integer> child1 = new SimpleTreeNode<>(5, root);
+        SimpleTreeNode<Integer> child2 = new SimpleTreeNode<>(15, root);
+
+        SimpleTreeNode<Integer> grandChild = new SimpleTreeNode<>(3, child1);
+
+        tree.AddChild(root, child1);
+        tree.AddChild(root, child2);
+        tree.AddChild(child1, grandChild);
+
+        assertTrue(tree.BalanceEvenBST());
+        assertEquals(5, tree.Root.NodeValue);
+        assertEquals(2, tree.Root.Children.size());
+        assertEquals(3, tree.Root.Children.getFirst().NodeValue);
+        assertEquals(10, tree.Root.Children.getLast().NodeValue);
+        assertEquals(15, tree.Root.Children.getLast().Children.getFirst().NodeValue);
+    }
+
+    @Test
+    void testBalanceEvenBSTUnbalancedTree() {
+        SimpleTreeNode<Integer> child1 = new SimpleTreeNode<>(5, root);
+        SimpleTreeNode<Integer> child2 = new SimpleTreeNode<>(15, root);
+
+        SimpleTreeNode<Integer> grandChild1 = new SimpleTreeNode<>(3, child1);
+        SimpleTreeNode<Integer> grandChild2 = new SimpleTreeNode<>(2, grandChild1);
+        SimpleTreeNode<Integer> grandChild3 = new SimpleTreeNode<>(1, grandChild2);
+
+        tree.AddChild(root, child1);
+        tree.AddChild(root, child2);
+        tree.AddChild(child1, grandChild1);
+        tree.AddChild(grandChild1, grandChild2);
+        tree.AddChild(grandChild2, grandChild3);
+
+        assertTrue(tree.BalanceEvenBST());
+        assertEquals(2, tree.Root.Children.size());
+        assertEquals(3, tree.Root.NodeValue);
+        assertEquals(1, tree.Root.Children.getFirst().NodeValue);
+        assertEquals(10, tree.Root.Children.getLast().NodeValue);
+
+        assertEquals(2, tree.Root.Children.getFirst().Children.getLast().NodeValue);
+        assertEquals(5, tree.Root.Children.getLast().Children.getFirst().NodeValue);
+        assertEquals(15, tree.Root.Children.getLast().Children.getLast().NodeValue);
+
+    }
+
+    @Test
+    void testBalanceEvenBSTOddNodes() {
+        SimpleTreeNode<Integer> child1 = new SimpleTreeNode<>(5, root);
+        SimpleTreeNode<Integer> child2 = new SimpleTreeNode<>(15, root);
+        SimpleTreeNode<Integer> child3 = new SimpleTreeNode<>(25, root);
+
+        tree.AddChild(root, child1);
+        tree.AddChild(root, child2);
+        tree.AddChild(root, child3);
+
+        assertFalse(tree.BalanceEvenBST());
+        assertEquals(3, tree.Root.Children.size());
+    }
+
+    @Test
+    void testCountEvenSubTreesSingleRoot() {
+        assertEquals(0, tree.CountEvenSubTrees());
+    }
+
+    @Test
+    void testCountEvenSubTreesRootEvenSubtree() {
+        SimpleTreeNode<Integer> child = new SimpleTreeNode<>(5, root);
+        tree.AddChild(root, child);
+
+        assertEquals(1, tree.CountEvenSubTrees());
+    }
+
+    @Test
+    void testCountEvenSubTreesNoEvenSubtrees() {
+        SimpleTreeNode<Integer> child1 = new SimpleTreeNode<>(5, root);
+        SimpleTreeNode<Integer> child2 = new SimpleTreeNode<>(15, root);
+
+        tree.AddChild(root, child1);
+        tree.AddChild(root, child2);
+
+        assertEquals(0, tree.CountEvenSubTrees());
+    }
+
+    @Test
+    void testCountEvenSubTreesMultipleEvenSubtrees() {
+        SimpleTreeNode<Integer> child1 = new SimpleTreeNode<>(5, root);
+        SimpleTreeNode<Integer> child2 = new SimpleTreeNode<>(15, root);
+
+        SimpleTreeNode<Integer> grandChild1 = new SimpleTreeNode<>(3, child1);
+        SimpleTreeNode<Integer> grandChild2 = new SimpleTreeNode<>(20, child2);
+
+        tree.AddChild(root, child1);
+        tree.AddChild(root, child2);
+        tree.AddChild(child1, grandChild1);
+        tree.AddChild(child2, grandChild2);
+
+        assertEquals(2, tree.CountEvenSubTrees());
+    }
+
+    @Test
+    void testCountEvenSubTreesOneEvenSubtree() {
+        SimpleTreeNode<Integer> child = new SimpleTreeNode<>(5, root);
+        tree.AddChild(root, child);
+
+        SimpleTreeNode<Integer> grandChild = new SimpleTreeNode<>(15, child);
+        tree.AddChild(child, grandChild);
+
+        assertEquals(1, tree.CountEvenSubTrees());
+    }
+
+    @Test
+    void testCountEvenSubTreesLargeTreeDepth4() {
+        SimpleTreeNode<Integer> child1 = new SimpleTreeNode<>(5, root);
+        SimpleTreeNode<Integer> child2 = new SimpleTreeNode<>(15, root);
+        SimpleTreeNode<Integer> child3 = new SimpleTreeNode<>(20, root);
+
+        SimpleTreeNode<Integer> grandChild1 = new SimpleTreeNode<>(3, child1);
+        SimpleTreeNode<Integer> grandChild2 = new SimpleTreeNode<>(8, child2);
+
+        SimpleTreeNode<Integer> greatGrandChild1 = new SimpleTreeNode<>(6, grandChild1);
+        SimpleTreeNode<Integer> greatGrandChild2 = new SimpleTreeNode<>(2, grandChild2);
+
+        tree.AddChild(root, child1);
+        tree.AddChild(root, child2);
+        tree.AddChild(root, child3);
+
+        tree.AddChild(child1, grandChild1);
+        tree.AddChild(child2, grandChild2);
+
+        tree.AddChild(grandChild1, greatGrandChild1);
+        tree.AddChild(grandChild2, greatGrandChild2);
+
+        assertEquals(3, tree.CountEvenSubTrees());
+    }
+
 }
