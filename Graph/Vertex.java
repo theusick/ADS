@@ -97,7 +97,7 @@ class SimpleGraph {
     private void DepthFirstSearch(int vFrom,
                                   int vTo,
                                   Deque<Integer> stack) {
-        if (OneIsOutOfBounds(vFrom, vTo)) {
+        if (IndexOutOfBounds(vFrom)) {
             return;
         }
 
@@ -121,6 +121,21 @@ class SimpleGraph {
             return;
         }
         DepthFirstSearch(stack.pop(), vTo, stack);
+    }
+
+    public boolean IsGraphConnected() {
+        if (currentSize <= 1) {
+            return false;
+        }
+
+        DepthFirstSearch(0, -1);
+
+        for (int vertexIndex = 0; vertexIndex < currentSize; vertexIndex++) {
+            if (!vertex[vertexIndex].Hit) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }
