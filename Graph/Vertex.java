@@ -138,4 +138,63 @@ class SimpleGraph {
         return true;
     }
 
+    public ArrayList<Vertex> BreadthFirstSearch(int VFrom, int VTo)
+    {
+        Deque<Integer> queue = new ArrayDeque<>();
+        Map<Integer, Integer> visitedPathVertices = new HashMap<>();
+
+        ClearVisitedVertices();
+        BreadthFirstSearch(VFrom, VTo, visitedPathVertices, queue);
+        return BuildBFSPath(VTo, visitedPathVertices);
+    }
+
+    private void BreadthFirstSearch(int VFrom,
+                                    int VTo,
+                                    Map<Integer, Integer> parents,
+                                    Deque<Integer> queue) {
+        if (OneIsOutOfBounds(VFrom, VTo)) {
+            return;
+        }
+
+        queue.addLast(VFrom);
+        vertex[VFrom].Hit = true;
+        parents.put(VFrom, null);
+
+        while(!queue.isEmpty()) {
+            int currentIndex = queue.removeFirst();
+
+            if (currentIndex == VTo) {
+                return;
+            }
+            ProcessBFSNeighbors(currentIndex, queue, parents);
+        }
+    }
+
+    private void ProcessBFSNeighbors(int currentIndex,
+                                     Deque<Integer> queue,
+                                     Map<Integer, Integer> parents) {
+        for (int neighborIndex = 0; neighborIndex < currentSize; neighborIndex++) {
+            if (IsEdge(currentIndex, neighborIndex) && !vertex[neighborIndex].Hit) {
+                queue.addLast(neighborIndex);
+                vertex[neighborIndex].Hit = true;
+                parents.put(neighborIndex, currentIndex);
+            }
+        }
+    }
+
+    private ArrayList<Vertex> BuildBFSPath(int VTo, Map<Integer, Integer> parents) {
+        ArrayList<Vertex> resultPath = new ArrayList<>();
+
+        Integer vertexIndex = VTo;
+        while (vertexIndex != null) {
+            resultPath.addFirst(vertex[vertexIndex]);
+            vertexIndex = parents.get(vertexIndex);
+        }
+
+        if (!resultPath.isEmpty() && (resultPath.getFirst() == vertex[VTo])) {
+            resultPath.clear();
+        }
+        return resultPath;
+    }
+
 }
