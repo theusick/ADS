@@ -200,7 +200,7 @@ class SimpleTreeTest {
         tree.MoveNode(null, newParent);
 
         assertEquals(2, tree.Count());
-        assertNull(newParent.Children);
+        assertTrue(newParent.Children.isEmpty());
         assertTrue(root.Children.contains(newParent));
     }
 
@@ -383,7 +383,7 @@ class SimpleTreeTest {
     void testBalanceEvenBSTSingleNodeTree() {
         assertFalse(tree.BalanceEvenBST());
         assertEquals(root, tree.Root);
-        assertNull(root.Children);
+        assertTrue(root.Children.isEmpty());
     }
 
     @Test

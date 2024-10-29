@@ -11,7 +11,7 @@ public class SimpleTreeNode<T> {
     public SimpleTreeNode(T val, SimpleTreeNode<T> parent) {
         NodeValue = val;
         Parent = parent;
-        Children = null;
+        Children = new ArrayList<>();
         Level = 0;
     }
 
@@ -33,9 +33,6 @@ class SimpleTree<T> {
             return;
         }
 
-        if (ParentNode.Children == null) {
-            ParentNode.Children = new ArrayList<>();
-        }
         ParentNode.Children.add(NewChild);
         NewChild.Parent = ParentNode;
         NewChild.Level = ParentNode.Level + 1;
@@ -44,7 +41,7 @@ class SimpleTree<T> {
     }
 
     private void UpdateChildrenLevels(SimpleTreeNode<T> node) {
-        if ((node == null) || (node.Children == null)) {
+        if (node == null) {
             return;
         }
 
@@ -61,7 +58,7 @@ class SimpleTree<T> {
 
         DeleteChildrenNodes(NodeToDelete);
 
-        if ((NodeToDelete.Parent != null) && (NodeToDelete.Parent.Children != null)) {
+        if (NodeToDelete.Parent != null) {
             NodeToDelete.Parent.Children.remove(NodeToDelete);
             NodeToDelete.Parent = null;
         }
@@ -91,9 +88,6 @@ class SimpleTree<T> {
 
         nodes.add(currentNode);
 
-        if (currentNode.Children == null) {
-            return;
-        }
         for (SimpleTreeNode<T> child : currentNode.Children) {
             GetAllNodes(child, nodes);
         }
@@ -113,10 +107,6 @@ class SimpleTree<T> {
         if (currentNode.NodeValue.equals(val)) {
             nodes.add(currentNode);
         }
-
-        if (currentNode.Children == null) {
-            return;
-        }
         for (SimpleTreeNode<T> child : currentNode.Children) {
             FindNodesByValue(child, val, nodes);
         }
@@ -130,7 +120,7 @@ class SimpleTree<T> {
             return;
         }
 
-        if ((OriginalNode.Parent != null) && (OriginalNode.Parent.Children != null)) {
+        if (OriginalNode.Parent != null) {
             OriginalNode.Parent.Children.remove(OriginalNode);
         }
         AddChild(NewParent, OriginalNode);
@@ -142,9 +132,6 @@ class SimpleTree<T> {
         }
         if (node == potentialChild) {
             return true;
-        }
-        if (node.Children == null) {
-            return false;
         }
 
         for (SimpleTreeNode<T> child : node.Children) {
@@ -164,10 +151,6 @@ class SimpleTree<T> {
             return 0;
         }
 
-        if ((currentNode.Children == null) || currentNode.Children.isEmpty()) {
-            return 1;
-        }
-
         int nodesCounter = 1;
         for (SimpleTreeNode<T> child : currentNode.Children) {
             nodesCounter += CountAllNodes(child);
@@ -184,7 +167,7 @@ class SimpleTree<T> {
             return 0;
         }
 
-        if ((currentNode.Children == null) || currentNode.Children.isEmpty()) {
+        if (currentNode.Children.isEmpty()) {
             return 1;
         }
 
@@ -206,9 +189,6 @@ class SimpleTree<T> {
 
         currentNode.Level = currentLevel;
 
-        if (currentNode.Children == null) {
-            return;
-        }
         for (SimpleTreeNode<T> child : currentNode.Children) {
             AssignNodesLevels(child, currentLevel + 1);
         }
@@ -249,16 +229,16 @@ class SimpleTree<T> {
 
     private boolean GetInOrderBSTNodes(SimpleTreeNode<T> node,
                                        ArrayList<SimpleTreeNode<T>> result) {
-        if ((node == null) || ((node.Children != null) && (node.Children.size() > 2))) {
+        if ((node == null) || (node.Children.size() > 2)) {
             return false;
         }
 
-        if (node.Children == null) {
+        if (node.Children.isEmpty()) {
             result.add(node);
             return true;
         }
 
-        if (!node.Children.isEmpty() && !GetInOrderBSTNodes(node.Children.getFirst(), result)) {
+        if (!GetInOrderBSTNodes(node.Children.getFirst(), result)) {
             return false;
         }
 
@@ -306,10 +286,6 @@ class SimpleTree<T> {
         int evenSubtreesCount = 0;
         if (currentNodesCount % 2 == 0) {
             evenSubtreesCount++;
-        }
-
-        if (node.Children == null) {
-            return evenSubtreesCount;
         }
 
         for (SimpleTreeNode<T> child : node.Children) {
