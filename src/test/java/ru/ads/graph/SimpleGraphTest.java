@@ -67,6 +67,7 @@ class SimpleGraphTest {
         assertTrue(smallGraph.IsEdge(0, 1));
         assertFalse(smallGraph.IsEdge(1, 2));
 
+        smallGraph.AddVertex(3);
         smallGraph.AddEdge(1, 2);
         assertTrue(smallGraph.IsEdge(1, 2));
     }
@@ -198,6 +199,57 @@ class SimpleGraphTest {
 
         path = largeGraph.DepthFirstSearch(2, 8);
         assertTrue(path.isEmpty());
+    }
+
+    @Test
+    void testIsGraphConnectedEmptyGraph() {
+        SimpleGraph emptyGraph = new SimpleGraph(0);
+
+        assertFalse(emptyGraph.IsGraphConnected());
+    }
+
+    @Test
+    void testIsGraphConnectedSingleVertex() {
+        SimpleGraph singleVertexGraph = new SimpleGraph(1);
+        singleVertexGraph.AddVertex(1);
+
+        assertFalse(singleVertexGraph.IsGraphConnected());
+    }
+
+    @Test
+    void testIsGraphConnectedSmallGraph() {
+        assertFalse(smallGraph.IsGraphConnected());
+
+        smallGraph.AddEdge(0, 1);
+        smallGraph.AddEdge(1, 2);
+
+        assertTrue(smallGraph.IsGraphConnected());
+    }
+
+    @Test
+    void testIsGraphConnectedMediumGraph() {
+        mediumGraph.AddEdge(0, 1);
+        mediumGraph.AddEdge(1, 2);
+
+        assertFalse(mediumGraph.IsGraphConnected());
+
+        mediumGraph.AddEdge(2, 3);
+        mediumGraph.AddEdge(3, 4);
+
+        assertTrue(mediumGraph.IsGraphConnected());
+    }
+
+    @Test
+    void testIsGraphConnectedLargeGraph() {
+        for (int i = 0; i < largeGraph.currentSize - 1; i++) {
+            largeGraph.AddEdge(i, i + 1);
+        }
+
+        assertTrue(largeGraph.IsGraphConnected());
+
+        largeGraph.RemoveEdge(0, 1);
+
+        assertFalse(largeGraph.IsGraphConnected());
     }
 
 }
