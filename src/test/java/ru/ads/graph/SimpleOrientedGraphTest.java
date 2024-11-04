@@ -61,6 +61,7 @@ class SimpleOrientedGraphTest {
         assertTrue(smallGraph.IsEdge(0, 1));
         assertFalse(smallGraph.IsEdge(1, 0));
 
+        smallGraph.AddVertex(3);
         assertFalse(smallGraph.IsEdge(1, 2));
 
         smallGraph.AddEdge(1, 2);
@@ -141,6 +142,64 @@ class SimpleOrientedGraphTest {
 
         largeGraph.AddEdge(5, 0);
         assertTrue(largeGraph.IsCyclic());
+    }
+
+    @Test
+    void testFindMaxSimplePathNoEdges() {
+        assertEquals(0, smallGraph.FindMaxSimplePath());
+        assertEquals(0, mediumGraph.FindMaxSimplePath());
+        assertEquals(0, largeGraph.FindMaxSimplePath());
+    }
+
+    @Test
+    void testFindMaxSimplePathSmallGraph() {
+        smallGraph.AddEdge(0, 1);
+        assertEquals(1, smallGraph.FindMaxSimplePath());
+
+        smallGraph.AddVertex(3);
+
+        smallGraph.AddEdge(1, 2);
+        assertEquals(2, smallGraph.FindMaxSimplePath());
+    }
+
+    @Test
+    void testFindMaxSimplePathMediumCyclicGraph() {
+        mediumGraph.AddEdge(0, 1);
+        mediumGraph.AddEdge(1, 2);
+        mediumGraph.AddEdge(2, 3);
+        mediumGraph.AddEdge(3, 1);
+
+        assertEquals(3, mediumGraph.FindMaxSimplePath());
+
+        mediumGraph.AddVertex(5);
+
+        mediumGraph.AddEdge(3, 4);
+        assertEquals(4, mediumGraph.FindMaxSimplePath());
+    }
+
+    @Test
+    void testFindMaxSimplePathLargeGraph() {
+        largeGraph.AddEdge(0, 1);
+        largeGraph.AddEdge(1, 2);
+        largeGraph.AddEdge(2, 3);
+        largeGraph.AddEdge(3, 4);
+        largeGraph.AddEdge(4, 5);
+        largeGraph.AddEdge(5, 6);
+        largeGraph.AddEdge(6, 7);
+        largeGraph.AddEdge(7, 8);
+
+        assertEquals(8, largeGraph.FindMaxSimplePath());
+
+        largeGraph.AddEdge(3, 6);
+        assertEquals(8, largeGraph.FindMaxSimplePath());
+    }
+
+    @Test
+    void testFindMaxSimplePathDisconnectedGraph() {
+        mediumGraph.AddEdge(0, 1);
+        mediumGraph.AddEdge(2, 3);
+
+        assertEquals(1, mediumGraph.FindMaxSimplePath());
     }
 
 }

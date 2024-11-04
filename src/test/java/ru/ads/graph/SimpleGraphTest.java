@@ -202,6 +202,23 @@ class SimpleGraphTest {
     }
 
     @Test
+    void testDepthFirstSearchLargeTreeGraph() {
+        largeGraph.AddEdge(0, 1);
+        largeGraph.AddEdge(1, 2);
+        largeGraph.AddEdge(2, 3);
+        largeGraph.AddEdge(1, 4);
+        largeGraph.AddEdge(4, 5);
+        largeGraph.AddEdge(1, 6);
+        largeGraph.AddEdge(6, 7);
+        largeGraph.AddEdge(7, 8);
+
+        List<Vertex> path = largeGraph.DepthFirstSearch(0, 8);
+        assertEquals(5, path.size());
+        assertEquals(1, path.getFirst().Value);
+        assertEquals(9, path.getLast().Value);
+    }
+
+    @Test
     void testIsGraphConnectedEmptyGraph() {
         SimpleGraph emptyGraph = new SimpleGraph(0);
 
@@ -248,6 +265,24 @@ class SimpleGraphTest {
         assertTrue(largeGraph.IsGraphConnected());
 
         largeGraph.RemoveEdge(0, 1);
+
+        assertFalse(largeGraph.IsGraphConnected());
+    }
+
+    @Test
+    void testIsGraphConnectedLargeTreeGraph() {
+        largeGraph.AddEdge(0, 1);
+        largeGraph.AddEdge(1, 2);
+        largeGraph.AddEdge(2, 3);
+        largeGraph.AddEdge(1, 4);
+        largeGraph.AddEdge(4, 5);
+        largeGraph.AddEdge(1, 6);
+        largeGraph.AddEdge(6, 7);
+        largeGraph.AddEdge(7, 8);
+
+        assertTrue(largeGraph.IsGraphConnected());
+
+        largeGraph.RemoveEdge(1, 6);
 
         assertFalse(largeGraph.IsGraphConnected());
     }

@@ -42,7 +42,7 @@ public class SimpleOrientedGraph {
     }
 
     private boolean IndexOutOfBounds(int index) {
-        return (index < 0) || (index >= max_vertex);
+        return (index < 0) || (index >= currentSize);
     }
 
     private boolean OneIsOutOfBounds(int v1, int v2) {
@@ -65,15 +65,15 @@ public class SimpleOrientedGraph {
 
     public boolean IsCyclic() {
         boolean[] visited = new boolean[max_vertex];
-        boolean[] recursion = new boolean[max_vertex];
+        boolean[] recursionStack = new boolean[max_vertex];
 
         for (int i = 0; i < max_vertex; i++) {
             visited[i] = false;
-            recursion[i] = false;
+            recursionStack[i] = false;
         }
 
         for (int i = 0; i < max_vertex; i++) {
-            if (IsCyclic(i, visited, recursion)) {
+            if (IsCyclic(i, visited, recursionStack)) {
                 return true;
             }
         }
@@ -92,14 +92,43 @@ public class SimpleOrientedGraph {
         visited[v] = true;
         recursionStack[v] = true;
 
-        for (int i = 0; i < max_vertex; i++) {
-            if ((m_adjacency[v][i] == 1) && (IsCyclic(i, visited, recursionStack))) {
+        for (int neighborIndex = 0; neighborIndex < max_vertex; neighborIndex++) {
+            if (IsEdge(v, neighborIndex) && IsCyclic(neighborIndex, visited, recursionStack)) {
                 return true;
             }
         }
 
         recursionStack[v] = false;
         return false;
+    }
+
+    public int FindMaxSimplePath() {
+        boolean[] visited = new boolean[max_vertex];
+        int maxLength = 0;
+
+        for (int vertexIndex = 0; vertexIndex < currentSize; vertexIndex++) {
+            maxLength = Math.max(maxLength, DepthFirstSearch(vertexIndex, visited, 0));
+        }
+        return maxLength;
+    }
+
+    private int DepthFirstSearch(int v, boolean[] visited, int pathLength) {
+        if (IndexOutOfBounds(v)) {
+            return 0;
+        }
+
+        visited[v] = true;
+        int maxLength = pathLength;
+
+        for (int neighborIndex = 0; neighborIndex < currentSize; neighborIndex++) {
+            if (IsEdge(v, neighborIndex) && !visited[neighborIndex]) {
+                maxLength = Math.max(maxLength,
+                    DepthFirstSearch(neighborIndex, visited, pathLength + 1));
+            }
+        }
+
+        visited[v] = false;
+        return maxLength;
     }
 
 }
