@@ -97,7 +97,7 @@ class SimpleGraph {
     private void DepthFirstSearch(int vFrom,
                                   int vTo,
                                   Deque<Integer> stack) {
-        if (IndexOutOfBounds(vFrom)) {
+        if (OneIsOutOfBounds(vFrom, vTo)) {
             return;
         }
 
@@ -117,10 +117,9 @@ class SimpleGraph {
         }
         stack.pop();
 
-        if (stack.isEmpty()) {
-            return;
+        if (!stack.isEmpty()) {
+            DepthFirstSearch(stack.pop(), vTo, stack);
         }
-        DepthFirstSearch(stack.pop(), vTo, stack);
     }
 
     public boolean IsGraphConnected() {
@@ -128,8 +127,27 @@ class SimpleGraph {
             return false;
         }
 
-        DepthFirstSearch(0, -1);
+        ClearVisitedVertices();
+        DepthFirstSearch(0);
 
+        return IsAllVerticesVisited();
+    }
+
+    private void DepthFirstSearch(int vFrom) {
+        if (IndexOutOfBounds(vFrom)) {
+            return;
+        }
+
+        vertex[vFrom].Hit = true;
+
+        for (int neighborIndex = 0; neighborIndex < currentSize; neighborIndex++) {
+            if (IsEdge(vFrom, neighborIndex) && (!vertex[neighborIndex].Hit)) {
+                DepthFirstSearch(neighborIndex);
+            }
+        }
+    }
+
+    private boolean IsAllVerticesVisited() {
         for (int vertexIndex = 0; vertexIndex < currentSize; vertexIndex++) {
             if (!vertex[vertexIndex].Hit) {
                 return false;
