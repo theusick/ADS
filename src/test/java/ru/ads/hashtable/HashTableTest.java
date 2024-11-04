@@ -24,7 +24,7 @@ class HashTableTest {
 
     @Test
     void testPut() {
-        HashTable table = new HashTable(3, 1); // Очень маленькая таблица
+        HashTable table = new HashTable(3, 1);
         assertTrue(table.put("apple") >= 0);
         assertTrue(table.put("banana") >= 0);
         assertTrue(table.put("cherry") >= 0);

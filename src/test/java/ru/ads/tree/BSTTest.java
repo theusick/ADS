@@ -788,7 +788,7 @@ public class BSTTest {
 
         ArrayList<ArrayList<BSTNode>> result = tree.FindMaxSumLeafPaths();
 
-        // Максимальная сумма через правую ветвь (10 -> 15 -> 20)
+        // Max sum through right branch (10 -> 15 -> 20)
         assertEquals(1, result.size());
         assertEquals(3, result.getFirst().size());
 
