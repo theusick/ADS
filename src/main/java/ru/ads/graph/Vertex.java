@@ -76,8 +76,7 @@ class SimpleGraph {
         m_adjacency[v2][v1] = 0;
     }
 
-    public ArrayList<Vertex> DepthFirstSearch(int vFrom, int vTo)
-    {
+    public ArrayList<Vertex> DepthFirstSearch(int vFrom, int vTo) {
         Deque<Integer> stack = new ArrayDeque<>();
 
         ClearVisitedVertices();
@@ -125,7 +124,7 @@ class SimpleGraph {
     }
 
     public boolean IsGraphConnected() {
-        if (currentSize <= 1) {
+        if (currentSize == 0) {
             return false;
         }
 
@@ -158,8 +157,7 @@ class SimpleGraph {
         return true;
     }
 
-    public ArrayList<Vertex> BreadthFirstSearch(int VFrom, int VTo)
-    {
+    public ArrayList<Vertex> BreadthFirstSearch(int VFrom, int VTo) {
         Deque<Integer> queue = new ArrayDeque<>();
         Map<Integer, Integer> visitedPathVertices = new HashMap<>();
 
@@ -180,7 +178,7 @@ class SimpleGraph {
         vertex[VFrom].Hit = true;
         parents.put(VFrom, null);
 
-        while(!queue.isEmpty()) {
+        while (!queue.isEmpty()) {
             int currentIndex = queue.removeFirst();
 
             if (currentIndex == VTo) {

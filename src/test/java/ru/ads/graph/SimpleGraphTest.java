@@ -230,7 +230,8 @@ class SimpleGraphTest {
         SimpleGraph singleVertexGraph = new SimpleGraph(1);
         singleVertexGraph.AddVertex(1);
 
-        assertFalse(singleVertexGraph.IsGraphConnected());
+        // One-vertex graph is connected as all vertices are reachable
+        assertTrue(singleVertexGraph.IsGraphConnected());
     }
 
     @Test
@@ -374,5 +375,55 @@ class SimpleGraphTest {
         assertTrue(path.isEmpty());
     }
 
+    @Test
+    void testFindGraphTreeDiameterEmptyGraph() {
+        SimpleGraph emptyGraph = new SimpleGraph(0);
+        assertEquals(0, emptyGraph.FindGraphTreeDiameter());
+    }
+
+    @Test
+    void testFindGraphTreeDiameterSingleVertex() {
+        SimpleGraph singleVertexGraph = new SimpleGraph(1);
+        singleVertexGraph.AddVertex(1);
+        assertEquals(1, singleVertexGraph.FindGraphTreeDiameter());
+    }
+
+    @Test
+    void testFindGraphTreeDiameterSmallGraph() {
+        smallGraph.AddEdge(0, 1);
+        assertEquals(2, smallGraph.FindGraphTreeDiameter());
+    }
+
+    @Test
+    void testFindGraphTreeDiameterLinearTree() {
+        mediumGraph.AddEdge(0, 1);
+        mediumGraph.AddEdge(1, 2);
+        mediumGraph.AddEdge(2, 3);
+        mediumGraph.AddEdge(3, 4);
+        assertEquals(4, mediumGraph.FindGraphTreeDiameter());
+    }
+
+    @Test
+    void testFindGraphTreeDiameterBalancedTree() {
+        largeGraph.AddEdge(0, 1);
+        largeGraph.AddEdge(0, 2);
+        largeGraph.AddEdge(1, 3);
+        largeGraph.AddEdge(1, 4);
+        largeGraph.AddEdge(2, 5);
+        largeGraph.AddEdge(2, 6);
+        assertEquals(5, largeGraph.FindGraphTreeDiameter());
+    }
+
+    @Test
+    void testFindGraphTreeDiameterUnbalancedTree() {
+        largeGraph.AddEdge(0, 1);
+        largeGraph.AddEdge(1, 2);
+        largeGraph.AddEdge(2, 3);
+        largeGraph.AddEdge(3, 4);
+        largeGraph.AddEdge(1, 5);
+        largeGraph.AddEdge(5, 6);
+        largeGraph.AddEdge(6, 7);
+        assertEquals(7, largeGraph.FindGraphTreeDiameter());
+    }
 
 }
