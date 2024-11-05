@@ -426,4 +426,94 @@ class SimpleGraphTest {
         assertEquals(7, largeGraph.FindGraphTreeDiameter());
     }
 
+    @Test
+    void testWeakVerticesTriangle() {
+        smallGraph.AddVertex(3);
+
+        smallGraph.AddEdge(0, 1);
+        smallGraph.AddEdge(1, 2);
+        smallGraph.AddEdge(2, 0);
+
+        List<Vertex> weakVertices = smallGraph.WeakVertices();
+        assertTrue(weakVertices.isEmpty());
+    }
+
+    @Test
+    void testWeakVerticesSingleWeakVertex() {
+        mediumGraph.AddVertex(5);
+
+        mediumGraph.AddEdge(0, 1);
+        mediumGraph.AddEdge(1, 2);
+        mediumGraph.AddEdge(2, 0);
+        mediumGraph.AddEdge(3, 4);
+
+        List<Vertex> weakVertices = mediumGraph.WeakVertices();
+        assertEquals(2, weakVertices.size());
+        assertEquals(4, weakVertices.getFirst().Value);
+        assertEquals(5, weakVertices.getLast().Value);
+    }
+
+    @Test
+    void testWeakVerticesIsolatedVertices() {
+        largeGraph.AddEdge(0, 1);
+        largeGraph.AddEdge(1, 2);
+        largeGraph.AddEdge(2, 0);
+        largeGraph.AddEdge(3, 4);
+        largeGraph.AddEdge(5, 6);
+
+        List<Vertex> weakVertices = largeGraph.WeakVertices();
+        assertEquals(6, weakVertices.size());
+        assertTrue(weakVertices.stream().anyMatch(v -> v.Value == 4));
+        assertTrue(weakVertices.stream().anyMatch(v -> v.Value == 5));
+        assertTrue(weakVertices.stream().anyMatch(v -> v.Value == 6));
+        assertTrue(weakVertices.stream().anyMatch(v -> v.Value == 7));
+        assertTrue(weakVertices.stream().anyMatch(v -> v.Value == 8));
+        assertTrue(weakVertices.stream().anyMatch(v -> v.Value == 9));
+    }
+
+    @Test
+    void testWeakVerticesNoEdges() {
+        List<Vertex> weakVertices = mediumGraph.WeakVertices();
+        assertEquals(4, weakVertices.size());
+        assertTrue(weakVertices.stream().anyMatch(v -> v.Value == 1));
+        assertTrue(weakVertices.stream().anyMatch(v -> v.Value == 2));
+        assertTrue(weakVertices.stream().anyMatch(v -> v.Value == 3));
+        assertTrue(weakVertices.stream().anyMatch(v -> v.Value == 4));
+    }
+
+    @Test
+    void testWeakVerticesFullyConnected() {
+        mediumGraph.AddEdge(0, 1);
+        mediumGraph.AddEdge(0, 2);
+        mediumGraph.AddEdge(0, 3);
+        mediumGraph.AddEdge(1, 2);
+        mediumGraph.AddEdge(1, 3);
+        mediumGraph.AddEdge(2, 3);
+
+        List<Vertex> weakVertices = mediumGraph.WeakVertices();
+        assertTrue(weakVertices.isEmpty());
+    }
+
+    @Test
+    void testWeakVerticesLargeGraph() {
+        largeGraph.AddEdge(0, 1);
+        largeGraph.AddEdge(0, 2);
+        largeGraph.AddEdge(0, 3);
+        largeGraph.AddEdge(1, 2);
+        largeGraph.AddEdge(1, 4);
+        largeGraph.AddEdge(2, 3);
+        largeGraph.AddEdge(2, 5);
+        largeGraph.AddEdge(4, 5);
+        largeGraph.AddEdge(5, 6);
+        largeGraph.AddEdge(6, 7);
+        largeGraph.AddEdge(5, 7);
+        largeGraph.AddEdge(7, 8);
+
+
+        List<Vertex> weakVertices = largeGraph.WeakVertices();
+        assertEquals(2, weakVertices.size());
+        assertEquals(5, weakVertices.getFirst().Value);
+        assertEquals(9, weakVertices.getLast().Value);
+    }
+
 }
