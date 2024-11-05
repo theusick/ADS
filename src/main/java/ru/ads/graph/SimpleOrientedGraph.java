@@ -64,16 +64,16 @@ public class SimpleOrientedGraph {
     }
 
     public boolean IsCyclic() {
-        boolean[] visited = new boolean[max_vertex];
-        boolean[] recursionStack = new boolean[max_vertex];
+        boolean[] visited = new boolean[currentSize];
+        boolean[] recursionStack = new boolean[currentSize];
 
-        for (int i = 0; i < max_vertex; i++) {
+        for (int i = 0; i < currentSize; i++) {
             visited[i] = false;
             recursionStack[i] = false;
         }
 
-        for (int i = 0; i < max_vertex; i++) {
-            if (IsCyclic(i, visited, recursionStack)) {
+        for (int vertexIndex = 0; vertexIndex < currentSize; vertexIndex++) {
+            if (IsCyclic(vertexIndex, visited, recursionStack)) {
                 return true;
             }
         }
@@ -103,10 +103,11 @@ public class SimpleOrientedGraph {
     }
 
     public int FindMaxSimplePath() {
-        boolean[] visited = new boolean[max_vertex];
+        boolean[] visited = new boolean[currentSize];
         int maxLength = 0;
 
         for (int vertexIndex = 0; vertexIndex < currentSize; vertexIndex++) {
+            Arrays.fill(visited, false);
             maxLength = Math.max(maxLength, DepthFirstSearch(vertexIndex, visited, 0));
         }
         return maxLength;
@@ -123,7 +124,7 @@ public class SimpleOrientedGraph {
         for (int neighborIndex = 0; neighborIndex < currentSize; neighborIndex++) {
             if (IsEdge(v, neighborIndex) && !visited[neighborIndex]) {
                 maxLength = Math.max(maxLength,
-                    DepthFirstSearch(neighborIndex, visited, pathLength + 1));
+                        DepthFirstSearch(neighborIndex, visited, pathLength + 1));
             }
         }
 
