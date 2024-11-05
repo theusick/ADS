@@ -11,6 +11,17 @@ class Vertex {
 
 }
 
+class TreeDiameterFind {
+    public int mostDistantVertex;
+    public int maxDistance;
+
+    TreeDiameterFind(int mostDistantVertex) {
+        this.mostDistantVertex = mostDistantVertex;
+        maxDistance = 0;
+    }
+
+}
+
 class SimpleGraph {
     Vertex[] vertex;
     int[][] m_adjacency;
@@ -211,6 +222,104 @@ class SimpleGraph {
             resultPath.clear();
         }
         return resultPath;
+    }
+
+    public int FindGraphTreeDiameter() {
+        TreeDiameterFind result = BreadthFirstSearch(0);
+        return BreadthFirstSearch(result.mostDistantVertex).maxDistance;
+    }
+
+    private TreeDiameterFind BreadthFirstSearch(int VFrom) {
+        if (IndexOutOfBounds(VFrom)) {
+            return new TreeDiameterFind(-1);
+        }
+
+        Deque<Integer> queue = new ArrayDeque<>();
+        ClearVisitedVertices();
+
+        queue.addLast(VFrom);
+        vertex[VFrom].Hit = true;
+
+        TreeDiameterFind result = new TreeDiameterFind(VFrom);
+
+        while (!queue.isEmpty()) {
+            int treeLevelSize = queue.size();
+            result.maxDistance++;
+
+            int mostDistantVertexOnLevel = ProcessBFSTreeLevel(treeLevelSize, queue);
+            result.mostDistantVertex = mostDistantVertexOnLevel < 0 ?
+                    result.mostDistantVertex : mostDistantVertexOnLevel;
+        }
+        return result;
+    }
+
+    private int ProcessBFSTreeLevel(int levelSize, Deque<Integer> queue) {
+        int mostDistantVertex = -1;
+
+        for (int currentSize = 0; currentSize < levelSize; currentSize++) {
+            int currentIndex = queue.removeFirst();
+            mostDistantVertex = currentIndex;
+            ProcessBFSNeighbors(currentIndex, queue);
+        }
+        return mostDistantVertex;
+    }
+
+    private void ProcessBFSNeighbors(int currentIndex, Deque<Integer> queue) {
+        for (int neighborIndex = 0; neighborIndex < currentSize; neighborIndex++) {
+            if (IsEdge(currentIndex, neighborIndex) && !vertex[neighborIndex].Hit) {
+                queue.addLast(neighborIndex);
+                vertex[neighborIndex].Hit = true;
+            }
+        }
+    }
+
+    public ArrayList<Vertex> WeakVertices() {
+        ArrayList<Vertex> weakVertices = new ArrayList<>();
+
+        for (int vertexIndex = 0; vertexIndex < currentSize; vertexIndex++) {
+            if (IsNotInTriangle(vertexIndex)) {
+                weakVertices.add(vertex[vertexIndex]);
+            }
+        }
+        return weakVertices;
+    }
+
+    private ArrayList<Integer> GetNeighborsList(int vertexIndex) {
+        if (IndexOutOfBounds(vertexIndex)) {
+            return new ArrayList<>();
+        }
+
+        ArrayList<Integer> neighbors = new ArrayList<>();
+
+        for (int neighbourIndex = 0; neighbourIndex < currentSize; neighbourIndex++) {
+            if ((vertexIndex != neighbourIndex) && IsEdge(vertexIndex, neighbourIndex)) {
+                neighbors.add(neighbourIndex);
+            }
+        }
+        return neighbors;
+    }
+
+    private boolean IsNotInTriangle(int vertexIndex) {
+        if (IndexOutOfBounds(vertexIndex)) {
+            return false;
+        }
+
+        ArrayList<Integer> vertexNeighbours = GetNeighborsList(vertexIndex);
+        for (int neighbourIndex : vertexNeighbours) {
+            if (HasTriangleEdgeWith(neighbourIndex, vertexNeighbours)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean HasTriangleEdgeWith(int vertexIndex, ArrayList<Integer> vertexNeighbours) {
+        for (int neighborIndex : vertexNeighbours) {
+            if ((vertexIndex != neighborIndex) && IsEdge(vertexIndex, neighborIndex)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
