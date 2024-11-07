@@ -250,7 +250,7 @@ class SimpleGraph {
 
             int mostDistantVertexOnLevel = ProcessBFSTreeLevel(treeLevelSize, queue);
             result.mostDistantVertex = mostDistantVertexOnLevel < 0 ?
-                    result.mostDistantVertex : mostDistantVertexOnLevel;
+                result.mostDistantVertex : mostDistantVertexOnLevel;
         }
         return result;
     }
@@ -275,6 +275,100 @@ class SimpleGraph {
         }
     }
 
+    public ArrayList<ArrayList<Integer>> FindAllCyclePaths() {
+        ArrayList<ArrayList<Integer>> allCyclePaths = new ArrayList<>();
+
+        for (int vertexIndex = 0; vertexIndex < currentSize; vertexIndex++) {
+            ClearVisitedVertices();
+            ProcessCyclesForVertex(vertexIndex, allCyclePaths);
+        }
+        return allCyclePaths;
+    }
+
+    private void ProcessCyclesForVertex(int vertexIndex,
+                                        ArrayList<ArrayList<Integer>> allCyclePaths) {
+        ArrayList<ArrayList<Integer>> currentVertexCycles = FindAllCyclesBFSFromVertex(vertexIndex);
+        AddUniqueCycles(currentVertexCycles, allCyclePaths);
+    }
+
+    private void AddUniqueCycles(ArrayList<ArrayList<Integer>> currentVertexCycles,
+                                 ArrayList<ArrayList<Integer>> allCyclePaths) {
+        for (ArrayList<Integer> cycle : currentVertexCycles) {
+            if (!IsCycleDuplicate(allCyclePaths, cycle)
+                && cycle.getFirst().equals(cycle.getLast())) {
+                allCyclePaths.add(cycle);
+            }
+        }
+    }
+
+    private ArrayList<ArrayList<Integer>> FindAllCyclesBFSFromVertex(int vFrom) {
+        ArrayList<ArrayList<Integer>> cyclePaths = new ArrayList<>();
+
+        if (IndexOutOfBounds(vFrom)) {
+            return cyclePaths;
+        }
+
+        Deque<Integer> queue = new ArrayDeque<>();
+        Map<Integer, Integer> parents = new HashMap<>();
+
+        queue.addLast(vFrom);
+        vertex[vFrom].Hit = true;
+        parents.put(vFrom, null);
+
+        while (!queue.isEmpty()) {
+            int currentVertex = queue.removeFirst();
+            ProcessNeighborsForCycles(currentVertex, cyclePaths, parents, queue);
+        }
+        return cyclePaths;
+    }
+
+    private void ProcessNeighborsForCycles(int currentIndex,
+                                           ArrayList<ArrayList<Integer>> cyclePaths,
+                                           Map<Integer, Integer> parents, Deque<Integer> queue) {
+        for (int neighborIndex : GetNeighborsList(currentIndex)) {
+            if (!vertex[neighborIndex].Hit) {
+                queue.addLast(neighborIndex);
+                vertex[neighborIndex].Hit = true;
+                parents.put(neighborIndex, currentIndex);
+            } else if (neighborIndex != parents.get(currentIndex)) {
+                cyclePaths.add(BuildCyclePath(neighborIndex, currentIndex, parents));
+            }
+        }
+    }
+
+    private ArrayList<Integer> BuildCyclePath(int startIndex,
+                                              int endIndex,
+                                              Map<Integer, Integer> parents) {
+        ArrayList<Integer> path = new ArrayList<>();
+        Set<Integer> pathSet = new HashSet<>();
+
+        for (Integer currentIndex = startIndex; currentIndex != null;
+             currentIndex = parents.get(currentIndex)) {
+            path.addFirst(currentIndex);
+            pathSet.add(currentIndex);
+        }
+
+        Integer currentIndex = endIndex;
+        while (!pathSet.contains(currentIndex)) {
+            path.add(currentIndex);
+            currentIndex = parents.get(currentIndex);
+        }
+        path.add(currentIndex);
+
+        return path;
+    }
+
+    private boolean IsCycleDuplicate(ArrayList<ArrayList<Integer>> allCyclePaths,
+                                     ArrayList<Integer> newCycle) {
+        Set<Integer> newCycleSet = new HashSet<>(newCycle);
+        for (ArrayList<Integer> cycle : allCyclePaths) {
+            if ((cycle.size() == newCycle.size()) && newCycleSet.containsAll(cycle)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public ArrayList<Vertex> WeakVertices() {
         ArrayList<Vertex> weakVertices = new ArrayList<>();
 
@@ -293,9 +387,9 @@ class SimpleGraph {
 
         ArrayList<Integer> neighbors = new ArrayList<>();
 
-        for (int neighbourIndex = 0; neighbourIndex < currentSize; neighbourIndex++) {
-            if ((vertexIndex != neighbourIndex) && IsEdge(vertexIndex, neighbourIndex)) {
-                neighbors.add(neighbourIndex);
+        for (int neighborIndex = 0; neighborIndex < currentSize; neighborIndex++) {
+            if ((vertexIndex != neighborIndex) && IsEdge(vertexIndex, neighborIndex)) {
+                neighbors.add(neighborIndex);
             }
         }
         return neighbors;
@@ -307,8 +401,8 @@ class SimpleGraph {
         }
 
         ArrayList<Integer> vertexNeighbours = GetNeighborsList(vertexIndex);
-        for (int neighbourIndex : vertexNeighbours) {
-            if (HasTriangleEdgeWith(neighbourIndex, vertexNeighbours)) {
+        for (int neighborIndex : vertexNeighbours) {
+            if (HasTriangleEdgeWith(neighborIndex, vertexNeighbours)) {
                 return false;
             }
         }
@@ -322,6 +416,80 @@ class SimpleGraph {
             }
         }
         return false;
+    }
+
+    public int CountTriangles() {
+        if (currentSize <= 2) {
+            return 0;
+        }
+
+        int trianglesCount = 0;
+        for (int vertexIndex = 0; vertexIndex < currentSize; vertexIndex++) {
+            trianglesCount += CountVertexTriangles(vertexIndex);
+        }
+        return trianglesCount / 3;
+    }
+
+    private int CountVertexTriangles(int vertexIndex) {
+        if (IndexOutOfBounds(vertexIndex)) {
+            return 0;
+        }
+
+        ArrayList<Integer> neighbors = GetNeighborsList(vertexIndex);
+
+        int trianglesCount = 0;
+        for (int neighborIndex = 0; neighborIndex < neighbors.size(); neighborIndex++) {
+            for (int nextNeighborIndex = neighborIndex + 1; nextNeighborIndex < neighbors.size();
+                 nextNeighborIndex++) {
+
+                if (IsEdge(neighbors.get(neighborIndex), neighbors.get(nextNeighborIndex))) {
+                    trianglesCount++;
+                }
+            }
+        }
+        return trianglesCount;
+    }
+
+    public ArrayList<Vertex> FindWeakVerticesOptimized() {
+        int[][] squaredMatrix = SquareAdjacencyMatrix();
+        return CollectWeakVertices(squaredMatrix);
+    }
+
+    private int[][] SquareAdjacencyMatrix() {
+        int[][] squaredMatrix = new int[currentSize][currentSize];
+        for (int i = 0; i < currentSize; i++) {
+            for (int j = 0; j < currentSize; j++) {
+                squaredMatrix[i][j] = CalculateMatrixSquareValue(i, j);
+            }
+        }
+        return squaredMatrix;
+    }
+
+    private int CalculateMatrixSquareValue(int row, int col) {
+        int value = 0;
+        for (int k = 0; k < currentSize; k++) {
+            value += m_adjacency[row][k] * m_adjacency[k][col];
+        }
+        return value;
+    }
+
+    private ArrayList<Vertex> CollectWeakVertices(int[][] squaredMatrix) {
+        ArrayList<Vertex> weakVertices = new ArrayList<>();
+        for (int i = 0; i < currentSize; i++) {
+            if (IsWeakVertex(squaredMatrix, i)) {
+                weakVertices.add(vertex[i]);
+            }
+        }
+        return weakVertices;
+    }
+
+    private boolean IsWeakVertex(int[][] squaredMatrix, int vertexIndex) {
+        for (int j = 0; j < currentSize; j++) {
+            if ((m_adjacency[vertexIndex][j] == 1) && (squaredMatrix[vertexIndex][j] > 0)) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

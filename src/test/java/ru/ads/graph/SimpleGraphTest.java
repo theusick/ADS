@@ -3,6 +3,7 @@ package ru.ads.graph;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -511,6 +512,273 @@ class SimpleGraphTest {
 
 
         List<Vertex> weakVertices = largeGraph.WeakVertices();
+        assertEquals(2, weakVertices.size());
+        assertEquals(5, weakVertices.getFirst().Value);
+        assertEquals(9, weakVertices.getLast().Value);
+    }
+
+    @Test
+    void testFindAllCyclePathsIsolatedVertices() {
+        ArrayList<ArrayList<Integer>> cycles = largeGraph.FindAllCyclePaths();
+        assertTrue(cycles.isEmpty());
+    }
+
+    @Test
+    void testFindAllCyclePathsNoCycles() {
+        mediumGraph.AddEdge(0, 1);
+        mediumGraph.AddEdge(1, 2);
+        mediumGraph.AddEdge(2, 3);
+        mediumGraph.AddEdge(3, 4);
+
+        ArrayList<ArrayList<Integer>> cycles = mediumGraph.FindAllCyclePaths();
+
+        assertTrue(cycles.isEmpty());
+    }
+
+    @Test
+    void testFindAllCyclePathsSingleCycle() {
+        smallGraph.AddVertex(3);
+        smallGraph.AddEdge(0, 1);
+        smallGraph.AddEdge(1, 2);
+        smallGraph.AddEdge(2, 0);
+
+        ArrayList<ArrayList<Integer>> cycles = smallGraph.FindAllCyclePaths();
+
+        assertEquals(1, cycles.size());
+        assertTrue(cycles.get(0).containsAll(List.of(0, 1, 2)));
+    }
+
+    @Test
+    void testFindAllCyclePathsMultipleCycles() {
+        mediumGraph.AddVertex(5);
+
+        mediumGraph.AddEdge(0, 1);
+        mediumGraph.AddEdge(1, 2);
+        mediumGraph.AddEdge(2, 0);
+        mediumGraph.AddEdge(1, 3);
+        mediumGraph.AddEdge(3, 4);
+        mediumGraph.AddEdge(4, 1);
+
+        ArrayList<ArrayList<Integer>> cycles = mediumGraph.FindAllCyclePaths();
+
+        assertEquals(2, cycles.size());
+        assertTrue(cycles.stream().anyMatch(cycle -> cycle.containsAll(List.of(0, 1, 2))));
+        assertTrue(cycles.stream().anyMatch(cycle -> cycle.containsAll(List.of(1, 3, 4))));
+    }
+
+    @Test
+    void testFindAllCyclePathsFullyConnectedGraph() {
+        mediumGraph.AddVertex(5);
+
+        mediumGraph.AddEdge(0, 1);
+        mediumGraph.AddEdge(0, 2);
+        mediumGraph.AddEdge(0, 3);
+        mediumGraph.AddEdge(1, 2);
+        mediumGraph.AddEdge(1, 3);
+        mediumGraph.AddEdge(2, 3);
+        mediumGraph.AddEdge(3, 4);
+
+        ArrayList<ArrayList<Integer>> cycles = mediumGraph.FindAllCyclePaths();
+
+        assertEquals(4, cycles.size());
+        assertTrue(cycles.stream().anyMatch(cycle -> cycle.containsAll(List.of(0, 1, 2))));
+        assertTrue(cycles.stream().anyMatch(cycle -> cycle.containsAll(List.of(0, 3, 2))));
+        assertTrue(cycles.stream().anyMatch(cycle -> cycle.containsAll(List.of(0, 1, 3))));
+        assertTrue(cycles.stream().anyMatch(cycle -> cycle.containsAll(List.of(1, 2, 3))));
+    }
+
+    @Test
+    void testFindAllCyclePathsLargeGraphWithTreeStructure() {
+        largeGraph.AddEdge(0, 1);
+        largeGraph.AddEdge(0, 2);
+        largeGraph.AddEdge(1, 3);
+        largeGraph.AddEdge(1, 4);
+        largeGraph.AddEdge(2, 5);
+        largeGraph.AddEdge(2, 6);
+
+        ArrayList<ArrayList<Integer>> cycles = largeGraph.FindAllCyclePaths();
+
+        assertTrue(cycles.isEmpty());
+    }
+
+    @Test
+    void testFindAllCyclePathsComplexGraph() {
+        largeGraph.AddEdge(0, 1);
+        largeGraph.AddEdge(0, 2);
+        largeGraph.AddEdge(0, 3);
+        largeGraph.AddEdge(1, 2);
+        largeGraph.AddEdge(1, 4);
+        largeGraph.AddEdge(2, 3);
+        largeGraph.AddEdge(2, 5);
+        largeGraph.AddEdge(4, 5);
+        largeGraph.AddEdge(5, 6);
+        largeGraph.AddEdge(6, 7);
+        largeGraph.AddEdge(5, 7);
+        largeGraph.AddEdge(7, 8);
+
+        ArrayList<ArrayList<Integer>> cycles = largeGraph.FindAllCyclePaths();
+
+        assertEquals(7, cycles.size());
+        assertTrue(cycles.stream().anyMatch(cycle -> cycle.containsAll(List.of(0, 1, 2))));
+        assertTrue(cycles.stream().anyMatch(cycle -> cycle.containsAll(List.of(0, 2, 3))));
+        assertTrue(cycles.stream().anyMatch(cycle -> cycle.containsAll(List.of(0, 2, 5, 4, 1))));
+        assertTrue(cycles.stream().anyMatch(cycle -> cycle.containsAll(List.of(1, 2, 5, 4))));
+        assertTrue(cycles.stream().anyMatch(cycle -> cycle.containsAll(List.of(0, 1, 2, 3))));
+        assertTrue(cycles.stream().anyMatch(cycle -> cycle.containsAll(List.of(3, 0, 1, 4, 5, 2))));
+        assertTrue(cycles.stream().anyMatch(cycle -> cycle.containsAll(List.of(5, 6, 7))));
+    }
+
+    @Test
+    void testCountTrianglesEmptyGraph() {
+        SimpleGraph emptyGraph = new SimpleGraph(0);
+        assertEquals(0, emptyGraph.CountTriangles());
+    }
+
+    @Test
+    void testCountTrianglesSingleVertex() {
+        SimpleGraph singleVertexGraph = new SimpleGraph(1);
+        singleVertexGraph.AddVertex(1);
+        assertEquals(0, singleVertexGraph.CountTriangles());
+    }
+
+    @Test
+    void testCountTrianglesNoEdges() {
+        assertEquals(0, mediumGraph.CountTriangles());
+    }
+
+    @Test
+    void testCountTrianglesSingleTriangle() {
+        smallGraph.AddVertex(3);
+
+        smallGraph.AddEdge(0, 1);
+        smallGraph.AddEdge(1, 2);
+        smallGraph.AddEdge(2, 0);
+
+        assertEquals(1, smallGraph.CountTriangles());
+    }
+
+    @Test
+    void testCountTrianglesMultipleTriangles() {
+        mediumGraph.AddEdge(0, 1);
+        mediumGraph.AddEdge(1, 2);
+        mediumGraph.AddEdge(2, 0);
+        mediumGraph.AddEdge(1, 3);
+        mediumGraph.AddEdge(2, 3);
+
+        assertEquals(2, mediumGraph.CountTriangles());
+    }
+
+    @Test
+    void testCountTrianglesFullyConnected() {
+        mediumGraph.AddEdge(0, 1);
+        mediumGraph.AddEdge(0, 2);
+        mediumGraph.AddEdge(0, 3);
+        mediumGraph.AddEdge(1, 2);
+        mediumGraph.AddEdge(1, 3);
+        mediumGraph.AddEdge(2, 3);
+
+        assertEquals(4, mediumGraph.CountTriangles());
+    }
+
+    @Test
+    void testCountTrianglesLargeGraph() {
+        largeGraph.AddEdge(0, 1);
+        largeGraph.AddEdge(0, 2);
+        largeGraph.AddEdge(0, 3);
+        largeGraph.AddEdge(1, 2);
+        largeGraph.AddEdge(1, 4);
+        largeGraph.AddEdge(2, 3);
+        largeGraph.AddEdge(2, 5);
+        largeGraph.AddEdge(4, 5);
+        largeGraph.AddEdge(5, 6);
+        largeGraph.AddEdge(6, 7);
+        largeGraph.AddEdge(5, 7);
+        largeGraph.AddEdge(7, 8);
+
+        assertEquals(3, largeGraph.CountTriangles());
+    }
+
+    @Test
+    void testFindWeakVerticesOptimizedEmptyGraph() {
+        SimpleGraph emptyGraph = new SimpleGraph(0);
+        assertTrue(emptyGraph.FindWeakVerticesOptimized().isEmpty());
+    }
+
+    @Test
+    void testFindWeakVerticesOptimizedSingleVertex() {
+        SimpleGraph singleVertexGraph = new SimpleGraph(1);
+        singleVertexGraph.AddVertex(1);
+        assertEquals(1, singleVertexGraph.FindWeakVerticesOptimized().size());
+    }
+
+    @Test
+    void testFindWeakVerticesOptimizedNoEdges() {
+        List<Vertex> weakVertices = mediumGraph.FindWeakVerticesOptimized();
+        assertEquals(4, weakVertices.size());
+        assertTrue(weakVertices.stream().anyMatch(v -> v.Value == 1));
+        assertTrue(weakVertices.stream().anyMatch(v -> v.Value == 2));
+        assertTrue(weakVertices.stream().anyMatch(v -> v.Value == 3));
+        assertTrue(weakVertices.stream().anyMatch(v -> v.Value == 4));
+    }
+
+    @Test
+    void testFindWeakVerticesOptimizedSingleTriangle() {
+        smallGraph.AddVertex(3);
+        smallGraph.AddEdge(0, 1);
+        smallGraph.AddEdge(1, 2);
+        smallGraph.AddEdge(2, 0);
+        List<Vertex> weakVertices = smallGraph.FindWeakVerticesOptimized();
+        assertTrue(weakVertices.isEmpty());
+    }
+
+    @Test
+    void testFindWeakVerticesOptimizedMixedConnections() {
+        largeGraph.AddEdge(0, 1);
+        largeGraph.AddEdge(1, 2);
+        largeGraph.AddEdge(2, 0);
+        largeGraph.AddEdge(3, 4);
+        largeGraph.AddEdge(4, 5);
+
+        List<Vertex> weakVertices = largeGraph.FindWeakVerticesOptimized();
+
+        assertEquals(6, weakVertices.size());
+        assertTrue(weakVertices.stream().anyMatch(v -> v.Value == 4));
+        assertTrue(weakVertices.stream().anyMatch(v -> v.Value == 5));
+        assertTrue(weakVertices.stream().anyMatch(v -> v.Value == 6));
+        assertTrue(weakVertices.stream().anyMatch(v -> v.Value == 7));
+        assertTrue(weakVertices.stream().anyMatch(v -> v.Value == 8));
+        assertTrue(weakVertices.stream().anyMatch(v -> v.Value == 9));
+    }
+
+    @Test
+    void testFindWeakVerticesOptimizedFullyConnected() {
+        mediumGraph.AddEdge(0, 1);
+        mediumGraph.AddEdge(0, 2);
+        mediumGraph.AddEdge(0, 3);
+        mediumGraph.AddEdge(1, 2);
+        mediumGraph.AddEdge(1, 3);
+        mediumGraph.AddEdge(2, 3);
+        List<Vertex> weakVertices = mediumGraph.FindWeakVerticesOptimized();
+        assertTrue(weakVertices.isEmpty());
+    }
+
+    @Test
+    void testFindWeakVerticesOptimizedLargeGraph() {
+        largeGraph.AddEdge(0, 1);
+        largeGraph.AddEdge(0, 2);
+        largeGraph.AddEdge(0, 3);
+        largeGraph.AddEdge(1, 2);
+        largeGraph.AddEdge(1, 4);
+        largeGraph.AddEdge(2, 3);
+        largeGraph.AddEdge(2, 5);
+        largeGraph.AddEdge(4, 5);
+        largeGraph.AddEdge(5, 6);
+        largeGraph.AddEdge(6, 7);
+        largeGraph.AddEdge(5, 7);
+        largeGraph.AddEdge(7, 8);
+
+
+        List<Vertex> weakVertices = largeGraph.FindWeakVerticesOptimized();
         assertEquals(2, weakVertices.size());
         assertEquals(5, weakVertices.getFirst().Value);
         assertEquals(9, weakVertices.getLast().Value);
