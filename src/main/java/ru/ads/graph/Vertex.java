@@ -278,6 +278,10 @@ class SimpleGraph {
     public ArrayList<ArrayList<Integer>> FindAllCyclePaths() {
         ArrayList<ArrayList<Integer>> allCyclePaths = new ArrayList<>();
 
+        if (currentSize <= 2) {
+            return allCyclePaths;
+        }
+
         for (int vertexIndex = 0; vertexIndex < currentSize; vertexIndex++) {
             ClearVisitedVertices();
             ProcessCyclesForVertex(vertexIndex, allCyclePaths);
@@ -448,6 +452,33 @@ class SimpleGraph {
             }
         }
         return trianglesCount;
+    }
+
+    public ArrayList<Vertex> WeakVerticesByInterface() {
+        ArrayList<Vertex> weakVertices = new ArrayList<>();
+        ArrayList<ArrayList<Integer>> allCyclePaths = FindAllCyclePaths();
+
+        for (int vertexIndex = 0; vertexIndex < currentSize; vertexIndex++) {
+            if (!IsVertexInCycleTriangle(vertexIndex, allCyclePaths)) {
+                weakVertices.add(vertex[vertexIndex]);
+            }
+        }
+
+        return weakVertices;
+    }
+
+    private boolean IsVertexInCycleTriangle(int vertexIndex,
+                                            ArrayList<ArrayList<Integer>> allCyclePaths) {
+        if (IndexOutOfBounds(vertexIndex)) {
+            return false;
+        }
+
+        for (ArrayList<Integer> cycle : allCyclePaths) {
+            if ((cycle.size() == 4) && cycle.contains(vertexIndex)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public ArrayList<Vertex> FindWeakVerticesOptimized() {

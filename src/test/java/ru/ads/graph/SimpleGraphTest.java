@@ -699,6 +699,95 @@ class SimpleGraphTest {
     }
 
     @Test
+    void testWeakVerticesByInterfaceTriangle() {
+        smallGraph.AddVertex(3);
+
+        smallGraph.AddEdge(0, 1);
+        smallGraph.AddEdge(1, 2);
+        smallGraph.AddEdge(2, 0);
+
+        List<Vertex> weakVertices = smallGraph.WeakVerticesByInterface();
+        assertTrue(weakVertices.isEmpty());
+    }
+
+    @Test
+    void testWeakVerticesByInterfaceSingleWeakVertex() {
+        mediumGraph.AddVertex(5);
+
+        mediumGraph.AddEdge(0, 1);
+        mediumGraph.AddEdge(1, 2);
+        mediumGraph.AddEdge(2, 0);
+        mediumGraph.AddEdge(3, 4);
+
+        List<Vertex> weakVertices = mediumGraph.WeakVerticesByInterface();
+        assertEquals(2, weakVertices.size());
+        assertEquals(4, weakVertices.get(0).Value);
+        assertEquals(5, weakVertices.get(1).Value);
+    }
+
+    @Test
+    void testWeakVerticesByInterfaceIsolatedVertices() {
+        largeGraph.AddEdge(0, 1);
+        largeGraph.AddEdge(1, 2);
+        largeGraph.AddEdge(2, 0);
+        largeGraph.AddEdge(3, 4);
+        largeGraph.AddEdge(5, 6);
+
+        List<Vertex> weakVertices = largeGraph.WeakVerticesByInterface();
+        assertEquals(6, weakVertices.size());
+        assertTrue(weakVertices.stream().anyMatch(v -> v.Value == 4));
+        assertTrue(weakVertices.stream().anyMatch(v -> v.Value == 5));
+        assertTrue(weakVertices.stream().anyMatch(v -> v.Value == 6));
+        assertTrue(weakVertices.stream().anyMatch(v -> v.Value == 7));
+        assertTrue(weakVertices.stream().anyMatch(v -> v.Value == 8));
+        assertTrue(weakVertices.stream().anyMatch(v -> v.Value == 9));
+    }
+
+    @Test
+    void testWeakVerticesByInterfaceNoEdges() {
+        List<Vertex> weakVertices = mediumGraph.WeakVerticesByInterface();
+        assertEquals(4, weakVertices.size());
+        assertTrue(weakVertices.stream().anyMatch(v -> v.Value == 1));
+        assertTrue(weakVertices.stream().anyMatch(v -> v.Value == 2));
+        assertTrue(weakVertices.stream().anyMatch(v -> v.Value == 3));
+        assertTrue(weakVertices.stream().anyMatch(v -> v.Value == 4));
+    }
+
+    @Test
+    void testWeakVerticesByInterfaceFullyConnected() {
+        mediumGraph.AddEdge(0, 1);
+        mediumGraph.AddEdge(0, 2);
+        mediumGraph.AddEdge(0, 3);
+        mediumGraph.AddEdge(1, 2);
+        mediumGraph.AddEdge(1, 3);
+        mediumGraph.AddEdge(2, 3);
+
+        List<Vertex> weakVertices = mediumGraph.WeakVerticesByInterface();
+        assertTrue(weakVertices.isEmpty());
+    }
+
+    @Test
+    void testWeakVerticesByInterfaceLargeGraph() {
+        largeGraph.AddEdge(0, 1);
+        largeGraph.AddEdge(0, 2);
+        largeGraph.AddEdge(0, 3);
+        largeGraph.AddEdge(1, 2);
+        largeGraph.AddEdge(1, 4);
+        largeGraph.AddEdge(2, 3);
+        largeGraph.AddEdge(2, 5);
+        largeGraph.AddEdge(4, 5);
+        largeGraph.AddEdge(5, 6);
+        largeGraph.AddEdge(6, 7);
+        largeGraph.AddEdge(5, 7);
+        largeGraph.AddEdge(7, 8);
+
+        List<Vertex> weakVertices = largeGraph.WeakVerticesByInterface();
+        assertEquals(2, weakVertices.size());
+        assertEquals(5, weakVertices.get(0).Value);
+        assertEquals(9, weakVertices.get(1).Value);
+    }
+
+    @Test
     void testFindWeakVerticesOptimizedEmptyGraph() {
         SimpleGraph emptyGraph = new SimpleGraph(0);
         assertTrue(emptyGraph.FindWeakVerticesOptimized().isEmpty());
