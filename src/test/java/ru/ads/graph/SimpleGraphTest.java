@@ -669,6 +669,19 @@ class SimpleGraphTest {
     }
 
     @Test
+    void testCountTrianglesDisconnectedGraph() {
+        largeGraph.AddEdge(0, 1);
+        largeGraph.AddEdge(1, 2);
+        largeGraph.AddEdge(2, 0);
+
+        largeGraph.AddEdge(3, 4);
+        largeGraph.AddEdge(4, 5);
+        largeGraph.AddEdge(5, 3);
+
+        assertEquals(2, largeGraph.CountTriangles());
+    }
+
+    @Test
     void testCountTrianglesFullyConnected() {
         mediumGraph.AddEdge(0, 1);
         mediumGraph.AddEdge(0, 2);

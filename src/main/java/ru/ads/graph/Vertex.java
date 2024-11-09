@@ -13,11 +13,11 @@ class Vertex {
 
 }
 
-class TreeDiameterFind {
+class FarthestNodeFind {
     public int mostDistantVertex;
     public int maxDistance;
 
-    TreeDiameterFind(int mostDistantVertex) {
+    FarthestNodeFind(int mostDistantVertex) {
         this.mostDistantVertex = mostDistantVertex;
         maxDistance = 0;
     }
@@ -227,13 +227,17 @@ class SimpleGraph {
     }
 
     public int FindGraphTreeDiameter() {
-        TreeDiameterFind result = BreadthFirstSearch(0);
-        return BreadthFirstSearch(result.mostDistantVertex).maxDistance;
+        int mostDistantVertexFromRoot = FindMostDistantVertexBFS(0).mostDistantVertex;
+
+        if (mostDistantVertexFromRoot == -1) {
+            return 0;
+        }
+        return FindMostDistantVertexBFS(mostDistantVertexFromRoot).maxDistance;
     }
 
-    private TreeDiameterFind BreadthFirstSearch(int VFrom) {
+    private FarthestNodeFind FindMostDistantVertexBFS(int VFrom) {
         if (IndexOutOfBounds(VFrom)) {
-            return new TreeDiameterFind(-1);
+            return new FarthestNodeFind(-1);
         }
 
         Deque<Integer> queue = new ArrayDeque<>();
@@ -242,7 +246,7 @@ class SimpleGraph {
         queue.addLast(VFrom);
         vertex[VFrom].Hit = true;
 
-        TreeDiameterFind result = new TreeDiameterFind(VFrom);
+        FarthestNodeFind result = new FarthestNodeFind(VFrom);
 
         while (!queue.isEmpty()) {
             int treeLevelSize = queue.size();
@@ -284,15 +288,10 @@ class SimpleGraph {
 
         for (int vertexIndex = 0; vertexIndex < currentSize; vertexIndex++) {
             ClearVisitedVertices();
-            ProcessCyclesForVertex(vertexIndex, allCyclePaths);
+            ArrayList<ArrayList<Integer>> currentVertexCycles = FindAllCyclesBFS(vertexIndex);
+            AddUniqueCycles(currentVertexCycles, allCyclePaths);
         }
         return allCyclePaths;
-    }
-
-    private void ProcessCyclesForVertex(int vertexIndex,
-                                        ArrayList<ArrayList<Integer>> allCyclePaths) {
-        ArrayList<ArrayList<Integer>> currentVertexCycles = FindAllCyclesBFSFromVertex(vertexIndex);
-        AddUniqueCycles(currentVertexCycles, allCyclePaths);
     }
 
     private void AddUniqueCycles(ArrayList<ArrayList<Integer>> currentVertexCycles,
@@ -305,7 +304,7 @@ class SimpleGraph {
         }
     }
 
-    private ArrayList<ArrayList<Integer>> FindAllCyclesBFSFromVertex(int vFrom) {
+    private ArrayList<ArrayList<Integer>> FindAllCyclesBFS(int vFrom) {
         ArrayList<ArrayList<Integer>> cyclePaths = new ArrayList<>();
 
         if (IndexOutOfBounds(vFrom)) {
@@ -328,7 +327,8 @@ class SimpleGraph {
 
     private void ProcessNeighborsForCycles(int currentIndex,
                                            ArrayList<ArrayList<Integer>> cyclePaths,
-                                           Map<Integer, Integer> parents, Deque<Integer> queue) {
+                                           Map<Integer, Integer> parents,
+                                           Deque<Integer> queue) {
         for (int neighborIndex : GetNeighborsList(currentIndex)) {
             if (!vertex[neighborIndex].Hit) {
                 queue.addLast(neighborIndex);
@@ -431,7 +431,7 @@ class SimpleGraph {
         for (int vertexIndex = 0; vertexIndex < currentSize; vertexIndex++) {
             trianglesCount += CountVertexTriangles(vertexIndex);
         }
-        return trianglesCount / 3;
+        return trianglesCount;
     }
 
     private int CountVertexTriangles(int vertexIndex) {
@@ -443,12 +443,29 @@ class SimpleGraph {
 
         int trianglesCount = 0;
         for (int neighborIndex = 0; neighborIndex < neighbors.size(); neighborIndex++) {
-            for (int nextNeighborIndex = neighborIndex + 1; nextNeighborIndex < neighbors.size();
-                 nextNeighborIndex++) {
+            int neighborVertexIndex = neighbors.get(neighborIndex);
 
-                if (IsEdge(neighbors.get(neighborIndex), neighbors.get(nextNeighborIndex))) {
-                    trianglesCount++;
-                }
+            if (vertexIndex < neighborVertexIndex) {
+                trianglesCount +=
+                    CountTrianglesWithNeighborPair(vertexIndex, neighborIndex, neighbors);
+            }
+        }
+        return trianglesCount;
+    }
+
+    private int CountTrianglesWithNeighborPair(int vertexIndex,
+                                               int neighborIndex,
+                                               ArrayList<Integer> neighbors) {
+        int neighborVertexIndex = neighbors.get(neighborIndex);
+
+        int trianglesCount = 0;
+        for (int nextNeighborIndex = neighborIndex + 1; nextNeighborIndex < neighbors.size();
+             nextNeighborIndex++) {
+            int nextNeighborVertexIndex = neighbors.get(nextNeighborIndex);
+
+            if ((vertexIndex < nextNeighborVertexIndex)
+                && IsEdge(neighborVertexIndex, nextNeighborVertexIndex)) {
+                trianglesCount++;
             }
         }
         return trianglesCount;
@@ -458,66 +475,48 @@ class SimpleGraph {
         ArrayList<Vertex> weakVertices = new ArrayList<>();
         ArrayList<ArrayList<Integer>> allCyclePaths = FindAllCyclePaths();
 
+        Set<Integer> verticesInTriangles = GetVerticesFromTriangleCycles(allCyclePaths);
+
         for (int vertexIndex = 0; vertexIndex < currentSize; vertexIndex++) {
-            if (!IsVertexInCycleTriangle(vertexIndex, allCyclePaths)) {
+            if (!verticesInTriangles.contains(vertexIndex)) {
                 weakVertices.add(vertex[vertexIndex]);
             }
         }
-
         return weakVertices;
     }
 
-    private boolean IsVertexInCycleTriangle(int vertexIndex,
-                                            ArrayList<ArrayList<Integer>> allCyclePaths) {
-        if (IndexOutOfBounds(vertexIndex)) {
-            return false;
-        }
+    private Set<Integer> GetVerticesFromTriangleCycles(ArrayList<ArrayList<Integer>> allCyclePaths) {
+        Set<Integer> verticesInTriangleCycles = new HashSet<>();
 
         for (ArrayList<Integer> cycle : allCyclePaths) {
-            if ((cycle.size() == 4) && cycle.contains(vertexIndex)) {
-                return true;
+            if (cycle.size() == 4) {
+                verticesInTriangleCycles.addAll(cycle);
             }
         }
-        return false;
+        return verticesInTriangleCycles;
     }
 
     public ArrayList<Vertex> FindWeakVerticesOptimized() {
-        int[][] squaredMatrix = SquareAdjacencyMatrix();
-        return CollectWeakVertices(squaredMatrix);
-    }
-
-    private int[][] SquareAdjacencyMatrix() {
-        int[][] squaredMatrix = new int[currentSize][currentSize];
-        for (int i = 0; i < currentSize; i++) {
-            for (int j = 0; j < currentSize; j++) {
-                squaredMatrix[i][j] = CalculateMatrixSquareValue(i, j);
-            }
-        }
-        return squaredMatrix;
-    }
-
-    private int CalculateMatrixSquareValue(int row, int col) {
-        int value = 0;
-        for (int k = 0; k < currentSize; k++) {
-            value += m_adjacency[row][k] * m_adjacency[k][col];
-        }
-        return value;
-    }
-
-    private ArrayList<Vertex> CollectWeakVertices(int[][] squaredMatrix) {
         ArrayList<Vertex> weakVertices = new ArrayList<>();
-        for (int i = 0; i < currentSize; i++) {
-            if (IsWeakVertex(squaredMatrix, i)) {
-                weakVertices.add(vertex[i]);
+
+        for (int vertexIndex = 0; vertexIndex < currentSize; vertexIndex++) {
+            if (IsWeakVertex(vertexIndex)) {
+                weakVertices.add(vertex[vertexIndex]);
             }
         }
         return weakVertices;
     }
 
-    private boolean IsWeakVertex(int[][] squaredMatrix, int vertexIndex) {
-        for (int j = 0; j < currentSize; j++) {
-            if ((m_adjacency[vertexIndex][j] == 1) && (squaredMatrix[vertexIndex][j] > 0)) {
-                return false;
+    private boolean IsWeakVertex(int vertexIndex) {
+        for (int neighborIndex = 0; neighborIndex < currentSize; neighborIndex++) {
+            if (m_adjacency[vertexIndex][neighborIndex] == 1) {
+                for (int nextNeighborIndex = 0; nextNeighborIndex < currentSize;
+                     nextNeighborIndex++) {
+                    if ((m_adjacency[vertexIndex][nextNeighborIndex] == 1)
+                        && (m_adjacency[neighborIndex][nextNeighborIndex] == 1)) {
+                        return false;
+                    }
+                }
             }
         }
         return true;
