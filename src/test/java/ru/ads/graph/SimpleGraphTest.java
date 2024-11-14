@@ -860,6 +860,7 @@ class SimpleGraphTest {
         mediumGraph.AddEdge(1, 2);
         mediumGraph.AddEdge(1, 3);
         mediumGraph.AddEdge(2, 3);
+
         List<Vertex> weakVertices = mediumGraph.FindWeakVerticesOptimized();
         assertTrue(weakVertices.isEmpty());
     }
@@ -878,7 +879,6 @@ class SimpleGraphTest {
         largeGraph.AddEdge(6, 7);
         largeGraph.AddEdge(5, 7);
         largeGraph.AddEdge(7, 8);
-
 
         List<Vertex> weakVertices = largeGraph.FindWeakVerticesOptimized();
         assertEquals(2, weakVertices.size());
