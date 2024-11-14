@@ -85,6 +85,10 @@ class SimpleGraph {
         m_adjacency[v2][v1] = 0;
     }
 
+    public int GetCurrentSize() {
+        return currentSize;
+    }
+
     public ArrayList<Vertex> DepthFirstSearch(int vFrom, int vTo) {
         Deque<Integer> stack = new ArrayDeque<>();
 
@@ -284,18 +288,22 @@ class SimpleGraph {
             return allCyclePaths;
         }
 
+        Set<Integer> uniqueVertices = new HashSet<>();
+
         for (int vertexIndex = 0; vertexIndex < currentSize; vertexIndex++) {
             ClearVisitedVertices();
+
             ArrayList<ArrayList<Integer>> currentVertexCycles = FindAllCyclesBFS(vertexIndex);
-            AddUniqueCycles(currentVertexCycles, allCyclePaths);
+            AddUniqueCycles(currentVertexCycles, allCyclePaths, uniqueVertices);
         }
         return allCyclePaths;
     }
 
     private void AddUniqueCycles(ArrayList<ArrayList<Integer>> currentVertexCycles,
-                                 ArrayList<ArrayList<Integer>> allCyclePaths) {
+                                 ArrayList<ArrayList<Integer>> allCyclePaths,
+                                 Set<Integer> uniqueVertices) {
         for (ArrayList<Integer> cycle : currentVertexCycles) {
-            if (!IsCycleDuplicate(allCyclePaths, cycle)
+            if (!IsCycleDuplicate(allCyclePaths, cycle, uniqueVertices)
                     && cycle.getFirst().equals(cycle.getLast())) {
                 allCyclePaths.add(cycle);
             }
@@ -361,10 +369,13 @@ class SimpleGraph {
     }
 
     private boolean IsCycleDuplicate(ArrayList<ArrayList<Integer>> allCyclePaths,
-                                     ArrayList<Integer> newCycle) {
-        Set<Integer> newCycleSet = new HashSet<>(newCycle);
+                                     ArrayList<Integer> newCycle,
+                                     Set<Integer> uniqueVertices) {
+        uniqueVertices.clear();
+        uniqueVertices.addAll(newCycle);
+
         for (ArrayList<Integer> cycle : allCyclePaths) {
-            if ((cycle.size() == newCycle.size()) && newCycleSet.containsAll(cycle)) {
+            if ((cycle.size() == newCycle.size()) && uniqueVertices.containsAll(cycle)) {
                 return true;
             }
         }
@@ -425,19 +436,21 @@ class SimpleGraph {
             return 0;
         }
 
+        ArrayList<Integer> neighbors = new ArrayList<>();
+
         int trianglesCount = 0;
-        for (int vertexIndex = 0; vertexIndex < currentSize; vertexIndex++) {
-            trianglesCount += CountVertexTriangles(vertexIndex);
+        for (int vertexIndex = 0; vertexIndex < GetCurrentSize(); vertexIndex++) {
+            trianglesCount += CountVertexTriangles(vertexIndex, neighbors);
         }
         return trianglesCount;
     }
 
-    private int CountVertexTriangles(int vertexIndex) {
+    private int CountVertexTriangles(int vertexIndex, ArrayList<Integer> neighbors) {
         if (IndexOutOfBounds(vertexIndex)) {
             return 0;
         }
 
-        ArrayList<Integer> neighbors = GetNeighborsList(vertexIndex);
+        neighbors = GetNeighborsList(vertexIndex);
 
         int trianglesCount = 0;
         for (int neighborIndex = 0; neighborIndex < neighbors.size(); neighborIndex++) {
@@ -497,27 +510,62 @@ class SimpleGraph {
     public ArrayList<Vertex> FindWeakVerticesOptimized() {
         ArrayList<Vertex> weakVertices = new ArrayList<>();
 
+        Deque<Integer> neighbors = new ArrayDeque<>();
+
         for (int vertexIndex = 0; vertexIndex < currentSize; vertexIndex++) {
-            if (IsWeakVertex(vertexIndex)) {
+            if (IsWeakVertex(vertexIndex, neighbors)) {
                 weakVertices.add(vertex[vertexIndex]);
             }
         }
         return weakVertices;
     }
 
-    private boolean IsWeakVertex(int vertexIndex) {
-        for (int neighborIndex = 0; neighborIndex < currentSize; neighborIndex++) {
-            if (m_adjacency[vertexIndex][neighborIndex] == 1) {
-                for (int nextNeighborIndex = 0; nextNeighborIndex < currentSize;
-                     nextNeighborIndex++) {
-                    if ((m_adjacency[vertexIndex][nextNeighborIndex] == 1)
-                            && (m_adjacency[neighborIndex][nextNeighborIndex] == 1)) {
-                        return false;
-                    }
-                }
+    private boolean IsWeakVertex(int vertexIndex, Deque<Integer> neighbors) {
+        neighbors.clear();
+        boolean wasLastNotLeftEdge = false;
+
+        for (int leftNeighborIndex = 0, rightNeighborIndex = currentSize - 1;
+             leftNeighborIndex <= rightNeighborIndex; ) {
+            if (!IsEdge(vertexIndex, leftNeighborIndex)) {
+                leftNeighborIndex++;
+                wasLastNotLeftEdge = true;
+                continue;
+            }
+            if (!IsEdge(vertexIndex, rightNeighborIndex)) {
+                rightNeighborIndex--;
+                wasLastNotLeftEdge = false;
+                continue;
+            }
+
+            if (IsEdge(leftNeighborIndex, rightNeighborIndex)) {
+                return false;
+            }
+
+            if (neighbors.isEmpty() && (leftNeighborIndex == rightNeighborIndex)) {
+                break;
+            }
+
+            if (leftNeighborIndex == rightNeighborIndex) {
+                rightNeighborIndex = RestorePreviousRightIndex(neighbors, leftNeighborIndex);
+
+                leftNeighborIndex = wasLastNotLeftEdge ? leftNeighborIndex :
+                        leftNeighborIndex + 1;
+            } else {
+                neighbors.addLast(rightNeighborIndex);
+                rightNeighborIndex--;
             }
         }
         return true;
+    }
+
+    private int RestorePreviousRightIndex(Deque<Integer> neighbors, int leftNeighborIndex) {
+        while (!neighbors.isEmpty() && (neighbors.peekFirst() <= leftNeighborIndex)) {
+            neighbors.removeFirst();
+        }
+        if (!neighbors.isEmpty()) {
+            return neighbors.removeFirst();
+        }
+        return -1;
     }
 
 }
